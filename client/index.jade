@@ -1,0 +1,77 @@
+doctype html
+html(lang='en', ng-app='application')
+	head
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+		title= zChat
+
+		link(rel='stylesheet', href='css/toastr.css')
+		link(rel='stylesheet' href='css/foundation-icons.css')
+		link(href='css/app.css', rel='stylesheet', type='text/css')
+		link(href='css/style.css', rel='stylesheet', type='text/css')
+
+		script(src='js/foundation.js')
+		script(src='js/templates.js')
+		script(src='js/routes.js')
+		script(src='js/app.js')
+		script(src='socket.io/socket.io.js')
+
+	body
+		a(zf-open='basicModal', id='showModalButton') Open modal
+		div(zf-modal='', id='basicModal', overlay-close='false')
+			a(zf-close='', id='closeModalButton', class='close-button') ×
+			h3 Your name, please:
+			input(type='text', id='name', autocomplete='off', placeholder='Guest')
+
+		div(class='grid-frame')
+			div(zf-panel='', class='small-5 roomsSidebarSmall', id='rooms')
+				section(class='block-list roomsSidebar')
+					div
+						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
+						| rooms
+					ul
+						each room, name in rooms
+							li(class='roomName')
+								span #{name}
+								span #{room.peopleCount}
+			div(zf-panel='', class='small-5 peopleSidebarSmall', id='people', position='right')
+				section(class='block-list peopleSidebar')
+					div
+						| people
+						img(src='images/people.svg', class='peopleIcon', alt='people')
+					ul
+						for person in rooms.global.people
+							li(id='#{person.name}') #{person.name}
+			div(class='grid-content left show-for-medium medium-3 roomsSidebar')
+				section(class='block-list')
+					div
+						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
+						| rooms
+					ul
+						each room, name in rooms
+							li(class='roomName')
+								span #{name}
+								span #{room.peopleCount}
+			div(class='grid-block')
+				div(class='grid-block small-12 vertical')
+					div(class='hide-for-medium header')
+						img(zf-toggle='rooms', src='images/rooms.svg', class='roomsIcon', alt='rooms')
+						| ! WelcomE !
+						img(zf-toggle='people', src='images/people.svg', class='peopleIcon', alt='people')
+					div(class='hide-for-medium underHeaderBlock')
+					div(class='grid-content' id='messages')
+						// img(src='http://placehold.it/30x30')
+						h4 Cady Heron
+						p Sed auctor neque
+						hr
+					div(class='message-input grid-content collapse shrink')
+							input(type='text', placeholder='Message')
+			div(class='grid-content medium-3 right show-for-medium peopleSidebar')
+				section(class='block-list')
+					div
+						| people
+						img(src='images/people.svg', class='peopleIcon', alt='people')
+					ul
+						for person in rooms.global.people
+							li(id='#{person.name}') #{person.name}

@@ -1,0 +1,160 @@
+.hide-for-medium {
+	font-family: 'Monaco';
+	font-size: 18px;
+	color: white;
+	padding: 20px;
+	background: #00558b;
+	padding-left: 50px;
+}
+
+.hide-for-medium a {
+	position: absolute;
+	top: 10px;
+	left: 18.6px;
+	color: white;
+}
+
+.hide-for-medium a i {
+	display: inline-block;
+	font-size: 36px;
+}
+
+/* mine */
+
+.message-input input {
+	margin-bottom: 0;
+}
+
+body {
+	background-color: white;
+	font-family: monaco;
+}
+
+#showModalButton {
+	display: none;
+}
+
+#sidebar {
+	border-right: 1px solid black;
+}
+
+.avatar-section {
+	background-color: black;
+	color: white;
+}
+
+.hide-for-medium {
+	background-color: black;
+}
+
+.block-list div {
+	background: silver;
+	color: black;
+	height: 50px;
+	font-size: 24px;
+	text-align: center;
+	line-height: 2.1;
+	border-bottom: 1px solid black;
+}
+
+.message-input input, .message-input input:hover, .message-input input:focus {
+	font-size: 24px;
+	background: rgb(240, 240, 240);
+	height: 51px;
+	border: none;
+	border-top: 1px solid black;
+}
+
+header, .avatar-section {
+	font-size: 20px !important;
+	color: white !important;
+	padding: 15px;
+	text-align: center;
+	margin: 0 !important;
+	background-color: black;
+}
+
+.roomsIcon {
+	margin-right: 10px;
+	width: 45px;
+	height: 45px;
+}
+
+.peopleIcon {
+	margin-left: 10px;
+	width: 40px;
+	height: 40px;
+}
+
+.block-list {
+	margin: 0;
+}
+
+.block-list ul {
+	padding-bottom: 50px;
+}
+
+.roomsSidebar, .peopleSidebar {
+	padding: 0;
+}
+
+.peopleSidebar, .roomsSidebar, .block-list, .block-list ul {
+	height: 100%;
+	overflow: hidden;
+}
+
+
+
+
+.block-list ul {
+	overflow: auto;
+}
+
+.grid-content.left {
+	border-right: 1px solid black;
+}
+
+.grid-content.right {
+	border-left: 1px solid black;
+}
+
+.header {
+	height: 50px;
+	position: absolute;
+	width: 100%;
+	background: silver;
+	color: black;
+	font-size: 24px;
+	text-align: center;
+	padding: 0;
+	line-height: 2.1;
+	border-bottom: 1px solid black;
+	padding: 0 20px;
+}
+
+.header img:nth-child(1) {
+	float: left;
+	margin-top: 3px;
+}
+
+.header img:nth-child(2) {
+	float: right;
+	margin-top: 5px;
+}
+
+#rooms li, #people li {
+	padding: 10px 30px;
+}
+
+.underHeaderBlock {
+	height: 50px;
+}
+
+.block-list li {
+	padding: 9px 10px;
+}
+
+.block-list span {
+	padding: none !important;
+	display: inline !important;
+}
