@@ -1,51 +1,35 @@
 window.onload = function() {
-	/*function populateSidebar(data, type, size) {
-		var section = document.createElement('section');
-		var div = document.createElement('div');
-		section.appendChild(div);
-		if (size != 'small') {
-			section.firstChild.innerHTML = '<img src="images/' + type + '.svg" class="' + type + 'Icon" alt="' + type + '">' + type;
-		} else {
-			section.firstChild.innerHTML = type;
-		}
-		var ul = document.createElement('ul');
-		section.appendChild(ul);
-		var i, li;
-		if (type == 'rooms') {
-			section.className = 'block-list roomsSidebar';
-			for(i = 0; i < data.length; ++i) {
-				li = document.createElement('li');
-				li.className = 'roomName';
-				li.innerHTML = '<span>' + data[i].name + '</span> <span>' + data[i].peopleCount + '</span>';
-				section.lastChild.appendChild(li);
-			}
-		} else {
-			section.className = 'block-list peopleSidebar';
-			for(i = 0; i < data.length; ++i) {
-				li = document.createElement('li');
-				li.setAttribute('id', data[i].name);
-				li.innerHTML = data[i].name;
-				section.lastChild.appendChild(li);
-			}
-		}
-		return section;
-	}*/
 
-	function addPerson(name) {
+	function addListItem(lists, itemData, type) {
 		var li = document.createElement('li');
-		li.textContent = name;
-		li.className = name;
-		if (elements.peopleList[0].firstChild !== null) {
-			elements.peopleList[0].insertBefore(li, elements.peopleList[0].firstChild);
-			elements.peopleList[1].insertBefore(li.cloneNode(true), elements.peopleList[1].firstChild);
+		li.className = itemData.id;
+		if (type === 'room') {
+			li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
 		} else {
-			elements.peopleList[0].appendChild(li);
-			elements.peopleList[1].appendChild(li.cloneNode(true));
+			li.innerHTML = itemData.name;
+		}
+		if (lists[0].firstChild !== null) {
+			lists[0].insertBefore(li, lists[0].firstChild);
+			lists[1].insertBefore(li.cloneNode(true), lists[1].firstChild);
+		} else {
+			lists[0].appendChild(li);
+			lists[1].appendChild(li.cloneNode(true));
 		}
 	}
 
-	function deletePerson(personId) {
-		var nodeToDelete = getNode('.' + personId, true);
+	function addMessage(messageDiv, data) {
+		var message = document.createElement('div');
+		message.innerHTML = '<h4>' + data.author + ' <em>' + data.date + '</em></h4><p>' + data.text + '</p><hr>';
+
+		if (messageDiv.firstChild !== null) {
+			messageDiv.insertBefore(message, messageDiv.firstChild);
+		} else {
+			messageDiv.appendChild(message);
+		}
+	}
+
+	function removeListItem(userId) {
+		var nodeToDelete = getNode('.' + userId, true);
 		nodeToDelete[0].parentNode.removeChild(nodeToDelete[0]);
 		nodeToDelete[1].parentNode.removeChild(nodeToDelete[1]);
 	}
@@ -80,14 +64,14 @@ window.onload = function() {
 			nameInput:            getNode('#name'),
 			closeModalButton:     getNode('#closeModalButton'),
 			header:               getNode('.header'),
-			peopleList:           getNode('.peopleSidebar ul', true),
+			roomLists:            getNode('.roomsSidebar ul', true),
+			peopleLists:          getNode('.peopleSidebar ul', true),
 			peopleSidebar:        getNode('.peopleSidebar'),
 			roomsSidebar:         getNode('.roomsSidebar'),
 			roomsSidebarSmall:    getNode('.roomsSidebarSmall'),
 			peopleSidebarSmall:   getNode('.peopleSidebarSmall'),
 			roomsSidebarContent:  getNode('.roomsSidebar section'),
 			peopleSidebarContent: getNode('.peopleSidebar section'),
-			rooms:                getNode('.roomsSidebar ul li', true),
 			roomsButton:          getNode('.header img:nth-child(1)'),
 			peopleButton:         getNode('.header img:nth-child(2)'),
 			roomsIcon:            getNode('.roomsIcon'),
@@ -120,49 +104,50 @@ window.onload = function() {
 	var socket = io();
 	transformSidebarsForSmallScreenSizes();
 
-	for(var i = 0; i < elements.rooms.length; ++i) {
-		elements.rooms[i].addEventListener('click', changeRoomHandler);
-	}
+	socket.emit('populateChat');
+	socket.on('populateChat', function(rooms, people, messages) {
+		var i;
+		for(i = 0; i < rooms.length; ++i) {
+			addListItem(elements.roomLists, rooms[i], 'room');
+		}
+
+		for(i = 0; i < messages.length; ++i) {
+			addMessage(elements.messageDiv, messages[i]);
+		}
+
+		for(i = 0; i < people.length; ++i) {
+			addListItem(elements.peopleLists, people[i]);
+		}
+
+		elements.rooms = getNode('.roomsSidebar ul li', true);
+		for(i = 0; i < elements.rooms.length; ++i) {
+			elements.rooms[i].addEventListener('click', changeRoomHandler);
+		}
+	});
+
 
 	socket.on('changeRoom', function(data) {
-		// var li;
 		if (data.people) {
-			elements.peopleList[0].innerHTML = '';
-			elements.peopleList[1].innerHTML = '';
+			var i;
+			elements.peopleLists[0].innerHTML = '';
+			elements.peopleLists[1].innerHTML = '';
+			elements.messageDiv.innerHTML = '';
 			if (data.people.length !== 0) {
-				addPerson(data.people[0].name);
-				// li = document.createElement('li');
-				// li.textContent = data.people[0];
-				// li.className = data.people[0];
-				// elements.peopleList[0].appendChild(li);
-				// elements.peopleList[1].appendChild(li.cloneNode(true));
-				for(var i = 1; i < data.people.length; ++i) {
-					addPerson(data.people[i].name);
-					// li = document.createElement('li');
-					// li.textContent = data.people[i];
-					// li.className = data.people[i];
-					// elements.peopleList[0].insertBefore(li, peopleList[0].firstChild);
-					// elements.peopleList[1].insertBefore(li.cloneNode(true), peopleList[1].firstChild);
+				for(i = 0; i < data.people.length; ++i) {
+					addListItem(elements.peopleLists, data.people[i]);
 				}
 			}
-			addPerson(data.name + '(you)');
-			// li = document.createElement('li');
-			// li.textContent = data.name + '(you)';
-			// elements.peopleList[0].insertBefore(li, peopleList[0].firstChild);
-			// elements.peopleList[1].insertBefore(li.cloneNode(true), peopleList[1].firstChild);
+			if (data.messages.length !== 0) {
+				for(i = 0; i < data.messages.length; ++i) {
+					addMessage(elements.messageDiv, data.messages[i]);
+				}
+			}
+			addListItem(elements.peopleLists, data.user);
 		} else {
-			if (data.whoLeftId) {
-				deletePerson(data.whoLeftId);
-				// var nodeToDelete = getNode('.' + data.whoLeft, true);
-				// nodeToDelete[0].parentNode.removeChild(nodeToDelete[0]);
-				// nodeToDelete[1].parentNode.removeChild(nodeToDelete[1]);
+			if (data.whoLeft) {
+				removeListItem(data.whoLeft.id);
 			} else {
-				addPerson(data.name);
-				// li = document.createElement('li');
-				// li.textContent = data.name;
-				// li.className = data.name;
-				// elements.peopleList[0].insertBefore(li, peopleList[0].firstChild);
-				// elements.peopleList[1].insertBefore(li.cloneNode(true), peopleList[1].firstChild);
+				addListItem(elements.peopleLists, data.user);
 			}
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 		}
@@ -194,31 +179,24 @@ window.onload = function() {
 	});
 
 	socket.on('joined', function(data) {
-		// var li = document.createElement('li');
-		// li.textContent = data.name;
+		console.log('joined');
 		if (data.message) {
-			// li.className = data.name;
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 		}
-		addPerson(data.name);
-		// if (elements.peopleList[0].firstChild == null) {
-		// 	addPerson(data, data.name);
-		// } else {
-		// 	addPerson(data, true);
-		// }
+		addListItem(elements.peopleLists, data.user);
 	});
 
-	socket.on('userIsTyping', function(data) {
+	socket.on('userIsTyping', function(user) {
 		// var li = getNode('.' + data.userId);
-		var li = getNode('.' + data.name);
+		var li = getNode('.' + user.id);
 		var img = document.createElement('img');
 		img.src = 'images/pen.gif';
 		li.appendChild(img);
 	});
 
-	socket.on('userStopTyping', function(data) {
+	socket.on('userStopTyping', function(user) {
 		// var li = getNode('.' + data.userId);
-		var li = getNode('.' + data.name);
+		var li = getNode('.' + user.id);
 		li.removeChild(li.lastChild);
 	});
 
@@ -226,20 +204,12 @@ window.onload = function() {
 		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
-	socket.on('message', function(data) {
-		for(var i = 0; i < data.length; ++i) {
-			var messageContent = document.createElement('div');
-			messageContent.innerHTML = '<h4>' + data[i].name + '</h4>' + '<p>' + data[i].message + '</p><hr>';
-			if (elements.messageDiv.firstChild === null) {
-				elements.messageDiv.appendChild(messageContent);
-			} else {
-				elements.messageDiv.insertBefore(messageContent, elements.messageDiv.firstChild);
-			}
-		}
+	socket.on('message', function(message) {
+		addMessage(elements.messageDiv, message);
 	});
 
-	socket.on('left', function(data) {
-		deletePerson(data);
+	socket.on('left', function(user) {
+		removeListItem(user.id);
 		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
@@ -252,7 +222,7 @@ window.onload = function() {
 			elements.closeModalButton.dispatchEvent(new MouseEvent('click'));
 			// nameBlock.textContent = (e.target.value != '') ? e.target.value : 'Guest'; // use reg exp
 
-			socket.emit('joined', { name: elements.nameInput.value });
+			socket.emit('joined', elements.nameInput.value);
 
 			elements.messageInput.addEventListener('keyup', function(e) {
 				if (e.keyCode == 13) {

@@ -31,28 +31,28 @@ html(lang='en', ng-app='application')
 						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
 						| rooms
 					ul
-						each room, name in rooms
-							li(class='roomName')
-								span #{name}
-								span #{room.peopleCount}
+						//- for room in rooms
+						//- 	li(class='roomName')
+						//- 		span #{room.name}
+						//- 		span #{room.peopleCount}
 			div(zf-panel='', class='small-5 peopleSidebarSmall', id='people', position='right')
 				section(class='block-list peopleSidebar')
 					div
 						| people
 						img(src='images/people.svg', class='peopleIcon', alt='people')
 					ul
-						for person in rooms.global.people
-							li(id='#{person.name}') #{person.name}
+						//- for user in people
+						//- 	li(id='#{user.name}') #{user.name}
 			div(class='grid-content left show-for-medium medium-3 roomsSidebar')
 				section(class='block-list')
 					div
 						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
 						| rooms
 					ul
-						each room, name in rooms
-							li(class='roomName')
-								span #{name}
-								span #{room.peopleCount}
+						//- for room in rooms
+						//- 	li(class='roomName')
+						//- 		span #{room.name}
+						//- 		span #{room.peopleCount}
 			div(class='grid-block')
 				div(class='grid-block small-12 vertical')
 					div(class='hide-for-medium header')
@@ -62,9 +62,10 @@ html(lang='en', ng-app='application')
 					div(class='hide-for-medium underHeaderBlock')
 					div(class='grid-content' id='messages')
 						// img(src='http://placehold.it/30x30')
-						h4 Cady Heron
-						p Sed auctor neque
-						hr
+						//- for message in messages
+						//- 	h4 #{message.author}
+						//- 	p #{message.text}
+						//- 	hr
 					div(class='message-input grid-content collapse shrink')
 							input(type='text', placeholder='Message')
 			div(class='grid-content medium-3 right show-for-medium peopleSidebar')
@@ -73,5 +74,5 @@ html(lang='en', ng-app='application')
 						| people
 						img(src='images/people.svg', class='peopleIcon', alt='people')
 					ul
-						for person in rooms.global.people
-							li(id='#{person.name}') #{person.name}
+						//- for user in people
+						//- 	li(id='#{user.name}') #{user.name}
