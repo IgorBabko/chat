@@ -86,7 +86,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					messages.find({ room: data.roomName }).toArray(function(err, messages) {
 						if (err) return err;
 
-						console.log(messages);
 						socket.emit('changeRoom', { user: user, people: users, messages: messages });
 						socket.join(data.roomName);
 						people.update({ id: user.id }, { $set: { room: data.roomName } });
