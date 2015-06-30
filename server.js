@@ -10,7 +10,7 @@ var client  = io.listen(server);
 app.use(express.static(__dirname + '/build/assets'));
 
 mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
-	console.log('connected');
+
 	var rooms    = db.collection('rooms');
 	var people   = db.collection('people');
 	var messages = db.collection('messages');
@@ -21,7 +21,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 	});
 
 	client.on('connection', function(socket) {
-		
+
 		socket.join('global');
 
 		socket.on('populateChat', function() {
@@ -79,9 +79,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				if (err) return err;
 
 				var user = users[0];
-				// if (data.newRoom == user.room) {
-				// 	return;
-				// }
+
 				socket.broadcast.to(user.room).emit('changeRoom', { message: user.name + ' left room', whoLeft: user });
 				socket.leave(user.room);
 				client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });

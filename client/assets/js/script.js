@@ -201,19 +201,15 @@ window.onload = function() {
 
 	socket.on('joined', function(data) {
 		if (data.message) {
-			console.log('1');
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 		} else {
-			console.log('hey there');
 			elements.closeModalButton.dispatchEvent(new MouseEvent('click'));
 		}
 		addListItem(elements.peopleLists, data.user);
 	});
 
 	socket.on('userIsTyping', function(userId) {
-		console.log(userId);
 		var li = getNode('._' + userId, true);
-		console.log(li);
 		var img = document.createElement('img');
 		img.src = 'images/pen.gif';
 		img.style['margin-left'] = '10px';
