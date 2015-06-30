@@ -80,6 +80,16 @@ header, .avatar-section {
 	height: 45px;
 }
 
+.activeRoom {
+	background: gray;
+}
+
+h4 em {
+	color: gray;
+	font-size: 10px;
+	float: right;
+}
+
 .peopleIcon {
 	margin-left: 10px;
 	width: 40px;

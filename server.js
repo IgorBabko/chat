@@ -10,7 +10,7 @@ var client  = io.listen(server);
 app.use(express.static(__dirname + '/build/assets'));
 
 mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
-
+	console.log('connected');
 	var rooms    = db.collection('rooms');
 	var people   = db.collection('people');
 	var messages = db.collection('messages');
@@ -21,24 +21,27 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 	});
 
 	client.on('connection', function(socket) {
+		
+		socket.join('global');
 
-	socket.on('populateChat', function() {
-		rooms.find().toArray(function(err, roomsData) {
-			if (err) return err;
-
-			people.find({ room: 'global' }).toArray(function(err, peopleData) {
+		socket.on('populateChat', function() {
+			rooms.find().toArray(function(err, roomsData) {
 				if (err) return err;
 
-				messages.find({ room: 'global' }).toArray(function(err, messagesData) {
+				people.find({ room: 'global' }).toArray(function(err, peopleData) {
 					if (err) return err;
 
-					socket.emit('populateChat', roomsData, peopleData, messagesData);
+					messages.find({ room: 'global' }).toArray(function(err, messagesData) {
+						if (err) return err;
+
+						socket.emit('populateChat', roomsData, peopleData, messagesData);
+					});
 				});
 			});
 		});
-	});
 
 		socket.on('joined', function(userName) {
+
 			var user = {
 				id: '_' + socket.id,
 				name: userName,
@@ -51,7 +54,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			socket.broadcast.emit('joined', { user: user, message: user.name + ' joined chat.' });
 			user.name += '(you)';
 			socket.emit('joined', { user: user });
-			socket.join('global');
 		});
 
 		socket.on('left', function() {
@@ -69,39 +71,35 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				if (err) return err;
 
 				var user = users[0];
-
-				if (data.roomName == user.room) {
-					return;
-				}
-
+				// if (data.newRoom == user.room) {
+				// 	return;
+				// }
 				socket.broadcast.to(user.room).emit('changeRoom', { message: user.name + ' left room', whoLeft: user });
 				socket.leave(user.room);
-				client.in(data.roomName).emit('changeRoom', { user: user, message: user.name + ' joined room' });
+				client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
 
 				user.name += '(you)';
 
-				people.find({ room: data.roomName }).toArray(function(err, users) {
+				people.find({ room: data.newRoom }).toArray(function(err, users) {
 					if (err) return err;
 
-					messages.find({ room: data.roomName }).toArray(function(err, messages) {
+					messages.find({ room: data.newRoom }).toArray(function(err, messages) {
 						if (err) return err;
 
 						socket.emit('changeRoom', { user: user, people: users, messages: messages });
-						socket.join(data.roomName);
-						people.update({ id: user.id }, { $set: { room: data.roomName } });
+						socket.join(data.newRoom);
+						people.update({ id: user.id }, { $set: { room: data.newRoom } });
 					});
 				});
 			});
 		});
 
-		socket.on('userIsTyping', function() {
-			var user = people.find({ id: '_' + socket.id });
-			socket.broadcast.in(user.room).emit('userIsTyping', { userId: user.id });
+		socket.on('userIsTyping', function(room) {
+			socket.broadcast.to(room).emit('userIsTyping', socket.id);
 		});
 
-		socket.on('userStopTyping', function() {
-			var user = people.find({ id: '_' + socket.id });
-			socket.broadcast.in(user.room).emit('userStopTyping', { userId: user.id });
+		socket.on('userStopTyping', function(room) {
+			socket.broadcast.to(room).emit('userStopTyping', socket.id);
 		});
 
 		socket.on('message', function(data) {

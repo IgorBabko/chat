@@ -2,10 +2,14 @@ window.onload = function() {
 
 	function addListItem(lists, itemData, type) {
 		var li = document.createElement('li');
-		li.className = itemData.id;
 		if (type === 'room') {
+			li.className = '_' + itemData._id;
+			if (itemData.name === 'global') {
+				li.className += ' activeRoom';
+			}
 			li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
 		} else {
+			li.className = itemData.id;
 			li.innerHTML = itemData.name;
 		}
 		if (lists[0].firstChild !== null) {
@@ -35,7 +39,19 @@ window.onload = function() {
 	}
 
 	function changeRoomHandler() {
-		socket.emit('changeRoom', { roomName: this.firstChild.textContent });
+		if (this !== elements.activeRoom[0] && this !== elements.activeRoom[1]) {
+
+			elements.activeRoom[0].classList.remove('activeRoom');
+			elements.activeRoom[1].classList.remove('activeRoom');
+
+			elements.activeRoom = getNode('.' + this.className, true);
+			elements.activeRoom[0].classList.add('activeRoom');
+			elements.activeRoom[1].classList.add('activeRoom');
+
+
+			activeRoomName = this.firstChild.textContent;
+			socket.emit('changeRoom', { newRoom: activeRoomName });
+		}
 	}
 
 	function transformSidebarsForSmallScreenSizes() {
@@ -53,6 +69,15 @@ window.onload = function() {
 			return document.querySelectorAll(selector);
 		} else {
 			return document.querySelector(selector);
+		}
+	}
+
+	function panelHandler() {
+		if (roomsOpened) {
+			elements.roomsButton.dispatchEvent(new MouseEvent('click'));
+		}
+		if (peopleOpened) {
+			elements.peopleButton.dispatchEvent(new MouseEvent('click'));
 		}
 	}
 
@@ -81,25 +106,17 @@ window.onload = function() {
 	}
 
 	var elements = getElements();
+	var activeRoomName = 'global';
 
 	elements.messageInput.addEventListener('focus', function() {
-		socket.emit('userIsTyping');
+		socket.emit('userIsTyping', activeRoomName);
 	});
 
 	elements.messageInput.addEventListener('blur', function() {
-		socket.emit('userStopTyping');
+		socket.emit('userStopTyping', activeRoomName);
 	});
 
 	var isScreenLarge = window.outerWidth > 640 ? true: false;
-
-	function panelHandler() {
-		if (roomsOpened) {
-			elements.roomsButton.dispatchEvent(new MouseEvent('click'));
-		}
-		if (peopleOpened) {
-			elements.peopleButton.dispatchEvent(new MouseEvent('click'));
-		}
-	}
 
 	var socket = io();
 	transformSidebarsForSmallScreenSizes();
@@ -123,7 +140,11 @@ window.onload = function() {
 		for(i = 0; i < elements.rooms.length; ++i) {
 			elements.rooms[i].addEventListener('click', changeRoomHandler);
 		}
+
+		elements.activeRoom = getNode('.activeRoom', true);
 	});
+
+
 
 
 	socket.on('changeRoom', function(data) {
@@ -179,25 +200,28 @@ window.onload = function() {
 	});
 
 	socket.on('joined', function(data) {
-		console.log('joined');
 		if (data.message) {
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 		}
 		addListItem(elements.peopleLists, data.user);
 	});
 
-	socket.on('userIsTyping', function(user) {
-		// var li = getNode('.' + data.userId);
-		var li = getNode('.' + user.id);
+	socket.on('userIsTyping', function(userId) {
+		console.log(userId);
+		var li = getNode('._' + userId, true);
+		console.log(li);
 		var img = document.createElement('img');
 		img.src = 'images/pen.gif';
-		li.appendChild(img);
+		img.style['margin-left'] = '10px';
+		img.style.width = '20px';
+		li[0].appendChild(img);
+		li[1].appendChild(img.cloneNode());
 	});
 
-	socket.on('userStopTyping', function(user) {
-		// var li = getNode('.' + data.userId);
-		var li = getNode('.' + user.id);
-		li.removeChild(li.lastChild);
+	socket.on('userStopTyping', function(userId) {
+		var li = getNode('._' + userId, true);
+		li[0].removeChild(li[0].lastChild);
+		li[1].removeChild(li[1].lastChild);
 	});
 
 	socket.on('warning', function(data) {
@@ -208,8 +232,8 @@ window.onload = function() {
 		addMessage(elements.messageDiv, message);
 	});
 
-	socket.on('left', function(user) {
-		removeListItem(user.id);
+	socket.on('left', function(data) {
+		removeListItem(data.user.id);
 		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
@@ -220,7 +244,6 @@ window.onload = function() {
 		if (e.keyCode == 13) {
 
 			elements.closeModalButton.dispatchEvent(new MouseEvent('click'));
-			// nameBlock.textContent = (e.target.value != '') ? e.target.value : 'Guest'; // use reg exp
 
 			socket.emit('joined', elements.nameInput.value);
 
