@@ -201,7 +201,11 @@ window.onload = function() {
 
 	socket.on('joined', function(data) {
 		if (data.message) {
+			console.log('1');
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+		} else {
+			console.log('hey there');
+			elements.closeModalButton.dispatchEvent(new MouseEvent('click'));
 		}
 		addListItem(elements.peopleLists, data.user);
 	});
@@ -239,11 +243,8 @@ window.onload = function() {
 
 	elements.showModalButton.dispatchEvent(new MouseEvent('click'));
 	elements.nameInput.focus();
-
 	elements.nameInput.addEventListener('keyup', function(e) {
 		if (e.keyCode == 13) {
-
-			elements.closeModalButton.dispatchEvent(new MouseEvent('click'));
 
 			socket.emit('joined', elements.nameInput.value);
 

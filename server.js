@@ -42,6 +42,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 		socket.on('joined', function(userName) {
 
+			var whitespacePattern = /^\s*$/;
+			userName = userName.trim();
+			if (whitespacePattern.test(userName)) {
+				socket.emit('warning', { message: 'Name should not be empty!' });
+				return;
+			}
+
 			var user = {
 				id: '_' + socket.id,
 				name: userName,
