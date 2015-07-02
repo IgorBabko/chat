@@ -12,7 +12,7 @@ window.onload = function() {
 			li.className = itemData.id;
 			li.innerHTML = itemData.name;
 		}
-		if (lists[0].firstChild !== null) {
+		if (lists[0].firstChild !== null && type !== 'room') {
 			lists[0].insertBefore(li, lists[0].firstChild);
 			lists[1].insertBefore(li.cloneNode(true), lists[1].firstChild);
 		} else {

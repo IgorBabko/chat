@@ -48,7 +48,7 @@ body {
 }
 
 .block-list div {
-	background: silver;
+	background: #D1F5F7;
 	color: black;
 	height: 50px;
 	font-size: 24px;
@@ -89,7 +89,7 @@ header, .avatar-section {
 }
 
 .activeRoom {
-	background: gray;
+	background: #B0E6FF;
 }
 
 h4 em {
@@ -121,8 +121,23 @@ h4 em {
 	overflow: hidden;
 }
 
+.roomsSidebar span:nth-child(2) {
+	float: right;
+	padding-top: 5px;
+}
 
+.newRoom {
+	padding: 0 !important;
+}
 
+.newRoom a {
+	margin: 0;
+	font-size: 20px;
+}
+
+.roomsSidebar li:not(.activeRoom), .roomsSidebar li:not(.activeRoom) * {
+	cursor: pointer;
+}
 
 .block-list ul {
 	overflow: auto;
