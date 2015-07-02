@@ -51,7 +51,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			}
 
 			var user = {
-				id: '_' + socket.id,
+				_id: '_' + socket.id,
 				name: userName,
 				room: 'global',
 				isTyping: false
@@ -65,17 +65,45 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('left', function() {
-			people.find({ id: '_' + socket.id }).toArray(function(err, users) {
+			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 				if (err) return err;
 
 				var whoLeft = users[0];
 				client.in(whoLeft.room).emit('left', { user: whoLeft, message: whoLeft.name + 'left chat.' });
-				people.remove({ id: whoLeft.id });
+				people.remove({ _id: whoLeft._id });
+			});
+		});
+
+		socket.on('createRoom', function(data) {
+
+			var whitespacePattern = /^\s*$/;
+
+			if (whitespacePattern.test(data.roomName)) {
+				socket.emit('warning', { message: 'Room name should not be empty!' });
+				return;
+			}
+
+			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
+
+				var user = users[0];
+
+				var room = {
+					_id:         '_' + uuid.v1(),
+					name:        data.roomName,
+					password:    data.roomPassword,
+					creatorId:   user._id,
+					peopleCount: 0
+				};
+
+				rooms.insert(room);
+
+				socket.emit('createRoom', { room: room });
+				socket.broadcast.emit('createRoom', { room: room, message: user.name + ' added public room "' + data.roomName + '"' });
 			});
 		});
 
 		socket.on('changeRoom', function(data) {
-			people.find({ id: '_' + socket.id }).toArray(function(err, users) {
+			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 				if (err) return err;
 
 				var user = users[0];
@@ -94,18 +122,18 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 						socket.emit('changeRoom', { user: user, people: users, messages: messages });
 						socket.join(data.newRoom);
-						people.update({ id: user.id }, { $set: { room: data.newRoom } });
+						people.update({ _id: user._id }, { $set: { room: data.newRoom } });
 					});
 				});
 			});
 		});
 
 		socket.on('userIsTyping', function(room) {
-			socket.broadcast.to(room).emit('userIsTyping', socket.id);
+			socket.broadcast.to(room).emit('userIsTyping', '_' + socket.id);
 		});
 
 		socket.on('userStopTyping', function(room) {
-			socket.broadcast.to(room).emit('userStopTyping', socket.id);
+			socket.broadcast.to(room).emit('userStopTyping', '_' + socket.id);
 		});
 
 		socket.on('message', function(data) {
@@ -116,13 +144,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				return;
 			}
 
-			people.find({ id: '_' + socket.id }).toArray(function(err, users) {
+			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 				if (err) return err;
 
 				var user = users[0];
 
 				var message = {
-					id: '_' + uuid.v1(),
+					_id: '_' + uuid.v1(),
 					author: user.name,
 					text: data.message,
 					room: user.room,

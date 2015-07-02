@@ -3,22 +3,25 @@ window.onload = function() {
 	function addListItem(lists, itemData, type) {
 		var li = document.createElement('li');
 		if (type === 'room') {
-			li.className = '_' + itemData._id;
+			li.className = itemData._id;
 			if (itemData.name === 'global') {
 				li.className += ' activeRoom';
 			}
 			li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
 		} else {
-			li.className = itemData.id;
+			li.className = itemData._id;
 			li.innerHTML = itemData.name;
 		}
+		var li2 = li.cloneNode(true);
 		if (lists[0].firstChild !== null && type !== 'room') {
 			lists[0].insertBefore(li, lists[0].firstChild);
-			lists[1].insertBefore(li.cloneNode(true), lists[1].firstChild);
+			lists[1].insertBefore(li2, lists[1].firstChild);
 		} else {
 			lists[0].appendChild(li);
-			lists[1].appendChild(li.cloneNode(true));
+			lists[1].appendChild(li2);
 		}
+
+		return [li, li2];
 	}
 
 	function addMessage(messageDiv, data) {
@@ -33,6 +36,7 @@ window.onload = function() {
 	}
 
 	function removeListItem(userId) {
+		console.log(userId);
 		var nodeToDelete = getNode('.' + userId, true);
 		nodeToDelete[0].parentNode.removeChild(nodeToDelete[0]);
 		nodeToDelete[1].parentNode.removeChild(nodeToDelete[1]);
@@ -83,11 +87,15 @@ window.onload = function() {
 
 	function getElements() {
 		var elements = {
-			showModalButton:      getNode('#showModalButton'),
+			roomNameField:        getNode('#roomName'),
+			roomPasswordField:    getNode('#roomPassword'),
+			showInputNameModal:   getNode('#showInputNameModal'),
+			closeInputNameModal:  getNode('#closeInputNameModal'),
+			showNewRoomModal:     getNode('#showNewRoomModal'),
+			closeNewRoomModal:    getNode('#closeNewRoomModal'),
 			messageInput:         getNode('.message-input input'),
 			messageDiv:           getNode('#messages'),
 			nameInput:            getNode('#name'),
-			closeModalButton:     getNode('#closeModalButton'),
 			header:               getNode('.header'),
 			roomLists:            getNode('.roomsSidebar ul', true),
 			peopleLists:          getNode('.peopleSidebar ul', true),
@@ -136,7 +144,7 @@ window.onload = function() {
 			addListItem(elements.peopleLists, people[i]);
 		}
 
-		elements.rooms = getNode('.roomsSidebar ul li', true);
+		elements.rooms = getNode('.roomsSidebar ul li:not(.newRoom)', true);
 		for(i = 0; i < elements.rooms.length; ++i) {
 			elements.rooms[i].addEventListener('click', changeRoomHandler);
 		}
@@ -145,7 +153,33 @@ window.onload = function() {
 	});
 
 
+	function newRoomFormSender(e) {
+		if (e.keyCode == 13) {
+			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value });
+			elements.roomNameField.value = '';
+			elements.roomPasswordField.value = '';
+		}
+	}
 
+	elements.roomNameField.addEventListener('keyup', function(e) {
+		newRoomFormSender(e);
+	});
+	elements.roomPasswordField.addEventListener('keyup', function(e) {
+		newRoomFormSender(e);
+	});
+
+
+	socket.on('createRoom', function(data) {
+		if (data.message) {
+			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+		} else {
+			elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
+		}
+		var newRoomItem = addListItem(elements.roomLists, data.room, 'room');
+
+		newRoomItem[0].addEventListener('click', changeRoomHandler);
+		newRoomItem[1].addEventListener('click', changeRoomHandler);
+	});
 
 	socket.on('changeRoom', function(data) {
 		if (data.people) {
@@ -166,7 +200,7 @@ window.onload = function() {
 			addListItem(elements.peopleLists, data.user);
 		} else {
 			if (data.whoLeft) {
-				removeListItem(data.whoLeft.id);
+				removeListItem(data.whoLeft._id);
 			} else {
 				addListItem(elements.peopleLists, data.user);
 			}
@@ -203,13 +237,13 @@ window.onload = function() {
 		if (data.message) {
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 		} else {
-			elements.closeModalButton.dispatchEvent(new MouseEvent('click'));
+			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 		}
 		addListItem(elements.peopleLists, data.user);
 	});
 
 	socket.on('userIsTyping', function(userId) {
-		var li = getNode('._' + userId, true);
+		var li = getNode('.' + userId, true);
 		var img = document.createElement('img');
 		img.src = 'images/pen.gif';
 		img.style['margin-left'] = '10px';
@@ -219,7 +253,7 @@ window.onload = function() {
 	});
 
 	socket.on('userStopTyping', function(userId) {
-		var li = getNode('._' + userId, true);
+		var li = getNode('.' + userId, true);
 		li[0].removeChild(li[0].lastChild);
 		li[1].removeChild(li[1].lastChild);
 	});
@@ -233,11 +267,11 @@ window.onload = function() {
 	});
 
 	socket.on('left', function(data) {
-		removeListItem(data.user.id);
+		removeListItem(data.user._id);
 		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
-	elements.showModalButton.dispatchEvent(new MouseEvent('click'));
+	elements.showInputNameModal.dispatchEvent(new MouseEvent('click'));
 	elements.nameInput.focus();
 	elements.nameInput.addEventListener('keyup', function(e) {
 		if (e.keyCode == 13) {

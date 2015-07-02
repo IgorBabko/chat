@@ -18,10 +18,16 @@ html(lang='en', ng-app='application')
 		script(src='socket.io/socket.io.js')
 
 	body
-		a(zf-open='basicModal', id='showModalButton') Open modal
-		div(zf-modal='', id='basicModal', overlay-close='false')
-			a(zf-close='', id='closeModalButton', class='close-button') ×
+		a(zf-open='inputNameModal', id='showInputNameModal')
+		div(zf-modal='', id='inputNameModal', overlay-close='false')
+			a(zf-close='', id='closeInputNameModal', class='close-button') ×
 			input(type='text', id='name', autocomplete='off', placeholder='Your name:')
+
+		div(zf-modal='', id='newRoomModal', overlay-close='true')
+			a(zf-close='', id='closeNewRoomModal', class='close-button') ×
+			input(type='text', id='roomName', autocomplete='off', placeholder='Room name: ')
+			input(type='password', id='roomPassword', autocomplete='off', placeholder='Password (optional): ')
+			//- a(class='info button', id='createRoomButton', href='#') create
 
 		div(class='grid-frame')
 			div(zf-panel='', class='small-5 roomsSidebarSmall', id='rooms')
@@ -31,7 +37,7 @@ html(lang='en', ng-app='application')
 						| rooms
 					ul
 						li(class='newRoom')
-							a(class='success button', href='#') New Room
+							a(zf-open='newRoomModal', class='showNewRoomModal success button') New Room
 			div(zf-panel='', class='small-5 peopleSidebarSmall', id='people', position='right')
 				section(class='block-list peopleSidebar')
 					div
@@ -45,7 +51,7 @@ html(lang='en', ng-app='application')
 						| rooms
 					ul
 						li(class='newRoom')
-							a(class='success button', href='#') New Room
+							a(zf-open='newRoomModal', class='showNewRoomModal success button') New Room
 			div(class='grid-block')
 				div(class='grid-block small-12 vertical')
 					div(class='hide-for-medium header')

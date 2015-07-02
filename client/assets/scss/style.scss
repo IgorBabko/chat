@@ -59,7 +59,7 @@ body {
 
 .message-input input, .message-input input:hover, .message-input input:focus {
 	font-size: 24px;
-	background: rgb(240, 240, 240);
+	background: #E9FAFB;
 	height: 51px;
 	border: none;
 	border-top: 1px solid black;
@@ -74,8 +74,17 @@ header, .avatar-section {
 	background-color: black;
 }
 
-#closeModalButton {
+#closeInputNameModal, #closeNewRoomModal {
 	display: none;
+}
+
+#roomPassword {
+	margin: 0;
+}
+
+#createRoomButton {
+	float: right;
+	margin: 10px 0 0 0;
 }
 
 #name {
@@ -155,7 +164,7 @@ h4 em {
 	height: 50px;
 	position: absolute;
 	width: 100%;
-	background: silver;
+	background: #D1F5F7;
 	color: black;
 	font-size: 24px;
 	text-align: center;
