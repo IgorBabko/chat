@@ -58,10 +58,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			};
 
 			people.insert(user);
+			rooms.update({ name: 'global' }, { $inc: { peopleCount: 1 } });
+			rooms.find({ name: 'global' }).toArray(function(err, roomsData) {
+				var room = roomsData[0];
 
-			socket.broadcast.emit('joined', { user: user, message: user.name + ' joined chat.' });
-			user.name += '(you)';
-			socket.emit('joined', { user: user });
+				socket.broadcast.emit('joined', { room: room, user: user, message: user.name + ' joined chat.' });
+				user.name += '(you)';
+				socket.emit('joined', { room: room, user: user });
+			});
 		});
 
 		socket.on('left', function() {
@@ -69,8 +73,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				if (err) return err;
 
 				var whoLeft = users[0];
-				client.in(whoLeft.room).emit('left', { user: whoLeft, message: whoLeft.name + 'left chat.' });
-				people.remove({ _id: whoLeft._id });
+
+				rooms.update({ name: whoLeft.room }, { $inc: { peopleCount: -1 } });
+
+				rooms.find({ name: whoLeft.room }).toArray(function(err, roomsData) {
+					var room = roomsData[0];
+					client.in(whoLeft.room).emit('left', { room: room, user: whoLeft, message: whoLeft.name + 'left chat.' });
+					people.remove({ _id: whoLeft._id });
+				});
 			});
 		});
 
@@ -112,17 +122,27 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				socket.leave(user.room);
 				client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
 
-				user.name += '(you)';
+				rooms.update({ name: user.room }, { $inc: { peopleCount: -1 } });
+				rooms.update({ name: data.newRoom }, { $inc: { peopleCount: 1 } });
 
-				people.find({ room: data.newRoom }).toArray(function(err, users) {
-					if (err) return err;
+				rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
+					rooms.find({ name: data.newRoom }).toArray(function(err, newRoomInfo) {
 
-					messages.find({ room: data.newRoom }).toArray(function(err, messages) {
-						if (err) return err;
+						client.emit('changeRoom', { oldRoomInfo: oldRoomInfo[0], newRoomInfo: newRoomInfo[0] });
 
-						socket.emit('changeRoom', { user: user, people: users, messages: messages });
-						socket.join(data.newRoom);
-						people.update({ _id: user._id }, { $set: { room: data.newRoom } });
+						user.name += '(you)';
+
+						people.find({ room: data.newRoom }).toArray(function(err, users) {
+							if (err) return err;
+
+							messages.find({ room: data.newRoom }).toArray(function(err, messages) {
+								if (err) return err;
+
+								socket.emit('changeRoom', { people: users, messages: messages, user: user });
+								socket.join(data.newRoom);
+								people.update({ _id: user._id }, { $set: { room: data.newRoom } });
+							});
+						});
 					});
 				});
 			});
