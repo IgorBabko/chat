@@ -7,7 +7,11 @@ window.onload = function() {
 			if (itemData.name === 'global') {
 				li.className += ' activeRoom';
 			}
-			li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
+			if (itemData.password !== '') {
+				li.innerHTML = '<span>' + itemData.name + '</span><img class="lock" src="/images/lock.png" >';
+			} else {
+				li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
+			}
 		} else {
 			li.className = itemData._id;
 			li.innerHTML = itemData.name;
