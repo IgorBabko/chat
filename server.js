@@ -93,6 +93,11 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				return;
 			}
 
+			var roomType = 'public';
+			if (data.roomPassword !== '') {
+				roomType = 'private';
+			}
+
 			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 
 				var user = users[0];
@@ -108,7 +113,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				rooms.insert(room);
 
 				socket.emit('createRoom', { room: room });
-				socket.broadcast.emit('createRoom', { room: room, message: user.name + ' added public room "' + data.roomName + '"' });
+				socket.broadcast.emit('createRoom', { room: room, message: user.name + ' added ' + roomType + ' room "' + data.roomName + '"' });
 			});
 		});
 
