@@ -174,7 +174,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					author: user.name,
 					text: data.message,
 					room: user.room,
-					date: new Date().toLocaleString().replace(/[PM,]/g, '')
+					date: new Date().toLocaleString().replace(/[PMA,]/g, '')
 				};
 
 				messages.insert(message);
