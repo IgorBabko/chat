@@ -9,7 +9,6 @@ window.onload = function() {
 			}
 			li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
 		} else {
-			// console.log(itemData._id);
 			li.className = itemData._id;
 			li.innerHTML = itemData.name;
 		}
@@ -84,6 +83,12 @@ window.onload = function() {
 		if (peopleOpened) {
 			elements.peopleButton.dispatchEvent(new MouseEvent('click'));
 		}
+	}
+
+	function updatePeopleCounters(roomInfo) {
+		var peopleCounters = getNode('.' + roomInfo._id + ' :last-child', true);
+		peopleCounters[0].innerHTML = roomInfo.peopleCount;
+		peopleCounters[1].innerHTML = roomInfo.peopleCount;
 	}
 
 	function getElements() {
@@ -184,14 +189,8 @@ window.onload = function() {
 
 	socket.on('changeRoom', function(data) {
 		if (data.oldRoomInfo) {
-			console.log(data.oldRoomInfo);
-			var peopleCounters = getNode('.' + data.oldRoomInfo._id + ' :last-child', true);
-			peopleCounters[0].innerHTML = data.oldRoomInfo.peopleCount;
-			peopleCounters[1].innerHTML = data.oldRoomInfo.peopleCount;
-
-			peopleCounters = getNode('.' + data.newRoomInfo._id + ' :last-child', true);
-			peopleCounters[0].innerHTML = data.newRoomInfo.peopleCount;
-			peopleCounters[1].innerHTML = data.newRoomInfo.peopleCount;
+			updatePeopleCounters(data.oldRoomInfo);
+			updatePeopleCounters(data.newRoomInfo);
 		} else if (data.people) {
 			var i;
 			elements.peopleLists[0].innerHTML = '';
@@ -249,9 +248,7 @@ window.onload = function() {
 		} else {
 			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 		}
-		var peopleCounters = getNode('.' + data.room._id + ' :last-child', true);
-		peopleCounters[0].innerHTML = data.room.peopleCount;
-		peopleCounters[1].innerHTML = data.room.peopleCount;
+		updatePeopleCounters(data.room);
 		addListItem(elements.peopleLists, data.user);
 	});
 
@@ -281,9 +278,7 @@ window.onload = function() {
 
 	socket.on('left', function(data) {
 
-		var peopleCounters = getNode('.' + data.room._id + ' :last-child', true);
-		peopleCounters[0].innerHTML = data.room.peopleCount;
-		peopleCounters[1].innerHTML = data.room.peopleCount;
+		updatePeopleCounters(data.room);
 
 		removeListItem(data.user._id);
 		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
