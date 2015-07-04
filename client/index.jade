@@ -36,6 +36,11 @@ html(lang='en', ng-app='application')
 			input(type='password', id='roomCode', autocomplete='off', placeholder='Room code (optional):')
 			input(type='password', id='roomCodeRepeat', autocomplete='off', placeholder='Room code confirmation:')
 
+		a(zf-open='removeRoomModal', id='showRemoveRoomModal')
+		div(zf-modal='', id='removeRoomModal', overlay-close='true')
+			a(zf-close='', id='closeRemoveRoomModal', class='close-button') ×
+			input(type='password', id='code', autocomplete='off', placeholder='Room code:')
+
 		div(class='grid-frame')
 			div(zf-panel='', class='small-5 roomsSidebarSmall', id='rooms')
 				section(class='block-list roomsSidebar')
@@ -43,8 +48,9 @@ html(lang='en', ng-app='application')
 						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
 						| rooms
 					ul
-						li(class='newRoom')
-							a(zf-open='newRoomModal', class='showNewRoomModal success button') New Room
+						li(class='buttons')
+							a(zf-open='newRoomModal', class='showNewRoomModal success button') add
+							a(zf-open='removeRoomModal', class='showRemoveRoomModal alert button') remove
 			div(zf-panel='', class='small-5 peopleSidebarSmall', id='people', position='right')
 				section(class='block-list peopleSidebar')
 					div
@@ -57,8 +63,9 @@ html(lang='en', ng-app='application')
 						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
 						| rooms
 					ul
-						li(class='newRoom')
-							a(zf-open='newRoomModal', class='showNewRoomModal success button') New Room
+						li(class='buttons')
+							a(zf-open='newRoomModal', class='showNewRoomModal success button') add
+							a(zf-open='removeRoomModal', class='showRemoveRoomModal alert button') remove
 			div(class='grid-block')
 				div(class='grid-block small-12 vertical')
 					div(class='hide-for-medium header')

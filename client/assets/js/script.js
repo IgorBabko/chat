@@ -98,6 +98,9 @@ window.onload = function() {
 
 	function getElements() {
 		var elements = {
+			showRemoveRoomModal:     getNode('#showRemoveRoomModal'),
+			closeRemoveRoomModal:    getNode('#closeRemoveRoomModal'),
+			codeInput:               getNode('#code'),
 			showRoomPasswordModal:   getNode('#showRoomPasswordModal'),
 			closeRoomPasswordModal:  getNode('#closeRoomPasswordModal'),
 			passwordInput:           getNode('#passwordInput'),
@@ -108,7 +111,6 @@ window.onload = function() {
 			roomCodeRepeatField:     getNode('#roomCodeRepeat'),
 			showInputNameModal:      getNode('#showInputNameModal'),
 			closeInputNameModal:     getNode('#closeInputNameModal'),
-			// showNewRoomModal:        getNode('#showNewRoomModal'),
 			closeNewRoomModal:       getNode('#closeNewRoomModal'),
 			messageInput:            getNode('.message-input input'),
 			messageDiv:              getNode('#messages'),
@@ -161,7 +163,7 @@ window.onload = function() {
 			addListItem(elements.peopleLists, people[i]);
 		}
 
-		elements.rooms = getNode('.roomsSidebar ul li:not(.newRoom)', true);
+		elements.rooms = getNode('.roomsSidebar ul li:not(.buttons)', true);
 		for(i = 0; i < elements.rooms.length; ++i) {
 			elements.rooms[i].addEventListener('click', changeRoomHandler);
 		}

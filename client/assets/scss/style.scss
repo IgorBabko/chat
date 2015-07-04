@@ -34,6 +34,11 @@ body {
 	display: none;
 }
 
+.showNewRoomModal, .showRemoveRoomModal {
+	display: inline-block !important;
+	width: 50%;
+}
+
 #sidebar {
 	border-right: 1px solid black;
 }
@@ -74,11 +79,14 @@ header, .avatar-section {
 	background-color: black;
 }
 
-#closeInputNameModal, #closeNewRoomModal, #closeRoomPasswordModal {
+#closeInputNameModal,
+#closeNewRoomModal,
+#closeRoomPasswordModal,
+#closeRemoveRoomModal {
 	display: none;
 }
 
-#roomCodeRepeat, #name, #passwordInput {
+#roomCodeRepeat, #name, #passwordInput, #code {
 	margin: 0;
 }
 
@@ -136,11 +144,11 @@ h4 em {
 	padding: 6px 6px 0 0;
 }
 
-.newRoom {
+.buttons {
 	padding: 0 !important;
 }
 
-.newRoom a {
+.buttons a {
 	margin: 0;
 	font-size: 20px;
 }
