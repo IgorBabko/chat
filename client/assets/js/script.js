@@ -220,52 +220,50 @@ window.onload = function() {
 	});
 
 	socket.on('changeRoom', function(data) {
-		if (data.oldRoomInfo || data.isRoomPrivate) {
-			var lockImgs;
-			if (data.people) {
-				if (data.isRoomPrivate) {
-					elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
-				}
-				if (data.newRoomInfo.password !== '') {
-
-					elements.activeRoom[0].classList.remove('activeRoom');
-					elements.activeRoom[1].classList.remove('activeRoom');
-
-					elements.activeRoom = getNode('.' + data.newRoomInfo._id, true);
-					elements.activeRoom[0].classList.add('activeRoom');
-					elements.activeRoom[1].classList.add('activeRoom');
-
-					lockImgs = getNode('.' + data.newRoomInfo._id + ' .lock', true);
-					var newRoomItems = [lockImgs[0].parentNode, lockImgs[1].parentNode];
-					newRoomItems[0].removeChild(lockImgs[0]);
-					newRoomItems[1].removeChild(lockImgs[1]);
-					newRoomItems[0].appendChild(document.createElement('span'));
-					newRoomItems[1].appendChild(document.createElement('span'));
-				}
+		if (data.forAllClients) {
+			if (data.oldRoomInfo.password === '' || activeRoomName === data.oldRoomInfo.name) {
+				updatePeopleCounters(data.oldRoomInfo);
+			}
+			if (data.newRoomInfo.password === '' || activeRoomName === data.newRoomInfo.name) {
 				updatePeopleCounters(data.newRoomInfo);
-
-				if (data.oldRoomInfo.password !== '') {
-					var oldRoomItems = getNode('.' + data.oldRoomInfo._id, true);
-					oldRoomItems[0].removeChild(oldRoomItems[0].lastChild);
-					oldRoomItems[1].removeChild(oldRoomItems[1].lastChild);
-					var lockImg = document.createElement('img');
-					lockImg.className = 'lock';
-					lockImg.src = 'images/lock.png';
-					lockImgs = [lockImg, lockImg.cloneNode()];
-					oldRoomItems[0].appendChild(lockImgs[0]);
-					oldRoomItems[1].appendChild(lockImgs[1]);
-				} else {
-					updatePeopleCounters(data.oldRoomInfo);
-				}
-			} else {
-				if (data.oldRoomInfo.password === '' || activeRoomName === data.oldRoomInfo.name) {
-					updatePeopleCounters(data.oldRoomInfo);
-				}
-				if (data.newRoomInfo.password === '' || activeRoomName === data.newRoomInfo.name) {
-					updatePeopleCounters(data.newRoomInfo);
-				}
 			}
 		} else if (data.people) {
+			var lockImgs;
+			if (data.isRoomPrivate) {
+				elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+			}
+			if (data.newRoomInfo.password !== '') {
+
+				elements.activeRoom[0].classList.remove('activeRoom');
+				elements.activeRoom[1].classList.remove('activeRoom');
+
+				elements.activeRoom = getNode('.' + data.newRoomInfo._id, true);
+				elements.activeRoom[0].classList.add('activeRoom');
+				elements.activeRoom[1].classList.add('activeRoom');
+
+				lockImgs = getNode('.' + data.newRoomInfo._id + ' .lock', true);
+				var newRoomItems = [lockImgs[0].parentNode, lockImgs[1].parentNode];
+				newRoomItems[0].removeChild(lockImgs[0]);
+				newRoomItems[1].removeChild(lockImgs[1]);
+				newRoomItems[0].appendChild(document.createElement('span'));
+				newRoomItems[1].appendChild(document.createElement('span'));
+			}
+			updatePeopleCounters(data.newRoomInfo);
+
+			if (data.oldRoomInfo.password !== '') {
+				var oldRoomItems = getNode('.' + data.oldRoomInfo._id, true);
+				oldRoomItems[0].removeChild(oldRoomItems[0].lastChild);
+				oldRoomItems[1].removeChild(oldRoomItems[1].lastChild);
+				var lockImg = document.createElement('img');
+				lockImg.className = 'lock';
+				lockImg.src = 'images/lock.png';
+				lockImgs = [lockImg, lockImg.cloneNode()];
+				oldRoomItems[0].appendChild(lockImgs[0]);
+				oldRoomItems[1].appendChild(lockImgs[1]);
+			} else {
+				updatePeopleCounters(data.oldRoomInfo);
+			}
+
 			var i;
 			elements.peopleLists[0].innerHTML = '';
 			elements.peopleLists[1].innerHTML = '';

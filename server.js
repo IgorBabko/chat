@@ -158,7 +158,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 							rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
 
 								oldRoomInfo = oldRoomInfo[0];
-								client.emit('changeRoom', { hello: 'world', oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
+								client.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
 
 								user.name += '(you)';
 
