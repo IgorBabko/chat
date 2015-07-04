@@ -49,15 +49,17 @@ window.onload = function() {
 	function changeRoomHandler() {
 		if (this !== elements.activeRoom[0] && this !== elements.activeRoom[1]) {
 
-			elements.activeRoom[0].classList.remove('activeRoom');
-			elements.activeRoom[1].classList.remove('activeRoom');
+			if (this.lastChild.className !== 'lock') {
+				elements.activeRoom[0].classList.remove('activeRoom');
+				elements.activeRoom[1].classList.remove('activeRoom');
 
-			elements.activeRoom = getNode('.' + this.className, true);
-			elements.activeRoom[0].classList.add('activeRoom');
-			elements.activeRoom[1].classList.add('activeRoom');
-
+				elements.activeRoom = getNode('.' + this.className, true);
+				elements.activeRoom[0].classList.add('activeRoom');
+				elements.activeRoom[1].classList.add('activeRoom');
+			}
 
 			activeRoomName = this.firstChild.textContent;
+
 			socket.emit('changeRoom', { newRoom: activeRoomName });
 		}
 	}
@@ -91,34 +93,38 @@ window.onload = function() {
 
 	function updatePeopleCounters(roomInfo) {
 		var peopleCounters = getNode('.' + roomInfo._id + ' :last-child', true);
+		console.log(roomInfo.peopleCount);
 		peopleCounters[0].innerHTML = roomInfo.peopleCount;
 		peopleCounters[1].innerHTML = roomInfo.peopleCount;
 	}
 
 	function getElements() {
 		var elements = {
-			roomNameField:        getNode('#roomName'),
-			roomPasswordField:    getNode('#roomPassword'),
-			showInputNameModal:   getNode('#showInputNameModal'),
-			closeInputNameModal:  getNode('#closeInputNameModal'),
-			showNewRoomModal:     getNode('#showNewRoomModal'),
-			closeNewRoomModal:    getNode('#closeNewRoomModal'),
-			messageInput:         getNode('.message-input input'),
-			messageDiv:           getNode('#messages'),
-			nameInput:            getNode('#name'),
-			header:               getNode('.header'),
-			roomLists:            getNode('.roomsSidebar ul', true),
-			peopleLists:          getNode('.peopleSidebar ul', true),
-			peopleSidebar:        getNode('.peopleSidebar'),
-			roomsSidebar:         getNode('.roomsSidebar'),
-			roomsSidebarSmall:    getNode('.roomsSidebarSmall'),
-			peopleSidebarSmall:   getNode('.peopleSidebarSmall'),
-			roomsSidebarContent:  getNode('.roomsSidebar section'),
-			peopleSidebarContent: getNode('.peopleSidebar section'),
-			roomsButton:          getNode('.header img:nth-child(1)'),
-			peopleButton:         getNode('.header img:nth-child(2)'),
-			roomsIcon:            getNode('.roomsIcon'),
-			peopleIcon:           getNode('.peopleIcon')
+			showRoomPasswordModal:  getNode('#showRoomPasswordModal'),
+			closeRoomPasswordModal: getNode('#closeRoomPasswordModal'),
+			passwordInput:          getNode('#passwordInput'),
+			roomNameField:          getNode('#roomName'),
+			roomPasswordField:      getNode('#roomPassword'),
+			showInputNameModal:     getNode('#showInputNameModal'),
+			closeInputNameModal:    getNode('#closeInputNameModal'),
+			showNewRoomModal:       getNode('#showNewRoomModal'),
+			closeNewRoomModal:      getNode('#closeNewRoomModal'),
+			messageInput:           getNode('.message-input input'),
+			messageDiv:             getNode('#messages'),
+			nameInput:              getNode('#name'),
+			header:                 getNode('.header'),
+			roomLists:              getNode('.roomsSidebar ul', true),
+			peopleLists:            getNode('.peopleSidebar ul', true),
+			peopleSidebar:          getNode('.peopleSidebar'),
+			roomsSidebar:           getNode('.roomsSidebar'),
+			roomsSidebarSmall:      getNode('.roomsSidebarSmall'),
+			peopleSidebarSmall:     getNode('.peopleSidebarSmall'),
+			roomsSidebarContent:    getNode('.roomsSidebar section'),
+			peopleSidebarContent:   getNode('.peopleSidebar section'),
+			roomsButton:            getNode('.header img:nth-child(1)'),
+			peopleButton:           getNode('.header img:nth-child(2)'),
+			roomsIcon:              getNode('.roomsIcon'),
+			peopleIcon:             getNode('.peopleIcon')
 		};
 		return elements;
 	}
@@ -162,7 +168,6 @@ window.onload = function() {
 		elements.activeRoom = getNode('.activeRoom', true);
 	});
 
-
 	function newRoomFormSender(e) {
 		if (e.keyCode == 13) {
 			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value });
@@ -170,6 +175,13 @@ window.onload = function() {
 			elements.roomPasswordField.value = '';
 		}
 	}
+
+	elements.passwordInput.addEventListener('keyup', function(e) {
+		if (e.keyCode == 13) {
+			socket.emit('changeRoom', { newRoom: activeRoomName, newRoomPassword: this.value });
+			this.value = '';
+		}
+	});
 
 	elements.roomNameField.addEventListener('keyup', function(e) {
 		newRoomFormSender(e);
@@ -191,10 +203,69 @@ window.onload = function() {
 		newRoomItem[1].addEventListener('click', changeRoomHandler);
 	});
 
+	socket.on('openRoomPasswordModal', function() {
+		console.log('openRoomPasswordModal');
+		elements.showRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+		elements.passwordInput.focus();
+	});
+
+	elements.passwordInput.addEventListener('click', function(e) {
+		if (e.keyCode == 13) {
+			socket.emit('changeRoom', { password: this.value });
+		}
+	});
+
 	socket.on('changeRoom', function(data) {
-		if (data.oldRoomInfo) {
-			updatePeopleCounters(data.oldRoomInfo);
-			updatePeopleCounters(data.newRoomInfo);
+		if (data.oldRoomInfo || data.isRoomPrivate) {
+			var lockImgs;
+			if (data.people) {
+				if (data.isRoomPrivate) {
+					elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+				}
+				if (data.newRoomInfo.password !== '') {
+
+					elements.activeRoom[0].classList.remove('activeRoom');
+					elements.activeRoom[1].classList.remove('activeRoom');
+
+					elements.activeRoom = getNode('.' + data.newRoomInfo._id, true);
+					elements.activeRoom[0].classList.add('activeRoom');
+					elements.activeRoom[1].classList.add('activeRoom');
+
+					// activeRoomName = data.newRoomInfo.name;
+
+					lockImgs = getNode('.' + data.newRoomInfo._id + ' .lock', true);
+					var newRoomItems = [lockImgs[0].parentNode, lockImgs[1].parentNode];
+					newRoomItems[0].removeChild(lockImgs[0]);
+					newRoomItems[1].removeChild(lockImgs[1]);
+					newRoomItems[0].appendChild(document.createElement('span'));
+					newRoomItems[1].appendChild(document.createElement('span'));
+				}
+				updatePeopleCounters(data.newRoomInfo);
+
+				if (data.oldRoomInfo.password !== '') {
+					var oldRoomItems = getNode('.' + data.oldRoomInfo._id, true);
+					oldRoomItems[0].removeChild(oldRoomItems[0].lastChild);
+					oldRoomItems[1].removeChild(oldRoomItems[1].lastChild);
+					var lockImg = document.createElement('img');
+					lockImg.className = 'lock';
+					lockImg.src = 'images/lock.png';
+					lockImgs = [lockImg, lockImg.cloneNode()];
+					oldRoomItems[0].appendChild(lockImgs[0]);
+					oldRoomItems[1].appendChild(lockImgs[1]);
+					console.log(oldRoomItems);
+				} else {
+					updatePeopleCounters(data.oldRoomInfo);
+				}
+			} else {
+				console.log(data.oldRoomInfo);
+				if (data.oldRoomInfo.password === '') {
+					updatePeopleCounters(data.oldRoomInfo);
+				}
+				console.log(data.newRoomInfo);
+				if (data.newRoomInfo.password === '') {
+					updatePeopleCounters(data.newRoomInfo);
+				}
+			}
 		} else if (data.people) {
 			var i;
 			elements.peopleLists[0].innerHTML = '';

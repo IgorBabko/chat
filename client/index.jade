@@ -23,10 +23,15 @@ html(lang='en', ng-app='application')
 			a(zf-close='', id='closeInputNameModal', class='close-button') ×
 			input(type='text', id='name', autocomplete='off', placeholder='Your name:')
 
+		a(zf-open='roomPasswordModal', id='showRoomPasswordModal')
+		div(zf-modal='', id='roomPasswordModal', overlay-close='true')
+			a(zf-close='', id='closeRoomPasswordModal', class='close-button') ×
+			input(type='password', id='passwordInput', autocomplete='off', placeholder='Password:')
+
 		div(zf-modal='', id='newRoomModal', overlay-close='true')
 			a(zf-close='', id='closeNewRoomModal', class='close-button') ×
-			input(type='text', id='roomName', autocomplete='off', placeholder='Room name: ')
-			input(type='password', id='roomPassword', autocomplete='off', placeholder='Password (optional): ')
+			input(type='text', id='roomName', autocomplete='off', placeholder='Room name:')
+			input(type='password', id='roomPassword', autocomplete='off', placeholder='Password (optional):')
 			//- a(class='info button', id='createRoomButton', href='#') create
 
 		div(class='grid-frame')

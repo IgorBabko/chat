@@ -74,8 +74,12 @@ header, .avatar-section {
 	background-color: black;
 }
 
-#closeInputNameModal, #closeNewRoomModal {
+#closeInputNameModal, #closeNewRoomModal, #closeRoomPasswordModal {
 	display: none;
+}
+
+#passwordInput {
+	margin: 0;
 }
 
 #roomPassword {

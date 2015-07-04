@@ -118,38 +118,59 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('changeRoom', function(data) {
-			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
-				if (err) return err;
-
-				var user = users[0];
-
-				socket.broadcast.to(user.room).emit('changeRoom', { message: user.name + ' left room', whoLeft: user });
-				socket.leave(user.room);
-				client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
-
-				rooms.update({ name: user.room }, { $inc: { peopleCount: -1 } });
-				rooms.update({ name: data.newRoom }, { $inc: { peopleCount: 1 } });
-
-				rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
-					rooms.find({ name: data.newRoom }).toArray(function(err, newRoomInfo) {
-
-						client.emit('changeRoom', { oldRoomInfo: oldRoomInfo[0], newRoomInfo: newRoomInfo[0] });
-
-						user.name += '(you)';
-
-						people.find({ room: data.newRoom }).toArray(function(err, users) {
+			rooms.find({ name: data.newRoom }).toArray(function(err, newRoomInfo) {
+				newRoomInfo = newRoomInfo[0];
+				console.log(data.newRoomPassword);
+				if (newRoomInfo.password !== '' && data.newRoomPassword === undefined) {
+					console.log('called');
+					socket.emit('openRoomPasswordModal');
+					return;
+				} else {
+					if (newRoomInfo.password !== '' && newRoomInfo.password !== data.newRoomPassword) {
+						socket.emit('warning', { message: 'Room password is wrong!' });
+						return;
+					} else {
+						console.log('is OK');
+						var isRoomPrivate = false;
+						if (data.newRoomPassword) {
+							isRoomPrivate = true;
+						}
+						people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 							if (err) return err;
 
-							messages.find({ room: data.newRoom }).toArray(function(err, messages) {
-								if (err) return err;
+							var user = users[0];
 
-								socket.emit('changeRoom', { people: users, messages: messages, user: user });
-								socket.join(data.newRoom);
-								people.update({ _id: user._id }, { $set: { room: data.newRoom } });
+							socket.broadcast.to(user.room).emit('changeRoom', { message: user.name + ' left room', whoLeft: user });
+							socket.leave(user.room);
+							client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
+
+							rooms.update({ name: user.room }, { $inc: { peopleCount: -1 } });
+							rooms.update({ name: data.newRoom }, { $inc: { peopleCount: 1 } });
+							newRoomInfo.peopleCount += 1;
+							rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
+
+								oldRoomInfo = oldRoomInfo[0];
+								client.emit('changeRoom', { oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
+
+								user.name += '(you)';
+
+								people.find({ room: data.newRoom }).toArray(function(err, users) {
+									if (err) return err;
+									console.log(users);
+
+									messages.find({ room: data.newRoom }).toArray(function(err, messages) {
+										if (err) return err;
+
+										socket.emit('changeRoom', { oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo, 
+																	isRoomPrivate: isRoomPrivate, people: users, messages: messages, user: user });
+										socket.join(data.newRoom);
+										people.update({ _id: user._id }, { $set: { room: data.newRoom } });
+									});
+								});
 							});
 						});
-					});
-				});
+					}
+				}
 			});
 		});
 
