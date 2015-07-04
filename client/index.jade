@@ -32,7 +32,9 @@ html(lang='en', ng-app='application')
 			a(zf-close='', id='closeNewRoomModal', class='close-button') ×
 			input(type='text', id='roomName', autocomplete='off', placeholder='Room name:')
 			input(type='password', id='roomPassword', autocomplete='off', placeholder='Password (optional):')
-			//- a(class='info button', id='createRoomButton', href='#') create
+			input(type='password', id='roomPasswordRepeat' autocomplete='off', placeholder='Password confirmation:')
+			input(type='password', id='roomCode', autocomplete='off', placeholder='Room code (optional):')
+			input(type='password', id='roomCodeRepeat', autocomplete='off', placeholder='Room code confirmation:')
 
 		div(class='grid-frame')
 			div(zf-panel='', class='small-5 roomsSidebarSmall', id='rooms')

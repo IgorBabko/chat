@@ -93,6 +93,16 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				return;
 			}
 
+			if (data.roomPassword !== data.roomPasswordRepeat) {
+				socket.emit('warning', { roomName: data.roomName, message: 'Password confirmation doesn\'t match password!' });
+				return;
+			}
+
+			if (data.roomCode !== data.roomCodeRepeat) {
+				socket.emit('warning', { roomName: data.roomName, message: 'Room code confirmation doesn\'t match room code!' });
+				return;
+			}
+
 			var roomType = 'public';
 			if (data.roomPassword !== '') {
 				roomType = 'private';
@@ -106,6 +116,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					_id:         '_' + uuid.v1(),
 					name:        data.roomName,
 					password:    data.roomPassword,
+					code:        data.roomCode,
 					creatorId:   user._id,
 					peopleCount: 0
 				};
@@ -120,9 +131,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		socket.on('changeRoom', function(data) {
 			rooms.find({ name: data.newRoom }).toArray(function(err, newRoomInfo) {
 				newRoomInfo = newRoomInfo[0];
-				console.log(data.newRoomPassword);
 				if (newRoomInfo.password !== '' && data.newRoomPassword === undefined) {
-					console.log('called');
 					socket.emit('openRoomPasswordModal');
 					return;
 				} else {
@@ -130,7 +139,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 						socket.emit('warning', { message: 'Room password is wrong!' });
 						return;
 					} else {
-						console.log('is OK');
 						var isRoomPrivate = false;
 						if (data.newRoomPassword) {
 							isRoomPrivate = true;
@@ -150,13 +158,12 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 							rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
 
 								oldRoomInfo = oldRoomInfo[0];
-								client.emit('changeRoom', { oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
+								client.emit('changeRoom', { hello: 'world', oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
 
 								user.name += '(you)';
 
 								people.find({ room: data.newRoom }).toArray(function(err, users) {
 									if (err) return err;
-									console.log(users);
 
 									messages.find({ room: data.newRoom }).toArray(function(err, messages) {
 										if (err) return err;

@@ -40,7 +40,6 @@ window.onload = function() {
 	}
 
 	function removeListItem(userId) {
-		console.log(userId);
 		var nodeToDelete = getNode('.' + userId, true);
 		nodeToDelete[0].parentNode.removeChild(nodeToDelete[0]);
 		nodeToDelete[1].parentNode.removeChild(nodeToDelete[1]);
@@ -93,38 +92,40 @@ window.onload = function() {
 
 	function updatePeopleCounters(roomInfo) {
 		var peopleCounters = getNode('.' + roomInfo._id + ' :last-child', true);
-		console.log(roomInfo.peopleCount);
 		peopleCounters[0].innerHTML = roomInfo.peopleCount;
 		peopleCounters[1].innerHTML = roomInfo.peopleCount;
 	}
 
 	function getElements() {
 		var elements = {
-			showRoomPasswordModal:  getNode('#showRoomPasswordModal'),
-			closeRoomPasswordModal: getNode('#closeRoomPasswordModal'),
-			passwordInput:          getNode('#passwordInput'),
-			roomNameField:          getNode('#roomName'),
-			roomPasswordField:      getNode('#roomPassword'),
-			showInputNameModal:     getNode('#showInputNameModal'),
-			closeInputNameModal:    getNode('#closeInputNameModal'),
-			showNewRoomModal:       getNode('#showNewRoomModal'),
-			closeNewRoomModal:      getNode('#closeNewRoomModal'),
-			messageInput:           getNode('.message-input input'),
-			messageDiv:             getNode('#messages'),
-			nameInput:              getNode('#name'),
-			header:                 getNode('.header'),
-			roomLists:              getNode('.roomsSidebar ul', true),
-			peopleLists:            getNode('.peopleSidebar ul', true),
-			peopleSidebar:          getNode('.peopleSidebar'),
-			roomsSidebar:           getNode('.roomsSidebar'),
-			roomsSidebarSmall:      getNode('.roomsSidebarSmall'),
-			peopleSidebarSmall:     getNode('.peopleSidebarSmall'),
-			roomsSidebarContent:    getNode('.roomsSidebar section'),
-			peopleSidebarContent:   getNode('.peopleSidebar section'),
-			roomsButton:            getNode('.header img:nth-child(1)'),
-			peopleButton:           getNode('.header img:nth-child(2)'),
-			roomsIcon:              getNode('.roomsIcon'),
-			peopleIcon:             getNode('.peopleIcon')
+			showRoomPasswordModal:   getNode('#showRoomPasswordModal'),
+			closeRoomPasswordModal:  getNode('#closeRoomPasswordModal'),
+			passwordInput:           getNode('#passwordInput'),
+			roomNameField:           getNode('#roomName'),
+			roomPasswordField:       getNode('#roomPassword'),
+			roomPasswordRepeatField: getNode('#roomPasswordRepeat'),
+			roomCodeField:           getNode('#roomCode'),
+			roomCodeRepeatField:     getNode('#roomCodeRepeat'),
+			showInputNameModal:      getNode('#showInputNameModal'),
+			closeInputNameModal:     getNode('#closeInputNameModal'),
+			// showNewRoomModal:        getNode('#showNewRoomModal'),
+			closeNewRoomModal:       getNode('#closeNewRoomModal'),
+			messageInput:            getNode('.message-input input'),
+			messageDiv:              getNode('#messages'),
+			nameInput:               getNode('#name'),
+			header:                  getNode('.header'),
+			roomLists:               getNode('.roomsSidebar ul', true),
+			peopleLists:             getNode('.peopleSidebar ul', true),
+			peopleSidebar:           getNode('.peopleSidebar'),
+			roomsSidebar:            getNode('.roomsSidebar'),
+			roomsSidebarSmall:       getNode('.roomsSidebarSmall'),
+			peopleSidebarSmall:      getNode('.peopleSidebarSmall'),
+			roomsSidebarContent:     getNode('.roomsSidebar section'),
+			peopleSidebarContent:    getNode('.peopleSidebar section'),
+			roomsButton:             getNode('.header img:nth-child(1)'),
+			peopleButton:            getNode('.header img:nth-child(2)'),
+			roomsIcon:               getNode('.roomsIcon'),
+			peopleIcon:              getNode('.peopleIcon')
 		};
 		return elements;
 	}
@@ -170,9 +171,13 @@ window.onload = function() {
 
 	function newRoomFormSender(e) {
 		if (e.keyCode == 13) {
-			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value });
+			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value,
+										roomPasswordRepeat: elements.roomPasswordRepeatField.value, roomCode: elements.roomCodeField.value,
+										roomCodeRepeat: elements.roomCodeRepeatField.value });
 			elements.roomNameField.value = '';
 			elements.roomPasswordField.value = '';
+			elements.roomPasswordRepeatField.value = '';
+			elements.roomCodeField.value = '';
 		}
 	}
 
@@ -204,7 +209,6 @@ window.onload = function() {
 	});
 
 	socket.on('openRoomPasswordModal', function() {
-		console.log('openRoomPasswordModal');
 		elements.showRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
 		elements.passwordInput.focus();
 	});
@@ -231,8 +235,6 @@ window.onload = function() {
 					elements.activeRoom[0].classList.add('activeRoom');
 					elements.activeRoom[1].classList.add('activeRoom');
 
-					// activeRoomName = data.newRoomInfo.name;
-
 					lockImgs = getNode('.' + data.newRoomInfo._id + ' .lock', true);
 					var newRoomItems = [lockImgs[0].parentNode, lockImgs[1].parentNode];
 					newRoomItems[0].removeChild(lockImgs[0]);
@@ -252,17 +254,14 @@ window.onload = function() {
 					lockImgs = [lockImg, lockImg.cloneNode()];
 					oldRoomItems[0].appendChild(lockImgs[0]);
 					oldRoomItems[1].appendChild(lockImgs[1]);
-					console.log(oldRoomItems);
 				} else {
 					updatePeopleCounters(data.oldRoomInfo);
 				}
 			} else {
-				console.log(data.oldRoomInfo);
-				if (data.oldRoomInfo.password === '') {
+				if (data.oldRoomInfo.password === '' || activeRoomName === data.oldRoomInfo.name) {
 					updatePeopleCounters(data.oldRoomInfo);
 				}
-				console.log(data.newRoomInfo);
-				if (data.newRoomInfo.password === '') {
+				if (data.newRoomInfo.password === '' || activeRoomName === data.newRoomInfo.name) {
 					updatePeopleCounters(data.newRoomInfo);
 				}
 			}
@@ -344,6 +343,9 @@ window.onload = function() {
 	});
 
 	socket.on('warning', function(data) {
+		if (data.roomName) {
+			elements.roomNameField.value = data.roomName;
+		}
 		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
