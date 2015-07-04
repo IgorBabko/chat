@@ -78,17 +78,13 @@ header, .avatar-section {
 	display: none;
 }
 
-#roomCodeRepeat {
+#roomCodeRepeat, #name, #passwordInput {
 	margin: 0;
 }
 
 #createRoomButton {
 	float: right;
 	margin: 10px 0 0 0;
-}
-
-#name {
-	margin: 0;
 }
 
 .lock {
@@ -137,7 +133,7 @@ h4 em {
 
 .roomsSidebar span:nth-child(2) {
 	float: right;
-	padding-top: 5px;
+	padding: 6px 6px 0 0;
 }
 
 .newRoom {
@@ -189,16 +185,16 @@ h4 em {
 	margin-top: 5px;
 }
 
-#rooms li, #people li {
-	padding: 10px 30px;
-}
-
 .underHeaderBlock {
 	height: 50px;
 }
 
+.peopleSidebar li {
+	padding-left: 12px !important;
+}
+
 .block-list li {
-	padding: 9px 10px;
+	padding: 9px 10px 9px 0;
 }
 
 .block-list span {
