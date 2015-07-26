@@ -90,14 +90,34 @@ header, .avatar-section {
 	margin: 0;
 }
 
+
 #createRoomButton {
 	float: right;
 	margin: 10px 0 0 0;
 }
 
+.roomsSidebar li {
+	text-align: right;
+	height: 44px;
+}
+
+.roomsSidebar span:first-child {
+	float: left;
+	line-height: 0;
+}
+
+.roomsSidebar span:first-child:after {
+	clear: both;
+}
+
 .lock {
 	float: right;
 	width: 30px;
+}
+
+.subscribeImg {
+	width: 23px;
+	cursor: pointer;
 }
 
 .roomsIcon {
@@ -139,9 +159,12 @@ h4 em {
 	overflow: hidden;
 }
 
-.roomsSidebar span:nth-child(2) {
-	float: right;
-	padding: 6px 6px 0 0;
+.roomsSidebar span:last-child {
+	padding: 6px 6px 0 6px;
+}
+
+.roomsSidebar li:not(.activeRoom):hover {
+	background-color: #DEF3FD;
 }
 
 .buttons {

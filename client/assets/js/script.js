@@ -380,6 +380,37 @@ window.onload = function() {
 			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 		}
 
+		if (data.user.status === 'doctor') {
+			var roomItems = getNode('.roomsSidebar li + li', true);
+			for(var i = 0; i < roomItems.length; ++i) {
+				var subscribeImg = document.createElement('img');
+				subscribeImg.src = '/images/subscribe.png';
+				subscribeImg.className = 'subscribeImg';
+				roomItems[i].insertBefore(subscribeImg, roomItems[i].lastChild);
+			}
+
+			elements.subscribeImgs = getNode('.subscribeImg', true);
+			for(var i = 0; i < elements.subscribeImgs.length; ++i) {
+				elements.subscribeImgs[i].addEventListener('mouseenter', function(e) {
+					// e.stopPropagation();
+					this.src = '/images/subscribeActive.png';
+				});
+				elements.subscribeImgs[i].addEventListener('mouseleave', function(e) {
+					// e.stopPropagation();
+					this.src = '/images/subscribe.png';
+				});
+
+				elements.subscribeImgs[i].addEventListener('click', function(e) {
+					// e.stopPropagation();
+					this.src = '/images/subscribeActive.png';
+				});
+				elements.subscribeImgs[i].addEventListener('click', function(e) {
+					// e.stopPropagation();
+					this.src = '/images/subscribe.png';
+				});
+			}
+		}
+
 		elements.messageInput.addEventListener('keyup', function(e) {
 			if (e.keyCode == 13) {
 				socket.emit('message', { message: elements.messageInput.value });

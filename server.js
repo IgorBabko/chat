@@ -31,11 +31,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				people.find({ room: 'global' }).toArray(function(err, peopleData) {
 					if (err) return err;
 
-					// for(var user in peopleData) {
-					// 	if (user.status === 'doctor') {
-					// 		user.name += '(doctor)';
-					// 	}
-					// }
+					for(var i = 0; i < peopleData.length; ++i) {
+						if (peopleData[i].status === 'doctor') {
+							peopleData[i].name += '(doctor)';
+						}
+					}
+
+					console.log(peopleData);
 
 					messages.find({ room: 'global' }).toArray(function(err, messagesData) {
 						if (err) return err;
@@ -169,6 +171,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 							socket.broadcast.to(user.room).emit('changeRoom', { message: user.name + ' left room', whoLeft: user });
 							socket.leave(user.room);
+							var userName = user.name;
+							if (user.status === 'doctor') {
+								user.name += '(doctor)';
+							}
 							client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
 
 							rooms.update({ name: user.room }, { $inc: { peopleCount: -1 } });
@@ -179,10 +185,16 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 								oldRoomInfo = oldRoomInfo[0];
 								client.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
 
-								user.name += '(you)';
+								user.name = userName + '(you)';
 
 								people.find({ room: data.newRoom }).toArray(function(err, users) {
 									if (err) return err;
+
+									for(var i = 0; i < users.length; ++i) {
+										if (users[i].status === 'doctor') {
+											users[i].name += '(doctor)';
+										}
+									}
 
 									messages.find({ room: data.newRoom }).toArray(function(err, messages) {
 										if (err) return err;
