@@ -31,6 +31,12 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				people.find({ room: 'global' }).toArray(function(err, peopleData) {
 					if (err) return err;
 
+					// for(var user in peopleData) {
+					// 	if (user.status === 'doctor') {
+					// 		user.name += '(doctor)';
+					// 	}
+					// }
+
 					messages.find({ room: 'global' }).toArray(function(err, messagesData) {
 						if (err) return err;
 
@@ -40,21 +46,30 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			});
 		});
 
-		socket.on('joined', function(userName) {
+		socket.on('joined', function(userData) {
 
 			var whitespacePattern = /^\s*$/;
-			userName = userName.trim();
+			userData.userName = userData.userName.trim();
 
-			if (whitespacePattern.test(userName)) {
+			if (whitespacePattern.test(userData.userName)) {
 				socket.emit('warning', { message: 'Name should not be empty!' });
 				return;
 			}
 
+			var status = 'patient';
+			if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
+				socket.emit('warning', { identificationCode: ' ', message: 'Identification code is wrong!' });
+				return;
+			} else if (userData.identificationCode === '1') {
+				status = 'doctor';
+			}
+
 			var user = {
 				_id: '_' + socket.id,
-				name: userName,
+				name: userData.userName,
 				room: 'global',
-				isTyping: false
+				status: status
+				// isTyping: false
 			};
 
 			people.insert(user);
@@ -62,8 +77,12 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			rooms.find({ name: 'global' }).toArray(function(err, roomsData) {
 				var room = roomsData[0];
 
+				var userName = user.name;
+				if (user.status === 'doctor') {
+					user.name += '(doctor)';
+				}
 				socket.broadcast.emit('joined', { room: room, user: user, message: user.name + ' joined chat.' });
-				user.name += '(you)';
+				user.name = userName + '(you)';
 				socket.emit('joined', { room: room, user: user });
 			});
 		});
@@ -179,6 +198,26 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					}
 				}
 			});
+		});
+
+		socket.on('removeRoom', function(data) {
+			if (typeof data === 'string') {
+				people.find({ room: data }).count(function(error, peopleInRoom) {
+					socket.emit('removeRoom', { peopleCount: peopleInRoom - 1 });
+					return;
+				});
+			} else {
+				rooms.find({ room: data.activeRoomName }).toArray(function(err, roomsInfo) {
+					var room = roomsInfo[0];
+					if (!room.code && data.code !== '' || room.code && room.code !== data.code) {
+						socket.emit('warning', { message: 'Room code is wrong!' });
+						return;
+					}
+					client.emit('removeRoom', { message: 'Room "' + data.activeRoomName + '" has been deleted.' });
+					people.broadcast.to(data.activeRoomName).emit('removeRoom', { message: 'You have been transfered to global room.'});
+					people.update({ room: data.activeRoomName }, { $set: { room: 'global' } });
+				});
+			}
 		});
 
 		socket.on('userIsTyping', function(room) {

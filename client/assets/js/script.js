@@ -46,6 +46,7 @@ window.onload = function() {
 	}
 
 	function changeRoomHandler() {
+		console.log('change room');
 		if (this !== elements.activeRoom[0] && this !== elements.activeRoom[1]) {
 
 			if (this.lastChild.className !== 'lock') {
@@ -91,6 +92,7 @@ window.onload = function() {
 	}
 
 	function updatePeopleCounters(roomInfo) {
+		console.log('updatePeopleCounter');
 		var peopleCounters = getNode('.' + roomInfo._id + ' :last-child', true);
 		peopleCounters[0].innerHTML = roomInfo.peopleCount;
 		peopleCounters[1].innerHTML = roomInfo.peopleCount;
@@ -98,7 +100,9 @@ window.onload = function() {
 
 	function getElements() {
 		var elements = {
-			showRemoveRoomModal:     getNode('#showRemoveRoomModal'),
+			removeRoomModal:         getNode('#removeRoomModal'),
+			showNewRoomModal:        getNode('.showNewRoomModal', true),
+			showRemoveRoomModal:     getNode('.showRemoveRoomModal', true),
 			closeRemoveRoomModal:    getNode('#closeRemoveRoomModal'),
 			codeInput:               getNode('#code'),
 			showRoomPasswordModal:   getNode('#showRoomPasswordModal'),
@@ -115,6 +119,7 @@ window.onload = function() {
 			messageInput:            getNode('.message-input input'),
 			messageDiv:              getNode('#messages'),
 			nameInput:               getNode('#name'),
+			identificationCodeInput: getNode('#identificationCode'),
 			header:                  getNode('.header'),
 			roomLists:               getNode('.roomsSidebar ul', true),
 			peopleLists:             getNode('.peopleSidebar ul', true),
@@ -171,6 +176,13 @@ window.onload = function() {
 		elements.activeRoom = getNode('.activeRoom', true);
 	});
 
+	elements.passwordInput.addEventListener('keyup', function(e) {
+		if (e.keyCode == 13) {
+			socket.emit('changeRoom', { newRoom: activeRoomName, newRoomPassword: this.value });
+			this.value = '';
+		}
+	});
+
 	function newRoomFormSender(e) {
 		if (e.keyCode == 13) {
 			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value,
@@ -183,20 +195,65 @@ window.onload = function() {
 		}
 	}
 
-	elements.passwordInput.addEventListener('keyup', function(e) {
+	function removeRoomFormSender(e) {
 		if (e.keyCode == 13) {
-			socket.emit('changeRoom', { newRoom: activeRoomName, newRoomPassword: this.value });
-			this.value = '';
+			socket.emit('removeRoom', { roomName: activeRoomName, code: elements.codeInput.value });
+			elements.codeInput.value = '';
 		}
+	}
+
+	elements.showNewRoomModal[0].addEventListener('click', function(e) {
+		elements.roomNameField.focus();
+	});
+
+	elements.showNewRoomModal[1].addEventListener('click', function(e) {
+		elements.roomNameField.focus();
+	});
+
+	elements.showRemoveRoomModal[0].addEventListener('click', function(e) {
+		if (elements.pTag) {
+			elements.codeInput.parentNode.removeChild(elements.pTag);
+			elements.pTag = undefined;
+		}
+		socket.emit('removeRoom', activeRoomName);
+		elements.codeInput.focus();
+	});
+
+	elements.showRemoveRoomModal[1].addEventListener('click', function(e) {
+		if (elements.pTag) {
+			elements.codeInput.parentNode.removeChild(elements.pTag);
+			elements.pTag = undefined;
+		}
+		socket.emit('removeRoom', activeRoomName);
+		elements.codeInput.focus();
 	});
 
 	elements.roomNameField.addEventListener('keyup', function(e) {
 		newRoomFormSender(e);
 	});
+
 	elements.roomPasswordField.addEventListener('keyup', function(e) {
 		newRoomFormSender(e);
 	});
 
+	elements.codeInput.addEventListener('keyup', function(e) {
+		removeRoomFormSender(e);
+	});
+
+	socket.on('removeRoom', function(data) {
+		console.log(data.peopleCount);
+		if (data.peopleCount && data.peopleCount !== 0) {
+			var pTag = document.createElement('p');
+			pTag.style.color = 'red';
+			pTag.innerHTML = 'There\'re <strong>' + data.peopleCount + '</strong> men at this room. When room gets removed all people will be moved to "global" room';
+			elements.codeInput.parentNode.insertBefore(pTag, elements.codeInput);
+			elements.pTag = pTag;
+			return;
+		}
+		//if () {
+			// message
+		//}
+	});
 
 	socket.on('createRoom', function(data) {
 		if (data.message) {
@@ -322,6 +379,18 @@ window.onload = function() {
 		} else {
 			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 		}
+
+		elements.messageInput.addEventListener('keyup', function(e) {
+			if (e.keyCode == 13) {
+				socket.emit('message', { message: elements.messageInput.value });
+				elements.messageInput.value = '';
+			}
+		});
+
+		window.onunload = function() {
+			socket.emit('left');
+		};
+
 		updatePeopleCounters(data.room);
 		addListItem(elements.peopleLists, data.user);
 	});
@@ -346,6 +415,10 @@ window.onload = function() {
 		if (data.roomName) {
 			elements.roomNameField.value = data.roomName;
 		}
+		if (data.identificationCode) {
+			console.log('iden');
+			elements.identificationCodeInput.value = '';
+		}
 		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
@@ -363,21 +436,19 @@ window.onload = function() {
 
 	elements.showInputNameModal.dispatchEvent(new MouseEvent('click'));
 	elements.nameInput.focus();
-	elements.nameInput.addEventListener('keyup', function(e) {
+
+	function joinedHandler(e) {
+		console.log(e.keyCode);
 		if (e.keyCode == 13) {
-
-			socket.emit('joined', elements.nameInput.value);
-
-			elements.messageInput.addEventListener('keyup', function(e) {
-				if (e.keyCode == 13) {
-					socket.emit('message', { message: elements.messageInput.value });
-					elements.messageInput.value = '';
-				}
-			});
-
-			window.onunload = function() {
-				socket.emit('left');
-			};
+			console.log('yes');
+			socket.emit('joined', { userName: elements.nameInput.value, identificationCode: elements.identificationCodeInput.value });
 		}
+	}
+
+	elements.nameInput.addEventListener('keyup', function (e) {
+		joinedHandler(e);
+	});
+	elements.identificationCodeInput.addEventListener('keyup', function (e) {
+		joinedHandler(e);
 	});
 };
