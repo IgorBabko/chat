@@ -111,11 +111,14 @@ header, .avatar-section {
 }
 
 .lock {
-	float: right;
 	width: 30px;
 }
 
-.subscribeImg {
+.roomsSidebar li span:nth-child(2) {
+	padding-right: 9px;
+}
+
+.subscribtionButton {
 	width: 23px;
 	cursor: pointer;
 }

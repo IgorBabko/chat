@@ -383,30 +383,50 @@ window.onload = function() {
 		if (data.user.status === 'doctor') {
 			var roomItems = getNode('.roomsSidebar li + li', true);
 			for(var i = 0; i < roomItems.length; ++i) {
-				var subscribeImg = document.createElement('img');
-				subscribeImg.src = '/images/subscribe.png';
-				subscribeImg.className = 'subscribeImg';
-				roomItems[i].insertBefore(subscribeImg, roomItems[i].lastChild);
+				var subscribtionButton = document.createElement('img');
+				subscribtionButton.src = '/images/subscribtion.png';
+				subscribtionButton.className = 'subscribtionButton';
+				roomItems[i].appendChild(subscribtionButton);
 			}
 
-			elements.subscribeImgs = getNode('.subscribeImg', true);
-			for(var i = 0; i < elements.subscribeImgs.length; ++i) {
-				elements.subscribeImgs[i].addEventListener('mouseenter', function(e) {
-					// e.stopPropagation();
-					this.src = '/images/subscribeActive.png';
+			elements.subscribtionButtons = getNode('.subscribtionButton', true);
+			for(var i = 0; i < elements.subscribtionButtons.length; ++i) {
+				elements.subscribtionButtons[i].addEventListener('mouseenter', function(e) {
+					if (this.src === '/images/subscribtion.png') {
+						this.src = '/images/subscribe.png';
+					} else {
+						console.log('niko');
+						this.src = '/images/subscribe.png';
+					}
 				});
-				elements.subscribeImgs[i].addEventListener('mouseleave', function(e) {
-					// e.stopPropagation();
-					this.src = '/images/subscribe.png';
+				elements.subscribtionButtons[i].addEventListener('mouseleave', function(e) {
+					if (this.src === '/images/subscribed.png') {
+						this.src = '/images/subscribe.png';
+					} else {
+						this.src = '/images/subscribtion.png';
+					}
 				});
 
-				elements.subscribeImgs[i].addEventListener('click', function(e) {
-					// e.stopPropagation();
-					this.src = '/images/subscribeActive.png';
-				});
-				elements.subscribeImgs[i].addEventListener('click', function(e) {
-					// e.stopPropagation();
-					this.src = '/images/subscribe.png';
+				elements.subscribtionButtons[i].addEventListener('click', function(e) {
+					e.stopPropagation();
+
+					var roomItemClass = this.parentNode.classList[1];
+					var subscribtionButtons = getNode('.' + roomItemClass + ' .' + this.className, true);
+					
+					if (this.src === '/images/subscribe.png') {
+						subscribtionButtons[0].src = '/images/subscribed.png';
+						subscribtionButtons[1].src = '/images/subscribed.png';
+						subscribtionButtons[0].classList.push('subscribed');
+						subscribtionButtons[1].classList.push('subscribed');
+					} else {
+						subscribtionButtons[0].src = '/images/subscribtion.png';
+						subscribtionButtons[1].src = '/images/subscribtion.png';
+						subscribtionButtons[0].classList.remove('subscribed');
+						subscribtionButtons[1].classList.remove('subscribed');
+					}
+
+					var roomName = this.parentNode.firstChild.textContent;
+					socket.emit('subscribe', roomName);
 				});
 			}
 		}
@@ -469,7 +489,6 @@ window.onload = function() {
 	elements.nameInput.focus();
 
 	function joinedHandler(e) {
-		console.log(e.keyCode);
 		if (e.keyCode == 13) {
 			console.log('yes');
 			socket.emit('joined', { userName: elements.nameInput.value, identificationCode: elements.identificationCodeInput.value });

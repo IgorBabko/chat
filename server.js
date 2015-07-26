@@ -5,7 +5,7 @@ var uuid    = require('node-uuid');
 var jade    = require('jade');
 var app     = express();
 var server  = app.listen(3000);
-var client  = io.listen(server);
+var clients  = io.listen(server);
 
 app.use(express.static(__dirname + '/build/assets'));
 
@@ -20,9 +20,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		res.send(html);
 	});
 
-	client.on('connection', function(socket) {
+	clients.on('connection', function(socket) {
 
 		socket.join('global');
+		for (var clientId in clients.eio.clients) {
+
+			console.log(clients.eio.clients[clientId].id);
+		}
 
 		socket.on('populateChat', function() {
 			rooms.find().toArray(function(err, roomsData) {
@@ -37,8 +41,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 						}
 					}
 
-					console.log(peopleData);
-
 					messages.find({ room: 'global' }).toArray(function(err, messagesData) {
 						if (err) return err;
 
@@ -49,6 +51,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('joined', function(userData) {
+
+			socket.room = 'global';
 
 			var whitespacePattern = /^\s*$/;
 			userData.userName = userData.userName.trim();
@@ -70,7 +74,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				_id: '_' + socket.id,
 				name: userData.userName,
 				room: 'global',
-				status: status
+				status: status,
+				subscribtions: []
 				// isTyping: false
 			};
 
@@ -99,9 +104,22 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				rooms.find({ name: whoLeft.room }).toArray(function(err, roomsData) {
 					var room = roomsData[0];
-					client.in(whoLeft.room).emit('left', { room: room, user: whoLeft, message: whoLeft.name + 'left chat.' });
+					clients.in(whoLeft.room).emit('left', { room: room, user: whoLeft, message: whoLeft.name + 'left chat.' });
 					people.remove({ _id: whoLeft._id });
 				});
+			});
+		});
+
+		socket.on('subscribe', function(roomName) {
+			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
+				if (err) return err;
+				var user = users[0];
+
+				console.log(user);
+				var subscribtions = user.subscribtions;
+				console.log(user.subscribtions);
+				subscribtions.push(roomName);
+				people.update({ _id: '_' + socket.id }, { $set: { subscribtions: subscribtions } });
 			});
 		});
 
@@ -150,6 +168,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('changeRoom', function(data) {
+
 			rooms.find({ name: data.newRoom }).toArray(function(err, newRoomInfo) {
 				newRoomInfo = newRoomInfo[0];
 				if (newRoomInfo.password !== '' && data.newRoomPassword === undefined) {
@@ -175,7 +194,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 							if (user.status === 'doctor') {
 								user.name += '(doctor)';
 							}
-							client.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
+							clients.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
 
 							rooms.update({ name: user.room }, { $inc: { peopleCount: -1 } });
 							rooms.update({ name: data.newRoom }, { $inc: { peopleCount: 1 } });
@@ -183,7 +202,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 							rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
 
 								oldRoomInfo = oldRoomInfo[0];
-								client.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
+								clients.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
 
 								user.name = userName + '(you)';
 
@@ -201,6 +220,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 										socket.emit('changeRoom', { oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo, 
 																	isRoomPrivate: isRoomPrivate, people: users, messages: messages, user: user });
+										socket.room = data.newRoom;
 										socket.join(data.newRoom);
 										people.update({ _id: user._id }, { $set: { room: data.newRoom } });
 									});
@@ -225,7 +245,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 						socket.emit('warning', { message: 'Room code is wrong!' });
 						return;
 					}
-					client.emit('removeRoom', { message: 'Room "' + data.activeRoomName + '" has been deleted.' });
+					clients.emit('removeRoom', { message: 'Room "' + data.activeRoomName + '" has been deleted.' });
 					people.broadcast.to(data.activeRoomName).emit('removeRoom', { message: 'You have been transfered to global room.'});
 					people.update({ room: data.activeRoomName }, { $set: { room: 'global' } });
 				});
@@ -263,7 +283,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				messages.insert(message);
 
-				client.in(user.room).emit('message', message);
+				clients.in(user.room).emit('message', message);
 			});
 		});
 	});
