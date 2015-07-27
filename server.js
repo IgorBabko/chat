@@ -23,10 +23,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 	clients.on('connection', function(socket) {
 
 		socket.join('global');
-		for (var clientId in clients.eio.clients) {
-
-			console.log(clients.eio.clients[clientId].id);
-		}
 
 		socket.on('populateChat', function() {
 			rooms.find().toArray(function(err, roomsData) {
@@ -68,6 +64,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				return;
 			} else if (userData.identificationCode === '1') {
 				status = 'doctor';
+				socket.subscribtions = [];
 			}
 
 			var user = {
@@ -90,7 +87,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				}
 				socket.broadcast.emit('joined', { room: room, user: user, message: user.name + ' joined chat.' });
 				user.name = userName + '(you)';
-				socket.emit('joined', { room: room, user: user });
+				socket.emit('joined', { room: room, user: user, status: status });
 			});
 		});
 
@@ -111,16 +108,24 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('subscribe', function(roomName) {
-			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
-				if (err) return err;
-				var user = users[0];
+			socket.subscribtions.push(roomName);
+			// console.log(clients.sockets.connected[socket.id].subscribtions);
+			// people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
+			// 	if (err) return err;
+			// 	var user = users[0];
 
-				console.log(user);
-				var subscribtions = user.subscribtions;
-				console.log(user.subscribtions);
-				subscribtions.push(roomName);
-				people.update({ _id: '_' + socket.id }, { $set: { subscribtions: subscribtions } });
-			});
+			// 	console.log(user);
+			// 	var subscribtions = user.subscribtions;
+			// 	console.log(user.subscribtions);
+			// 	subscribtions.push(roomName);
+			// 	people.update({ _id: '_' + socket.id }, { $set: { subscribtions: subscribtions } });
+			// });
+		});
+
+		socket.on('unsubscribe', function(roomName) {
+			console.log('unsubscribe: ' + roomName);
+			var indexOfRoom = socket.subscribtions.indexOf(roomName);
+			socket.subscribtions.splice(indexOfRoom, 1);
 		});
 
 		socket.on('createRoom', function(data) {
@@ -261,6 +266,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('message', function(data) {
+			console.log('----------------------------');
+			console.log('-----------------------------');
 			var whitespacePattern = /^\s*$/;
 
 			if (whitespacePattern.test(data.message)) {
@@ -284,6 +291,35 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				messages.insert(message);
 
 				clients.in(user.room).emit('message', message);
+
+				var allClients = clients.sockets.connected;	
+
+				// console.log(clients.sockets.connected[socket.id].room);
+				// console.log(clients.sockets.connected[socket.id].subscribtions);
+				console.log(socket.id);
+				console.log(allClients);
+				if (user.status === 'patient') {
+					for (var clientId in allClients) {
+						console.log(clientId);
+						// clients.to(clientId).emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" +  + "'.");
+						console.log('dfjidfndifndifnidnfinidfndifndifndif');
+						console.log(clientId + ' ' + socket.id);
+						console.log(allClients[clientId].room + ' ' + user.room);
+						console.log(allClients[clientId].room + ' ' + user.room);
+						console.log(allClients[clientId].status + ' doctor');
+						if (allClients[clientId].status === 'doctor') {
+							console.log(allClients[clientId].subscribtions);
+						}
+						continue;
+						if (clientId !== socket.id && 
+							allClients[clientId].room !== user.room &&
+							allClients[clientId].status === 'doctor' &&
+							allClients[clientId].subscribtions.contains(user.room)) {
+							console.log('hahaha');
+							allC[clientId].emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" + data.message + "'.");
+						}
+					}
+				}
 			});
 		});
 	});

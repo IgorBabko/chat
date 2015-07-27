@@ -92,8 +92,7 @@ window.onload = function() {
 	}
 
 	function updatePeopleCounters(roomInfo) {
-		console.log('updatePeopleCounter');
-		var peopleCounters = getNode('.' + roomInfo._id + ' :last-child', true);
+		var peopleCounters = getNode('.' + roomInfo._id + ' span:nth-child(2)', true);
 		peopleCounters[0].innerHTML = roomInfo.peopleCount;
 		peopleCounters[1].innerHTML = roomInfo.peopleCount;
 	}
@@ -250,9 +249,6 @@ window.onload = function() {
 			elements.pTag = pTag;
 			return;
 		}
-		//if () {
-			// message
-		//}
 	});
 
 	socket.on('createRoom', function(data) {
@@ -265,6 +261,56 @@ window.onload = function() {
 
 		newRoomItem[0].addEventListener('click', changeRoomHandler);
 		newRoomItem[1].addEventListener('click', changeRoomHandler);
+
+		if (socket.status === 'doctor') {
+			var subscribtionButton = document.createElement('img');
+			subscribtionButton.className = 'subscribtionButton';
+			subscribtionButton.src = '/images/subscribtion.png';
+
+			var subscribtionButtons = [ subscribtionButton, subscribtionButton.cloneNode(true) ];
+
+			newRoomItem[0].appendChild(subscribtionButtons[0]);
+			newRoomItem[1].appendChild(subscribtionButtons[1]);
+
+
+			for(var i = 0; i < subscribtionButtons.length; ++i) {
+				subscribtionButtons[i].addEventListener('mouseenter', function(e) {
+						if (this.classList.contains('subscribed')) {
+							this.src = '/images/unsubscribe.png';
+						} else {
+							this.src = '/images/subscribe.png';
+						}
+				});
+				subscribtionButtons[i].addEventListener('mouseleave', function(e) {
+					if (this.classList.contains('subscribed')) {
+						this.src = '/images/subscribed.png';
+					} else {
+						this.src = '/images/subscribtion.png';
+					}
+				});
+
+				subscribtionButtons[i].addEventListener('click', function(e) {
+					e.stopPropagation();
+
+					var roomItemClass = this.parentNode.classList[0];
+					var subscribtionButtons = getNode('.' + roomItemClass + ' .subscribtionButton', true);
+					if (!this.classList.contains('subscribed')) {
+						subscribtionButtons[0].src = '/images/subscribed.png';
+						subscribtionButtons[1].src = '/images/subscribed.png';
+						subscribtionButtons[0].className += ' subscribed';
+						subscribtionButtons[1].className += ' subscribed';
+					} else {
+						subscribtionButtons[0].src = '/images/subscribtion.png';
+						subscribtionButtons[1].src = '/images/subscribtion.png';
+						subscribtionButtons[0].className = 'subscribtionButton';
+						subscribtionButtons[1].className = 'subscribtionButton';
+					}
+
+					var roomName = this.parentNode.firstChild.textContent;
+					socket.emit('subscribe', roomName);
+				});
+			}
+		}
 	});
 
 	socket.on('openRoomPasswordModal', function() {
@@ -302,23 +348,44 @@ window.onload = function() {
 
 				lockImgs = getNode('.' + data.newRoomInfo._id + ' .lock', true);
 				var newRoomItems = [lockImgs[0].parentNode, lockImgs[1].parentNode];
+				console.log(newRoomItems[0].childNodes);
 				newRoomItems[0].removeChild(lockImgs[0]);
 				newRoomItems[1].removeChild(lockImgs[1]);
-				newRoomItems[0].appendChild(document.createElement('span'));
-				newRoomItems[1].appendChild(document.createElement('span'));
+
+				if (socket.status === 'doctor') {
+					console.log(newRoomItems[0].childNodes);
+					newRoomItems[0].insertBefore(document.createElement('span'), newRoomItems[0].lastChild);
+					newRoomItems[1].insertBefore(document.createElement('span'), newRoomItems[1].lastChild);
+					console.log(newRoomItems[0].childNodes);
+
+				} else {
+					newRoomItems[0].appendChild(document.createElement('span'));
+					newRoomItems[1].appendChild(document.createElement('span'));
+				}
 			}
 			updatePeopleCounters(data.newRoomInfo);
 
 			if (data.oldRoomInfo.password !== '') {
 				var oldRoomItems = getNode('.' + data.oldRoomInfo._id, true);
-				oldRoomItems[0].removeChild(oldRoomItems[0].lastChild);
-				oldRoomItems[1].removeChild(oldRoomItems[1].lastChild);
 				var lockImg = document.createElement('img');
 				lockImg.className = 'lock';
 				lockImg.src = 'images/lock.png';
 				lockImgs = [lockImg, lockImg.cloneNode()];
-				oldRoomItems[0].appendChild(lockImgs[0]);
-				oldRoomItems[1].appendChild(lockImgs[1]);
+				if (socket.status === 'doctor') {
+					var peopleCounters = getNode('.' + data.oldRoomInfo._id + ' span:nth-child(2)', true);
+					console.log('---------- peopleCounters: ------------');
+					console.log(peopleCounters);
+					var subscribtionButtons = getNode('.' + data.oldRoomInfo._id + ' .subscribtionButton', true);
+					oldRoomItems[0].removeChild(peopleCounters[0]);
+					oldRoomItems[1].removeChild(peopleCounters[1]);
+					oldRoomItems[0].insertBefore(lockImgs[0], subscribtionButtons[0]);
+					oldRoomItems[1].insertBefore(lockImgs[1], subscribtionButtons[1]);
+				} else {
+					oldRoomItems[0].removeChild(oldRoomItems[0].lastChild);
+					oldRoomItems[1].removeChild(oldRoomItems[1].lastChild);
+					oldRoomItems[0].appendChild(lockImgs[0]);
+					oldRoomItems[1].appendChild(lockImgs[1]);
+				}
 			} else {
 				updatePeopleCounters(data.oldRoomInfo);
 			}
@@ -380,7 +447,8 @@ window.onload = function() {
 			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 		}
 
-		if (data.user.status === 'doctor') {
+		if (data.status === 'doctor') {
+			socket.status = 'doctor';
 			var roomItems = getNode('.roomsSidebar li + li', true);
 			for(var i = 0; i < roomItems.length; ++i) {
 				var subscribtionButton = document.createElement('img');
@@ -389,47 +457,49 @@ window.onload = function() {
 				roomItems[i].appendChild(subscribtionButton);
 			}
 
-			elements.subscribtionButtons = getNode('.subscribtionButton', true);
-			for(var i = 0; i < elements.subscribtionButtons.length; ++i) {
-				elements.subscribtionButtons[i].addEventListener('mouseenter', function(e) {
-					if (this.src === '/images/subscribtion.png') {
-						this.src = '/images/subscribe.png';
+			var subscribtionButtons = getNode('.subscribtionButton', true);
+			for(var i = 0; i < subscribtionButtons.length; ++i) {
+				subscribtionButtons[i].addEventListener('mouseenter', function(e) {
+					if (this.classList.contains('subscribed')) {
+						this.src = '/images/unsubscribe.png';
 					} else {
-						console.log('niko');
 						this.src = '/images/subscribe.png';
 					}
 				});
-				elements.subscribtionButtons[i].addEventListener('mouseleave', function(e) {
-					if (this.src === '/images/subscribed.png') {
-						this.src = '/images/subscribe.png';
+				subscribtionButtons[i].addEventListener('mouseleave', function(e) {
+					if (this.classList.contains('subscribed')) {
+						this.src = '/images/subscribed.png';
 					} else {
 						this.src = '/images/subscribtion.png';
 					}
 				});
 
-				elements.subscribtionButtons[i].addEventListener('click', function(e) {
+				subscribtionButtons[i].addEventListener('click', function(e) {
 					e.stopPropagation();
 
-					var roomItemClass = this.parentNode.classList[1];
-					var subscribtionButtons = getNode('.' + roomItemClass + ' .' + this.className, true);
-					
-					if (this.src === '/images/subscribe.png') {
+					var roomItemClass = this.parentNode.classList[0];
+					var subscribtionButtons = getNode('.' + roomItemClass + ' .subscribtionButton', true);
+					var roomName = this.parentNode.firstChild.textContent;
+					if (!this.classList.contains('subscribed')) {
 						subscribtionButtons[0].src = '/images/subscribed.png';
 						subscribtionButtons[1].src = '/images/subscribed.png';
-						subscribtionButtons[0].classList.push('subscribed');
-						subscribtionButtons[1].classList.push('subscribed');
+						subscribtionButtons[0].className += ' subscribed';
+						subscribtionButtons[1].className += ' subscribed';
+						socket.emit('subscribe', roomName);
 					} else {
 						subscribtionButtons[0].src = '/images/subscribtion.png';
 						subscribtionButtons[1].src = '/images/subscribtion.png';
-						subscribtionButtons[0].classList.remove('subscribed');
-						subscribtionButtons[1].classList.remove('subscribed');
+						subscribtionButtons[0].className = 'subscribtionButton';
+						subscribtionButtons[1].className = 'subscribtionButton';
+						socket.emit('unsubscribe', roomName);
 					}
-
-					var roomName = this.parentNode.firstChild.textContent;
-					socket.emit('subscribe', roomName);
 				});
 			}
 		}
+
+		socket.on('notifySubscriber', function (info) {
+			toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+		});
 
 		elements.messageInput.addEventListener('keyup', function(e) {
 			if (e.keyCode == 13) {
