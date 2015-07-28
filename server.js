@@ -59,11 +59,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			}
 
 			var status = 'patient';
+			socket.status = 'patient';
 			if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
 				socket.emit('warning', { identificationCode: ' ', message: 'Identification code is wrong!' });
 				return;
 			} else if (userData.identificationCode === '1') {
 				status = 'doctor';
+				socket.status = 'doctor';
 				socket.subscribtions = [];
 			}
 
@@ -73,7 +75,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				room: 'global',
 				status: status,
 				subscribtions: []
-				// isTyping: false
 			};
 
 			people.insert(user);
@@ -97,6 +98,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				var whoLeft = users[0];
 
+				if (!whoLeft) {
+					return;
+				}
+
 				rooms.update({ name: whoLeft.room }, { $inc: { peopleCount: -1 } });
 
 				rooms.find({ name: whoLeft.room }).toArray(function(err, roomsData) {
@@ -109,21 +114,9 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 		socket.on('subscribe', function(roomName) {
 			socket.subscribtions.push(roomName);
-			// console.log(clients.sockets.connected[socket.id].subscribtions);
-			// people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
-			// 	if (err) return err;
-			// 	var user = users[0];
-
-			// 	console.log(user);
-			// 	var subscribtions = user.subscribtions;
-			// 	console.log(user.subscribtions);
-			// 	subscribtions.push(roomName);
-			// 	people.update({ _id: '_' + socket.id }, { $set: { subscribtions: subscribtions } });
-			// });
 		});
 
 		socket.on('unsubscribe', function(roomName) {
-			console.log('unsubscribe: ' + roomName);
 			var indexOfRoom = socket.subscribtions.indexOf(roomName);
 			socket.subscribtions.splice(indexOfRoom, 1);
 		});
@@ -266,11 +259,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		});
 
 		socket.on('message', function(data) {
-			console.log('----------------------------');
-			console.log('-----------------------------');
 			var whitespacePattern = /^\s*$/;
 
 			if (whitespacePattern.test(data.message)) {
+				console.log(data.message);
 				socket.emit('warning', { message: 'Message should not be empty!' });
 				return;
 			}
@@ -294,29 +286,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				var allClients = clients.sockets.connected;	
 
-				// console.log(clients.sockets.connected[socket.id].room);
-				// console.log(clients.sockets.connected[socket.id].subscribtions);
-				console.log(socket.id);
-				console.log(allClients);
 				if (user.status === 'patient') {
 					for (var clientId in allClients) {
-						console.log(clientId);
-						// clients.to(clientId).emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" +  + "'.");
-						console.log('dfjidfndifndifnidnfinidfndifndifndif');
-						console.log(clientId + ' ' + socket.id);
-						console.log(allClients[clientId].room + ' ' + user.room);
-						console.log(allClients[clientId].room + ' ' + user.room);
-						console.log(allClients[clientId].status + ' doctor');
-						if (allClients[clientId].status === 'doctor') {
-							console.log(allClients[clientId].subscribtions);
-						}
-						continue;
 						if (clientId !== socket.id && 
 							allClients[clientId].room !== user.room &&
 							allClients[clientId].status === 'doctor' &&
-							allClients[clientId].subscribtions.contains(user.room)) {
-							console.log('hahaha');
-							allC[clientId].emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" + data.message + "'.");
+							allClients[clientId].subscribtions.indexOf(user.room) !== -1) {
+							allClients[clientId].emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" + data.message + "'.");
 						}
 					}
 				}

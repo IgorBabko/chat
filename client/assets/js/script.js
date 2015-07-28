@@ -497,23 +497,24 @@ window.onload = function() {
 			}
 		}
 
-		socket.on('notifySubscriber', function (info) {
-			toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
-		});
-
-		elements.messageInput.addEventListener('keyup', function(e) {
-			if (e.keyCode == 13) {
-				socket.emit('message', { message: elements.messageInput.value });
-				elements.messageInput.value = '';
-			}
-		});
-
 		window.onunload = function() {
 			socket.emit('left');
 		};
 
 		updatePeopleCounters(data.room);
 		addListItem(elements.peopleLists, data.user);
+	});
+
+	elements.messageInput.addEventListener('keyup', function(e) {
+		if (e.keyCode == 13) {
+			socket.emit('message', { message: elements.messageInput.value });
+			console.log(elements.messageInput.value);
+			elements.messageInput.value = '';
+		}
+	});
+
+	socket.on('notifySubscriber', function (info) {
+		toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
 	});
 
 	socket.on('userIsTyping', function(userId) {
