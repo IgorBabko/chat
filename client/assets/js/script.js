@@ -46,10 +46,12 @@ window.onload = function() {
 	}
 
 	function changeRoomHandler() {
-		console.log('change room');
 		if (this !== elements.activeRoom[0] && this !== elements.activeRoom[1]) {
 
-			if (this.lastChild.className !== 'lock') {
+			var roomItemClass = this.classList[0];
+			var lockImgs = getNode('.roomsSidebar ul li.' + roomItemClass + ' .lock', true);
+
+			if (!lockImgs[0]) {
 				elements.activeRoom[0].classList.remove('activeRoom');
 				elements.activeRoom[1].classList.remove('activeRoom');
 
@@ -240,7 +242,6 @@ window.onload = function() {
 	});
 
 	socket.on('removeRoom', function(data) {
-		console.log(data.peopleCount);
 		if (data.peopleCount && data.peopleCount !== 0) {
 			var pTag = document.createElement('p');
 			pTag.style.color = 'red';
@@ -253,7 +254,7 @@ window.onload = function() {
 
 	socket.on('createRoom', function(data) {
 		if (data.message) {
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		} else {
 			elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
 		}
@@ -348,15 +349,12 @@ window.onload = function() {
 
 				lockImgs = getNode('.' + data.newRoomInfo._id + ' .lock', true);
 				var newRoomItems = [lockImgs[0].parentNode, lockImgs[1].parentNode];
-				console.log(newRoomItems[0].childNodes);
 				newRoomItems[0].removeChild(lockImgs[0]);
 				newRoomItems[1].removeChild(lockImgs[1]);
 
 				if (socket.status === 'doctor') {
-					console.log(newRoomItems[0].childNodes);
 					newRoomItems[0].insertBefore(document.createElement('span'), newRoomItems[0].lastChild);
 					newRoomItems[1].insertBefore(document.createElement('span'), newRoomItems[1].lastChild);
-					console.log(newRoomItems[0].childNodes);
 
 				} else {
 					newRoomItems[0].appendChild(document.createElement('span'));
@@ -373,8 +371,6 @@ window.onload = function() {
 				lockImgs = [lockImg, lockImg.cloneNode()];
 				if (socket.status === 'doctor') {
 					var peopleCounters = getNode('.' + data.oldRoomInfo._id + ' span:nth-child(2)', true);
-					console.log('---------- peopleCounters: ------------');
-					console.log(peopleCounters);
 					var subscribtionButtons = getNode('.' + data.oldRoomInfo._id + ' .subscribtionButton', true);
 					oldRoomItems[0].removeChild(peopleCounters[0]);
 					oldRoomItems[1].removeChild(peopleCounters[1]);
@@ -411,7 +407,7 @@ window.onload = function() {
 			} else {
 				addListItem(elements.peopleLists, data.user);
 			}
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		}
 	});
 
@@ -442,7 +438,7 @@ window.onload = function() {
 
 	socket.on('joined', function(data) {
 		if (data.message) {
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		} else {
 			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 		}
@@ -508,13 +504,12 @@ window.onload = function() {
 	elements.messageInput.addEventListener('keyup', function(e) {
 		if (e.keyCode == 13) {
 			socket.emit('message', { message: elements.messageInput.value });
-			console.log(elements.messageInput.value);
 			elements.messageInput.value = '';
 		}
 	});
 
 	socket.on('notifySubscriber', function (info) {
-		toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+		toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 0, preventDuplicates: true, closeHtml: '<button>hello</button>' });
 	});
 
 	socket.on('userIsTyping', function(userId) {
@@ -538,10 +533,9 @@ window.onload = function() {
 			elements.roomNameField.value = data.roomName;
 		}
 		if (data.identificationCode) {
-			console.log('iden');
 			elements.identificationCodeInput.value = '';
 		}
-		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 	});
 
 	socket.on('message', function(message) {
@@ -553,7 +547,7 @@ window.onload = function() {
 		updatePeopleCounters(data.room);
 
 		removeListItem(data.user._id);
-		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000 });
+		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 	});
 
 	elements.showInputNameModal.dispatchEvent(new MouseEvent('click'));
@@ -561,7 +555,6 @@ window.onload = function() {
 
 	function joinedHandler(e) {
 		if (e.keyCode == 13) {
-			console.log('yes');
 			socket.emit('joined', { userName: elements.nameInput.value, identificationCode: elements.identificationCodeInput.value });
 		}
 	}

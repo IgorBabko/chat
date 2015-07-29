@@ -30,6 +30,12 @@ body {
 	font-family: monaco;
 }
 
+#messages {
+	background-image: url('../images/notepad_texture.png');
+	background-repeat: repeat-y;
+	padding-left: 35px;
+}
+
 #showModalButton {
 	display: none;
 }

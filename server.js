@@ -262,7 +262,6 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			var whitespacePattern = /^\s*$/;
 
 			if (whitespacePattern.test(data.message)) {
-				console.log(data.message);
 				socket.emit('warning', { message: 'Message should not be empty!' });
 				return;
 			}
