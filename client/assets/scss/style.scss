@@ -21,8 +21,35 @@
 
 /* mine */
 
+#sendMessage {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	padding: 20px;
+	margin: 0;
+	border-top: 1px solid black;
+	background-color: rgba(52, 82, 203, 0.51);
+	cursor: pointer;
+	color: white;
+}
+
+#sendMessage:hover, #enterChat:hover, #sendPrivateMessage:hover, #createRoom:hover, #sendPassword:hover, #sendRoomCode:hover {
+    background-color: rgba(52, 82, 203, 0.81);
+    -webkit-transition: background-color 500ms linear;
+    -moz-transition: background-color 500ms linear;
+    -o-transition: background-color 500ms linear;
+    -ms-transition: background-color 500ms linear;
+    transition: background-color 500ms linear;
+}
+
+.message-input {
+	position: relative;
+}
+
 .message-input input {
 	margin-bottom: 0;
+	padding-right: 80px;
 }
 
 body {
@@ -30,19 +57,50 @@ body {
 	font-family: monaco;
 }
 
-#messages {
-	background-image: url('../images/notepad_texture.png');
+.unactiveMessagesLink {
+	color: black;
+	font-size: 30px;
+	background: rgba(52, 82, 203, 0.1) !important;
+	cursor: pointer !important;
+}
+
+.unactiveMessagesLink:hover {
+	color: rgb(52, 82, 203) !important;
+}
+
+#changeMessagesLinks a {
+	padding-top: 15px;
+	width: 50%;
+	font-size: 16px;
+	display: inline-block;
+	height: 48px;
+	text-align: center;
+	color: black;
+	cursor: default;
+	border-bottom: 2px solid rgba(52, 82, 203, 0.51) !important;
+}
+
+#messages, #privateMessages {
+	/*background-image: url('../images/notepad_texture.png');*/
 	background-repeat: repeat-y;
-	padding-left: 35px;
+	padding: 0 25px;
+}
+
+.peopleSidebar ul li:hover {
+	background-color: rgba(52, 82, 203, 0.1);
+	cursor: pointer;
 }
 
 #showModalButton {
 	display: none;
 }
 
+.showNewRoomModal:hover, .showRemoveRoomModal:hover {
+	color: white;
+}
+
 .showNewRoomModal, .showRemoveRoomModal {
-	display: inline-block !important;
-	width: 50%;
+	margin: 0 5px;
 }
 
 #sidebar {
@@ -59,9 +117,9 @@ body {
 }
 
 .block-list div {
-	background: #D1F5F7;
+	background: rgba(52, 82, 203, 0.51);
 	color: black;
-	height: 50px;
+	height: 48px;
 	font-size: 24px;
 	text-align: center;
 	line-height: 2.1;
@@ -70,7 +128,7 @@ body {
 
 .message-input input, .message-input input:hover, .message-input input:focus {
 	font-size: 24px;
-	background: #E9FAFB;
+	background: rgba(52, 82, 203, 0.10);
 	height: 51px;
 	border: none;
 	border-top: 1px solid black;
@@ -88,7 +146,28 @@ header, .avatar-section {
 #closeInputNameModal,
 #closeNewRoomModal,
 #closeRoomPasswordModal,
-#closeRemoveRoomModal {
+#closeRemoveRoomModal,
+#closePrivateMessageModal {
+	/*display: none;*/
+}
+
+#enterChat, #sendPrivateMessage, #createRoom, #sendPassword, #sendRoomCode {
+	float: right;
+	margin: 10px 0 0 0;
+	color: white;
+	background-color: rgba(52, 82, 203, 0.51);
+}
+
+#removeRoomModal p {
+	color: red;
+	margin-top: 35px;
+}
+
+#passwordInput, #privateMessage, #roomName, #code {
+	margin-top: 35px !important;
+}
+
+#closeInputNameModal {
 	display: none;
 }
 
@@ -96,6 +175,11 @@ header, .avatar-section {
 	margin: 0;
 }
 
+#privateMessage {
+	resize: none;
+	height: 150px;
+	margin: 0;
+}
 
 #createRoomButton {
 	float: right;
@@ -136,7 +220,7 @@ header, .avatar-section {
 }
 
 .activeRoom {
-	background: #B0E6FF;
+	background: rgba(52, 82, 203, 0.30);
 }
 
 h4 em {
@@ -173,7 +257,7 @@ h4 em {
 }
 
 .roomsSidebar li:not(.activeRoom):hover {
-	background-color: #DEF3FD;
+	background-color: rgba(52, 82, 203, 0.10);
 }
 
 .buttons {
@@ -193,6 +277,10 @@ h4 em {
 	overflow: auto;
 }
 
+.grid-content {
+	padding: 0;
+}
+
 .grid-content.left {
 	border-right: 1px solid black;
 }
@@ -203,9 +291,8 @@ h4 em {
 
 .header {
 	height: 50px;
-	position: absolute;
 	width: 100%;
-	background: #D1F5F7;
+	background: rgba(52, 82, 203, 0.51) !important;
 	color: black;
 	font-size: 24px;
 	text-align: center;
@@ -213,6 +300,14 @@ h4 em {
 	line-height: 2.1;
 	border-bottom: 1px solid black;
 	padding: 0 20px;
+}
+
+.hide-for-medium {
+	background: none;
+}
+
+.underHeaderBlock {
+	height: 400px;
 }
 
 .header img:nth-child(1) {

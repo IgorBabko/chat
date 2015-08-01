@@ -106,7 +106,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				rooms.find({ name: whoLeft.room }).toArray(function(err, roomsData) {
 					var room = roomsData[0];
-					clients.in(whoLeft.room).emit('left', { room: room, user: whoLeft, message: whoLeft.name + 'left chat.' });
+					clients.in(whoLeft.room).emit('left', { room: room, user: whoLeft, message: whoLeft.name + ' left chat.' });
 					people.remove({ _id: whoLeft._id });
 				});
 			});
@@ -276,16 +276,34 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					author: user.name,
 					text: data.message,
 					room: user.room,
-					date: new Date().toLocaleString().replace(/[PMA,]/g, '')
+					date: new Date().toISOString().replace(/T|(\..)/g, ' ')//new Date().toLocaleString().replace(/[PMA,]/g, '')
 				};
+
+				if (data.whoToSend) {
+					message.isPrivate = true;
+					message.addresseeId = data.whoToSend;
+				}
 
 				messages.insert(message);
 
-				clients.in(user.room).emit('message', message);
+				var allClients = clients.sockets.connected;
 
-				var allClients = clients.sockets.connected;	
+				// for( var clientId in allClients) {
+				// 	console.log(clientId);
+				// }
+				// console.log('----------------');
+				// console.log(data.whoToSend.slice(1));
+				// console.log('----------------');
 
-				if (user.status === 'patient') {
+				if (data.whoToSend) {
+					allClients[data.whoToSend.slice(1)].emit('message', { isPrivate: true, sender: user.name, message: message });
+					socket.emit('message', { isPrivate: true, message: message });
+				} else {
+					socket.emit('message', { self: true, message: message });
+					socket.broadcast.in(user.room).emit('message', { message: message });
+				}
+
+				if (user.status === 'patient' && !data.whoToSend) {
 					for (var clientId in allClients) {
 						if (clientId !== socket.id && 
 							allClients[clientId].room !== user.room &&

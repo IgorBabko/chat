@@ -32,11 +32,11 @@ window.onload = function() {
 		var message = document.createElement('div');
 		message.innerHTML = '<h4>' + data.author + ' <em>' + data.date + '</em></h4><p>' + data.text + '</p><hr>';
 
-		if (messageDiv.firstChild !== null) {
-			messageDiv.insertBefore(message, messageDiv.firstChild);
-		} else {
+		//if (messageDiv.firstChild !== null) {
+		//	messageDiv.insertBefore(message, messageDiv.firstChild);
+		//} else {
 			messageDiv.appendChild(message);
-		}
+		//}
 	}
 
 	function removeListItem(userId) {
@@ -101,39 +101,47 @@ window.onload = function() {
 
 	function getElements() {
 		var elements = {
-			removeRoomModal:         getNode('#removeRoomModal'),
-			showNewRoomModal:        getNode('.showNewRoomModal', true),
-			showRemoveRoomModal:     getNode('.showRemoveRoomModal', true),
-			closeRemoveRoomModal:    getNode('#closeRemoveRoomModal'),
-			codeInput:               getNode('#code'),
-			showRoomPasswordModal:   getNode('#showRoomPasswordModal'),
-			closeRoomPasswordModal:  getNode('#closeRoomPasswordModal'),
-			passwordInput:           getNode('#passwordInput'),
-			roomNameField:           getNode('#roomName'),
-			roomPasswordField:       getNode('#roomPassword'),
-			roomPasswordRepeatField: getNode('#roomPasswordRepeat'),
-			roomCodeField:           getNode('#roomCode'),
-			roomCodeRepeatField:     getNode('#roomCodeRepeat'),
-			showInputNameModal:      getNode('#showInputNameModal'),
-			closeInputNameModal:     getNode('#closeInputNameModal'),
-			closeNewRoomModal:       getNode('#closeNewRoomModal'),
-			messageInput:            getNode('.message-input input'),
-			messageDiv:              getNode('#messages'),
-			nameInput:               getNode('#name'),
-			identificationCodeInput: getNode('#identificationCode'),
-			header:                  getNode('.header'),
-			roomLists:               getNode('.roomsSidebar ul', true),
-			peopleLists:             getNode('.peopleSidebar ul', true),
-			peopleSidebar:           getNode('.peopleSidebar'),
-			roomsSidebar:            getNode('.roomsSidebar'),
-			roomsSidebarSmall:       getNode('.roomsSidebarSmall'),
-			peopleSidebarSmall:      getNode('.peopleSidebarSmall'),
-			roomsSidebarContent:     getNode('.roomsSidebar section'),
-			peopleSidebarContent:    getNode('.peopleSidebar section'),
-			roomsButton:             getNode('.header img:nth-child(1)'),
-			peopleButton:            getNode('.header img:nth-child(2)'),
-			roomsIcon:               getNode('.roomsIcon'),
-			peopleIcon:              getNode('.peopleIcon')
+			sendMessageButton:        getNode('#sendMessage'),
+			roomMessagesLink:         getNode("#roomMessagesLink"),
+			privateMessagesLink:      getNode("#privateMessagesLink"),
+			closePrivateMessageModal: getNode('#closePrivateMessageModal'),
+			privateMessageDiv:        getNode('#privateMessages'),
+			privateMessageTextarea:   getNode('#privateMessage'),
+			sendPrivateMessageButton: getNode('#sendPrivateMessage'),
+			openPrivateMessageModal:  getNode('#showPrivateMessageModal'),
+			removeRoomModal:          getNode('#removeRoomModal'),
+			showNewRoomModal:         getNode('.showNewRoomModal', true),
+			showRemoveRoomModal:      getNode('.showRemoveRoomModal', true),
+			closeRemoveRoomModal:     getNode('#closeRemoveRoomModal'),
+			codeInput:                getNode('#code'),
+			showRoomPasswordModal:    getNode('#showRoomPasswordModal'),
+			closeRoomPasswordModal:   getNode('#closeRoomPasswordModal'),
+			passwordInput:            getNode('#passwordInput'),
+			roomNameField:            getNode('#roomName'),
+			roomPasswordField:        getNode('#roomPassword'),
+			roomPasswordRepeatField:  getNode('#roomPasswordRepeat'),
+			roomCodeField:            getNode('#roomCode'),
+			roomCodeRepeatField:      getNode('#roomCodeRepeat'),
+			showInputNameModal:       getNode('#showInputNameModal'),
+			closeInputNameModal:      getNode('#closeInputNameModal'),
+			closeNewRoomModal:        getNode('#closeNewRoomModal'),
+			messageInput:             getNode('.message-input input'),
+			messageDiv:               getNode('#messages'),
+			nameInput:                getNode('#name'),
+			identificationCodeInput:  getNode('#identificationCode'),
+			header:                   getNode('.header'),
+			roomLists:                getNode('.roomsSidebar ul', true),
+			peopleLists:              getNode('.peopleSidebar ul', true),
+			peopleSidebar:            getNode('.peopleSidebar'),
+			roomsSidebar:             getNode('.roomsSidebar'),
+			roomsSidebarSmall:        getNode('.roomsSidebarSmall'),
+			peopleSidebarSmall:       getNode('.peopleSidebarSmall'),
+			roomsSidebarContent:      getNode('.roomsSidebar section'),
+			peopleSidebarContent:     getNode('.peopleSidebar section'),
+			roomsButton:              getNode('.header img:nth-child(1)'),
+			peopleButton:             getNode('.header img:nth-child(2)'),
+			roomsIcon:                getNode('.roomsIcon'),
+			peopleIcon:               getNode('.peopleIcon')
 		};
 		return elements;
 	}
@@ -166,15 +174,55 @@ window.onload = function() {
 		}
 
 		for(i = 0; i < people.length; ++i) {
-			addListItem(elements.peopleLists, people[i]);
+			var personItems = addListItem(elements.peopleLists, people[i]);
+			personItems[0].addEventListener('click', privateMessageHandler);
+			personItems[1].addEventListener('click', privateMessageHandler);
 		}
 
-		elements.rooms = getNode('.roomsSidebar ul li:not(.buttons)', true);
-		for(i = 0; i < elements.rooms.length; ++i) {
-			elements.rooms[i].addEventListener('click', changeRoomHandler);
+		elements.roomItems = getNode('.roomsSidebar ul li:not(.buttons)', true);
+		for(i = 0; i < elements.roomItems.length; ++i) {
+			elements.roomItems[i].addEventListener('click', changeRoomHandler);
 		}
+
+		// elements.peopleItems = getNode('.peopleSidebar ul li', true);
+		// for(i = 0; i < elements.peopleItems.length; ++i) {
+		// 	elements.peopleItems[i].addEventListener('click', privateMessageHandler);
+		// }
 
 		elements.activeRoom = getNode('.activeRoom', true);
+	});
+
+	var userId;
+	function privateMessageHandler() {
+		userId = this.className;
+		elements.openPrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+		elements.privateMessageTextarea.focus();
+	}
+
+	function sendPrivateMessage(e) {
+		var whitespacePattern = /^\s*$/;
+
+		if (whitespacePattern.test(elements.privateMessageTextarea.value)) {
+			socket.emit('message', { isMessagePrivate: true, whoToSend: userId, message: elements.privateMessageTextarea.value });
+		} else {
+			elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+			socket.emit('message', { isMessagePrivate: true, whoToSend: userId, message: elements.privateMessageTextarea.value });
+		}
+	}
+
+	// change keyup -> keypress
+
+	elements.privateMessageTextarea.addEventListener('keypress', function(e) {
+		if (e.ctrlKey && e.keyCode == 13) {
+			return;
+		} else if (e.keyCode == 13) {
+			sendPrivateMessage(e);
+			e.preventDefault();
+		}
+	});
+
+	elements.sendPrivateMessageButton.addEventListener('click', function(e) {
+		sendPrivateMessage(e);
 	});
 
 	elements.passwordInput.addEventListener('keyup', function(e) {
@@ -204,7 +252,9 @@ window.onload = function() {
 	}
 
 	elements.showNewRoomModal[0].addEventListener('click', function(e) {
+		console.log('click');
 		elements.roomNameField.focus();
+		//elements.openNewRoomModal.dispatchEvent(new MouseEvent('click'));
 	});
 
 	elements.showNewRoomModal[1].addEventListener('click', function(e) {
@@ -244,7 +294,7 @@ window.onload = function() {
 	socket.on('removeRoom', function(data) {
 		if (data.peopleCount && data.peopleCount !== 0) {
 			var pTag = document.createElement('p');
-			pTag.style.color = 'red';
+			// pTag.style.color = 'red';
 			pTag.innerHTML = 'There\'re <strong>' + data.peopleCount + '</strong> men at this room. When room gets removed all people will be moved to "global" room';
 			elements.codeInput.parentNode.insertBefore(pTag, elements.codeInput);
 			elements.pTag = pTag;
@@ -326,6 +376,7 @@ window.onload = function() {
 	});
 
 	socket.on('changeRoom', function(data) {
+		var personItems;
 		if (data.forAllClients) {
 			if (data.oldRoomInfo.password === '' || activeRoomName === data.oldRoomInfo.name) {
 				updatePeopleCounters(data.oldRoomInfo);
@@ -392,7 +443,9 @@ window.onload = function() {
 			elements.messageDiv.innerHTML = '';
 			if (data.people.length !== 0) {
 				for(i = 0; i < data.people.length; ++i) {
-					addListItem(elements.peopleLists, data.people[i]);
+					personItems = addListItem(elements.peopleLists, data.people[i]);
+					personItems[0].addEventListener('click', privateMessageHandler);
+					personItems[1].addEventListener('click', privateMessageHandler);
 				}
 			}
 			if (data.messages.length !== 0) {
@@ -405,7 +458,9 @@ window.onload = function() {
 			if (data.whoLeft) {
 				removeListItem(data.whoLeft._id);
 			} else {
-				addListItem(elements.peopleLists, data.user);
+				personItems = addListItem(elements.peopleLists, data.user);
+				personItems[0].addEventListener('click', privateMessageHandler);
+				personItems[1].addEventListener('click', privateMessageHandler);
 			}
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		}
@@ -417,6 +472,7 @@ window.onload = function() {
 
 	elements.header.addEventListener('click', panelHandler);
 	elements.messageDiv.addEventListener('click', panelHandler);
+	elements.privateMessageDiv.addEventListener('click', panelHandler);
 	elements.messageInput.addEventListener('click', panelHandler);
 	document.addEventListener('keyup', function(e) {
 		if (e.keyCode == 27) {
@@ -498,13 +554,28 @@ window.onload = function() {
 		};
 
 		updatePeopleCounters(data.room);
-		addListItem(elements.peopleLists, data.user);
+
+		if (data.message) {
+			var personItems = addListItem(elements.peopleLists, data.user);
+			personItems[0].addEventListener('click', privateMessageHandler);
+			personItems[1].addEventListener('click', privateMessageHandler);
+		} else {
+			addListItem(elements.peopleLists, data.user);
+		}
+	});
+
+	function sendMessage() {
+		socket.emit('message', { message: elements.messageInput.value });
+		elements.messageInput.value = '';
+	}
+
+	elements.sendMessageButton.addEventListener('click', function(e) {
+		sendMessage();
 	});
 
 	elements.messageInput.addEventListener('keyup', function(e) {
 		if (e.keyCode == 13) {
-			socket.emit('message', { message: elements.messageInput.value });
-			elements.messageInput.value = '';
+			sendMessage();
 		}
 	});
 
@@ -538,8 +609,45 @@ window.onload = function() {
 		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 	});
 
-	socket.on('message', function(message) {
-		addMessage(elements.messageDiv, message);
+	elements.roomMessagesLink.addEventListener('click', function(e) {
+		elements.messageDiv.style.display = 'block';
+		elements.roomMessagesLink.classList.remove('unactiveMessagesLink');
+
+		elements.privateMessageDiv.style.display = 'none';
+		elements.privateMessagesLink.classList.add('unactiveMessagesLink');
+	});
+
+	elements.privateMessagesLink.addEventListener('click', function(e) {
+		elements.messageDiv.style.display = 'none';
+		elements.roomMessagesLink.classList.add('unactiveMessagesLink');
+
+		elements.privateMessageDiv.style.display = 'block';
+		elements.privateMessagesLink.classList.remove('unactiveMessagesLink');
+	});
+
+	socket.on('message', function(data) {
+		if (data.isPrivate) {
+			if (data.sender) {
+				toastr.success(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+				addMessage(elements.privateMessageDiv, data.message);
+			} else {
+				addMessage(elements.privateMessageDiv, data.message);
+			}
+		} else {
+			addMessage(elements.messageDiv, data.message);
+
+			if (data.self) {
+				if (elements.privateMessageDiv.style.display === 'block') {
+
+					elements.messageDiv.style.display = 'block';
+					elements.roomMessagesLink.classList.remove('unactiveMessagesLink');
+
+					elements.privateMessageDiv.style.display = 'none';
+					elements.privateMessagesLink.classList.add('unactiveMessagesLink');
+				}
+				elements.messageDiv.scrollTop = elements.messageDiv.scrollHeight;
+			}
+		}
 	});
 
 	socket.on('left', function(data) {
