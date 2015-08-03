@@ -29,6 +29,7 @@ html(lang='en', ng-app='application')
 		div(zf-modal='', id='privateMessageModal', overlay-close='true')
 			a(zf-close='', id='closePrivateMessageModal', class='close-button') ×
 			textarea(id='privateMessage', autocomplete='off', placeholder='Your message goes here:')
+			a(id="privateConversationLink", href="#") Private conversation
 			a(id="sendPrivateMessage", href="#", class="button info") Send
 
 		a(zf-open='roomPasswordModal', id='showRoomPasswordModal')
@@ -55,10 +56,10 @@ html(lang='en', ng-app='application')
 			div(zf-panel='', class='small-5 roomsSidebarSmall', id='rooms')
 				section(class='block-list roomsSidebar')
 					div
-						i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
+						//- i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
 						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
 						| rooms
-						i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
+						//- i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
 					ul
 						//- li(class='buttons')
 						//- 	a(zf-open='newRoomModal', class='showNewRoomModal success button') add
@@ -72,10 +73,10 @@ html(lang='en', ng-app='application')
 			div(class='grid-content left show-for-medium medium-3 roomsSidebar')
 				section(class='block-list')
 					div
-						i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
+						//- i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
 						img(src='images/rooms.svg', class='roomsIcon', alt='rooms')
 						| rooms
-						i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
+						//- i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
 					ul
 						//- li(class='buttons')
 						//- 	a(zf-open='newRoomModal', class='showNewRoomModal success button') add

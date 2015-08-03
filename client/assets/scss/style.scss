@@ -86,10 +86,24 @@ body {
 	padding: 0 25px;
 }
 
-.peopleSidebar ul li:hover {
+#privateConversationLink {
+	margin-top: 10px;
+	display: inline-block;
+	color: rgb(52, 82, 203);
+}
+
+#privateConversationLink:hover {
+	text-decoration: underline;
+}
+
+#messages {
+	/*margin-top: 47px;*/
+}
+
+/*.peopleSidebar ul li:hover {
 	background-color: rgba(52, 82, 203, 0.1);
 	cursor: pointer;
-}
+}*/
 
 #showModalButton {
 	display: none;
@@ -200,7 +214,12 @@ header, .avatar-section {
 	clear: both;
 }
 
-.lock {
+.privateConversation {
+	padding-left: 10px;
+	cursor: pointer;
+}
+
+.lock, .privateConversation {
 	width: 30px;
 }
 
@@ -219,11 +238,15 @@ header, .avatar-section {
 	height: 45px;
 }
 
-.activeRoom {
+.activeItem {
 	background: rgba(52, 82, 203, 0.30);
 }
 
-h4 em {
+.name {
+	color: rgb(52, 82, 203);
+}
+
+.date {
 	color: gray;
 	font-size: 10px;
 	float: right;
@@ -256,7 +279,7 @@ h4 em {
 	padding: 6px 6px 0 6px;
 }
 
-.roomsSidebar li:not(.activeRoom):hover {
+.roomsSidebar li:not(.activeItem):hover, .peopleSidebar li:not(.activeItem):hover {
 	background-color: rgba(52, 82, 203, 0.10);
 }
 
@@ -269,7 +292,8 @@ h4 em {
 	font-size: 20px;
 }
 
-.roomsSidebar li:not(.activeRoom), .roomsSidebar li:not(.activeRoom) * {
+.roomsSidebar li:not(.activeItem), .roomsSidebar li:not(.activeItem) *,
+.peopleSidebar li:not(.activeItem), .peopleSidebar li:not(.activeItem) * {
 	cursor: pointer;
 }
 

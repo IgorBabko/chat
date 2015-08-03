@@ -258,6 +258,27 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			socket.broadcast.to(room).emit('userStopTyping', '_' + socket.id);
 		});
 
+		socket.on('getUserName', function(userId) {
+			people.find({ _id: userId }).toArray(function(err, users) {
+				if (err) return err;
+				var user = users[0];
+				socket.emit('getUserName', user.name);
+			});
+		});
+
+		socket.on('establishPrivateConversation', function(userId) {
+			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
+				if (err) return err;
+
+				var user = users[0];
+
+				console.log(userId);
+				var client = clients.sockets.connected[userId.slice(1)];
+				console.log(client);
+				client.emit('establishPrivateConversation', user.name + ' established private conversation with you');
+			});
+		});
+
 		socket.on('message', function(data) {
 			var whitespacePattern = /^\s*$/;
 
@@ -288,28 +309,30 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				var allClients = clients.sockets.connected;
 
-				// for( var clientId in allClients) {
-				// 	console.log(clientId);
-				// }
-				// console.log('----------------');
-				// console.log(data.whoToSend.slice(1));
-				// console.log('----------------');
-
 				if (data.whoToSend) {
-					allClients[data.whoToSend.slice(1)].emit('message', { isPrivate: true, sender: user.name, message: message });
-					socket.emit('message', { isPrivate: true, message: message });
+					people.find({ _id: message.addresseeId }).toArray(function(err, users) {
+
+						if (err) return err;
+						
+						var sender = users[0];
+						message.addresseeName = sender.name;
+
+						allClients[data.whoToSend.slice(1)].emit('message', { isPrivate: true, sender: user.name, message: message });
+						message.self = true;
+						socket.emit('message', { isPrivate: true, message: message });
+					});
 				} else {
 					socket.emit('message', { self: true, message: message });
 					socket.broadcast.in(user.room).emit('message', { message: message });
-				}
 
-				if (user.status === 'patient' && !data.whoToSend) {
-					for (var clientId in allClients) {
-						if (clientId !== socket.id && 
-							allClients[clientId].room !== user.room &&
-							allClients[clientId].status === 'doctor' &&
-							allClients[clientId].subscribtions.indexOf(user.room) !== -1) {
-							allClients[clientId].emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" + data.message + "'.");
+					if (user.status === 'patient') {
+						for (var clientId in allClients) {
+							if (clientId !== socket.id && 
+								allClients[clientId].room !== user.room &&
+								allClients[clientId].status === 'doctor' &&
+								allClients[clientId].subscribtions.indexOf(user.room) !== -1) {
+								allClients[clientId].emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" + data.message + "'.");
+							}
 						}
 					}
 				}
