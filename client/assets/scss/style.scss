@@ -26,21 +26,19 @@
 	right: 0;
 	bottom: 0;
 	height: 100%;
-	padding: 20px;
 	margin: 0;
-	border-top: 1px solid black;
 	background-color: rgba(52, 82, 203, 0.51);
 	cursor: pointer;
 	color: white;
 }
 
 #sendMessage:hover, #enterChat:hover, #sendPrivateMessage:hover, #createRoom:hover, #sendPassword:hover, #sendRoomCode:hover {
-    background-color: rgba(52, 82, 203, 0.81);
-    -webkit-transition: background-color 500ms linear;
-    -moz-transition: background-color 500ms linear;
-    -o-transition: background-color 500ms linear;
-    -ms-transition: background-color 500ms linear;
-    transition: background-color 500ms linear;
+	background-color: rgba(52, 82, 203, 0.81);
+	-webkit-transition: background-color 500ms linear;
+	-moz-transition: background-color 500ms linear;
+	-o-transition: background-color 500ms linear;
+	-ms-transition: background-color 500ms linear;
+	transition: background-color 500ms linear;
 }
 
 .message-input {
@@ -75,7 +73,7 @@ body {
 	display: inline-block;
 	height: 48px;
 	text-align: center;
-	color: black;
+	color: rgb(52, 82, 203);
 	cursor: default;
 	border-bottom: 2px solid rgba(52, 82, 203, 0.51) !important;
 }
@@ -110,7 +108,8 @@ body {
 }
 
 .showNewRoomModal:hover, .showRemoveRoomModal:hover {
-	color: white;
+	color: rgb(29, 131, 210);
+
 }
 
 .showNewRoomModal, .showRemoveRoomModal {
@@ -118,7 +117,7 @@ body {
 }
 
 #sidebar {
-	border-right: 1px solid black;
+	border-right: 1px solid rgba(52, 82, 203, 0.3);
 }
 
 .avatar-section {
@@ -132,20 +131,23 @@ body {
 
 .block-list div {
 	background: rgba(52, 82, 203, 0.51);
-	color: black;
+	color: white;
 	height: 48px;
 	font-size: 24px;
 	text-align: center;
 	line-height: 2.1;
-	border-bottom: 1px solid black;
+	/*border-bottom: 1px solid rgba(52, 82, 203, 0.51);*/
+}
+
+.block-list li {
+	border-bottom: 1px solid rgba(52, 82, 203, 0.3);
 }
 
 .message-input input, .message-input input:hover, .message-input input:focus {
-	font-size: 24px;
+	font-size: 12px;
 	background: rgba(52, 82, 203, 0.10);
-	height: 51px;
-	border: none;
-	border-top: 1px solid black;
+	border: none !important;
+	border-top: 1px solid rgba(52, 82, 203, 0.3) !important;
 }
 
 header, .avatar-section {
@@ -246,14 +248,20 @@ header, .avatar-section {
 	color: rgb(52, 82, 203);
 }
 
+hr {
+	background-color: rgba(52, 82, 203, 0.1);
+	border: 0;
+	height: 1px;
+}
+
 .date {
-	color: gray;
+	color: rgba(52, 82, 203, 0.51);
 	font-size: 10px;
 	float: right;
 }
 
 .peopleIcon {
-	margin-left: 10px;
+	margin: 0 0 5px 10px;
 	width: 40px;
 	height: 40px;
 }
@@ -264,6 +272,7 @@ header, .avatar-section {
 
 .block-list ul {
 	padding-bottom: 50px;
+	color: rgb(52, 82, 203);
 }
 
 .roomsSidebar, .peopleSidebar {
@@ -293,7 +302,7 @@ header, .avatar-section {
 }
 
 .roomsSidebar li:not(.activeItem), .roomsSidebar li:not(.activeItem) *,
-.peopleSidebar li:not(.activeItem), .peopleSidebar li:not(.activeItem) * {
+.peopleSidebar li:not(.activeItem):not(.meItem), .peopleSidebar li:not(.activeItem):not(.meItem) * {
 	cursor: pointer;
 }
 
@@ -306,15 +315,37 @@ header, .avatar-section {
 }
 
 .grid-content.left {
-	border-right: 1px solid black;
+	border-right: 1px solid rgba(52, 82, 203, 0.3);
 }
 
 .grid-content.right {
-	border-left: 1px solid black;
+	border-left: 1px solid rgba(52, 82, 203, 0.3);
+}
+
+.userIsTypingIcon {
+	float: left;
+	margin-top: 3px;
+	width: 20px;
+}
+
+.toast-success {
+	background-color: rgba(52, 82, 203, 0.81);
+}
+
+.toast-warning {
+	background-color: #E22F2A;
+}
+
+.meItem span {
+	color: #E22F2A !important;
+}
+
+.doctorItem span {
+	color: green !important;
 }
 
 .header {
-	height: 50px;
+	height: 48px;
 	width: 100%;
 	background: rgba(52, 82, 203, 0.51) !important;
 	color: black;
@@ -322,7 +353,6 @@ header, .avatar-section {
 	text-align: center;
 	padding: 0;
 	line-height: 2.1;
-	border-bottom: 1px solid black;
 	padding: 0 20px;
 }
 
@@ -350,11 +380,72 @@ header, .avatar-section {
 
 .peopleSidebar li {
 	padding-left: 12px !important;
+	height: 44px;
+}
+
+.peopleSidebar li span {
+	float: right;
+	padding: 5px 0 0 0;
 }
 
 .block-list li {
 	padding: 9px 10px 9px 0;
 }
+
+.block-list li > a, .block-list li > span, .block-list li > label {
+	color: rgb(52, 82, 203);
+}
+
+.block-list li > a, .block-list li > span, .block-list li > label {
+	display: inline;
+}
+
+::-webkit-input-placeholder {
+	color: rgba(52, 82, 203, .4);
+}
+
+:-moz-placeholder {
+	color: rgba(52, 82, 203, .4);
+}
+
+::-moz-placeholder {
+	color: rgba(52, 82, 203, .4);
+}
+
+:-ms-input-placeholder {  
+	color: rgba(52, 82, 203, .4);
+}
+
+.close-button {
+	color: rgba(52, 82, 203, .3);
+	-webkit-transition: color 200ms linear;
+	-moz-transition: color 200ms linear;
+	-o-transition: color 200ms linear;
+	-ms-transition: color 200ms linear;
+	transition: color 200ms linear;
+}
+
+.close-button:hover {
+	color: rgba(52, 82, 203, .51);
+	-webkit-transition: color 200ms linear;
+	-moz-transition: color 200ms linear;
+	-o-transition: color 200ms linear;
+	-ms-transition: color 200ms linear;
+	transition: color 200ms linear;
+}
+
+input, textarea {
+	color: rgb(52, 82, 203) !important;
+	border: 1px solid rgba(52, 82, 203, .3) !important;
+}
+
+input:focus, textarea:focus { 
+	outline:none;
+	border: 1px solid rgba(52, 82, 203, .51); 
+	box-shadow: 0px 0px 8px rgba(52, 82, 203, .51); 
+	-moz-box-shadow: 0px 0px 8px rgba(52, 82, 203, .51);
+	-webkit-box-shadow: 0px 0px 8px rgba(52, 82, 203, .51);  
+}​
 
 .block-list span {
 	padding: none !important;

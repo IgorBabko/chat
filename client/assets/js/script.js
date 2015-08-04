@@ -15,8 +15,14 @@ window.onload = function() {
 				li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
 			}
 		} else {
-			li.className = itemData._id;
-			li.innerHTML = itemData.name;
+			if ('_' + socket.id === itemData._id) {
+				li.className = itemData._id + ' meItem';
+			} else if (itemData.status === 'doctor') {
+				li.className = itemData._id + ' doctorItem';
+			} else {
+				li.className = itemData._id;
+			}
+			li.innerHTML = '<span>' + itemData.name + '</span>';
 		}
 		var li2 = li.cloneNode(true);
 		if (lists[0].firstChild !== null && type !== 'room') {
@@ -205,6 +211,7 @@ window.onload = function() {
 		userId = this.className;
 		elements.openPrivateMessageModal.dispatchEvent(new MouseEvent('click'));
 		elements.privateMessageTextarea.focus();
+		elements.privateMessageTextarea.select();
 	}
 
 	function sendPrivateMessage(e) {
@@ -226,6 +233,7 @@ window.onload = function() {
 	// exact names
 	// findOne method
 	// make len variable global
+	// on esc close all opened modals
 
 	elements.privateMessageTextarea.addEventListener('keypress', function(e) {
 		if (e.ctrlKey && e.keyCode == 13) {
@@ -259,26 +267,35 @@ window.onload = function() {
 	}
 
 	function newRoomFormSender(e) {
+
 		if (e.keyCode == 13 || e.type === 'click') {
-			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value,
-										roomPasswordRepeat: elements.roomPasswordRepeatField.value, roomCode: elements.roomCodeField.value,
-										roomCodeRepeat: elements.roomCodeRepeatField.value });
-			elements.roomNameField.value = '';
-			elements.roomPasswordField.value = '';
-			elements.roomPasswordRepeatField.value = '';
-			elements.roomCodeField.value = '';
+			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value, roomPasswordRepeat: elements.roomPasswordRepeatField.value, roomCode: elements.roomCodeField.value, roomCodeRepeat: elements.roomCodeRepeatField.value });
 		}
 	}
 
-	elements.showNewRoomModal[0].addEventListener('click', function(e) {
+	function cleanNewRoomForm() {
+		elements.roomPasswordField.value = '';
+		elements.roomPasswordRepeatField.value = '';
+		elements.roomCodeField.value = '';
+		elements.roomCodeRepeatField.value = '';
+	}
+
+	elements.showNewRoomModal[0].addEventListener('click', function() {
+		cleanNewRoomForm();
 		elements.roomNameField.focus();
+		elements.roomNameField.select();
 	});
 
-	elements.showNewRoomModal[1].addEventListener('click', function(e) {
+	elements.showNewRoomModal[1].addEventListener('click', function() {
+		cleanNewRoomForm();
 		elements.roomNameField.focus();
+		elements.roomNameField.select();
 	});
 
-	elements.showRemoveRoomModal[0].addEventListener('click', function(e) {
+	elements.showRemoveRoomModal[0].addEventListener('click', function() {
+
+		elements.codeInput.value = '';
+
 		if (elements.pTag) {
 			elements.codeInput.parentNode.removeChild(elements.pTag);
 			elements.pTag = undefined;
@@ -287,7 +304,10 @@ window.onload = function() {
 		elements.codeInput.focus();
 	});
 
-	elements.showRemoveRoomModal[1].addEventListener('click', function(e) {
+	elements.showRemoveRoomModal[1].addEventListener('click', function() {
+
+		elements.codeInput.value = '';
+
 		if (elements.pTag) {
 			elements.codeInput.parentNode.removeChild(elements.pTag);
 			elements.pTag = undefined;
@@ -456,6 +476,7 @@ window.onload = function() {
 	});
 
 	socket.on('openRoomPasswordModal', function() {
+		elements.passwordInput.value = '';
 		elements.showRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
 		elements.passwordInput.focus();
 	});
@@ -685,8 +706,7 @@ window.onload = function() {
 		var li = getNode('.' + userId, true);
 		var img = document.createElement('img');
 		img.src = 'images/pen.gif';
-		img.style['margin-left'] = '10px';
-		img.style.width = '20px';
+		img.className = 'userIsTypingIcon';
 		li[0].appendChild(img);
 		li[1].appendChild(img.cloneNode());
 	});
@@ -748,26 +768,33 @@ window.onload = function() {
 		}
 	});
 
+	socket.on('disablePrivateConversation', function (message) {
+		toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+	});
+
 	function privateConversationHandler(e, cancelPrivateConversation) {
-		var userItems = getNode('.privateConversation', true); 
-		if (userItems.length !== 0) {
-			var oldUserItems = [userItems[0].parentNode, userItems[1].parentNode];
+
+		var privateConversationIcons = getNode('.privateConversation', true); 
+
+		if (privateConversationIcons.length !== 0) {
+			var oldUserItems = [privateConversationIcons[0].parentNode, privateConversationIcons[1].parentNode];
 			oldUserItems[0].classList.remove('activeItem');
 			oldUserItems[1].classList.remove('activeItem');
 			oldUserItems[0].addEventListener('click', privateMessageHandler);
 			oldUserItems[1].addEventListener('click', privateMessageHandler);
 
-			oldUserItems[0].removeChild(userItems[0]);
-			oldUserItems[1].removeChild(userItems[1]);
+			oldUserItems[0].removeChild(privateConversationIcons[0]);
+			oldUserItems[1].removeChild(privateConversationIcons[1]);
 		}
 
 		if (cancelPrivateConversation) {
+			socket.emit('disablePrivateConversation', userIdForPrivateConversation);
 			userIdForPrivateConversation = null;
 			elements.messageInput.placeholder = 'Message';
 			return;
 		}
 
-		userItems = getNode('.' + userIdForPrivateConversation, true);
+		var userItems = getNode('.' + userIdForPrivateConversation, true);
 		userItems[0].classList.add('activeItem');
 		userItems[1].classList.add('activeItem');
 

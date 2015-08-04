@@ -31,11 +31,11 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				people.find({ room: 'global' }).toArray(function(err, peopleData) {
 					if (err) return err;
 
-					for(var i = 0; i < peopleData.length; ++i) {
-						if (peopleData[i].status === 'doctor') {
-							peopleData[i].name += '(doctor)';
-						}
-					}
+					// for(var i = 0; i < peopleData.length; ++i) {
+					// 	if (peopleData[i].status === 'doctor') {
+					// 		peopleData[i].name += '(doctor)';
+					// 	}
+					// }
 
 					messages.find({ room: 'global' }).toArray(function(err, messagesData) {
 						if (err) return err;
@@ -58,37 +58,46 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				return;
 			}
 
-			var status = 'patient';
-			socket.status = 'patient';
-			if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
-				socket.emit('warning', { identificationCode: ' ', message: 'Identification code is wrong!' });
-				return;
-			} else if (userData.identificationCode === '1') {
-				status = 'doctor';
-				socket.status = 'doctor';
-				socket.subscribtions = [];
-			}
+			people.find({ name: userData.userName }).toArray(function (err, usersInfo) {
+				if (err) return err;
 
-			var user = {
-				_id: '_' + socket.id,
-				name: userData.userName,
-				room: 'global',
-				status: status,
-				subscribtions: []
-			};
-
-			people.insert(user);
-			rooms.update({ name: 'global' }, { $inc: { peopleCount: 1 } });
-			rooms.find({ name: 'global' }).toArray(function(err, roomsData) {
-				var room = roomsData[0];
-
-				var userName = user.name;
-				if (user.status === 'doctor') {
-					user.name += '(doctor)';
+				if (usersInfo.length !== 0) {
+					socket.emit('warning', { message: 'User with name "' + userData.userName + '" already exists!' });
+					return;
 				}
-				socket.broadcast.emit('joined', { room: room, user: user, message: user.name + ' joined chat.' });
-				user.name = userName + '(you)';
-				socket.emit('joined', { room: room, user: user, status: status });
+
+				var status = 'patient';
+				socket.status = 'patient';
+				if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
+					socket.emit('warning', { identificationCode: ' ', message: 'Identification code is wrong!' });
+					return;
+				} else if (userData.identificationCode === '1') {
+					status = 'doctor';
+					socket.status = 'doctor';
+					socket.subscribtions = [];
+				}
+
+				var user = {
+					_id: '_' + socket.id,
+					name: userData.userName,
+					room: 'global',
+					status: status,
+					subscribtions: []
+				};
+
+				people.insert(user);
+				rooms.update({ name: 'global' }, { $inc: { peopleCount: 1 } });
+				rooms.find({ name: 'global' }).toArray(function(err, roomsData) {
+					var room = roomsData[0];
+
+					// var userName = user.name;
+					// if (user.status === 'doctor') {
+					// 	user.name += '(doctor)';
+					// }
+					socket.broadcast.emit('joined', { room: room, user: user, message: user.name + ' joined chat.' });
+					// user.name = userName + '(you)';
+					socket.emit('joined', { room: room, user: user, status: status });
+				});
 			});
 		});
 
@@ -130,38 +139,47 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				return;
 			}
 
-			if (data.roomPassword !== data.roomPasswordRepeat) {
-				socket.emit('warning', { roomName: data.roomName, message: 'Password confirmation doesn\'t match password!' });
-				return;
-			}
+			rooms.find({ name: data.roomName }).toArray(function (err, roomsInfo) {
+				if (err) return err;
 
-			if (data.roomCode !== data.roomCodeRepeat) {
-				socket.emit('warning', { roomName: data.roomName, message: 'Room code confirmation doesn\'t match room code!' });
-				return;
-			}
+				if (roomsInfo.length !== 0) {
+					socket.emit('warning', { message: 'Room with name "' + data.roomName + '" already exists!' });
+					return;
+				}
 
-			var roomType = 'public';
-			if (data.roomPassword !== '') {
-				roomType = 'private';
-			}
+				if (data.roomPassword !== data.roomPasswordRepeat) {
+					socket.emit('warning', { roomName: data.roomName, message: 'Password confirmation doesn\'t match password!' });
+					return;
+				}
 
-			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
+				if (data.roomCode !== data.roomCodeRepeat) {
+					socket.emit('warning', { roomName: data.roomName, message: 'Room code confirmation doesn\'t match room code!' });
+					return;
+				}
 
-				var user = users[0];
+				var roomType = 'public';
+				if (data.roomPassword !== '') {
+					roomType = 'private';
+				}
 
-				var room = {
-					_id:         '_' + uuid.v1(),
-					name:        data.roomName,
-					password:    data.roomPassword,
-					code:        data.roomCode,
-					creatorId:   user._id,
-					peopleCount: 0
-				};
+				people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 
-				rooms.insert(room);
+					var user = users[0];
 
-				socket.emit('createRoom', { room: room });
-				socket.broadcast.emit('createRoom', { room: room, message: user.name + ' added ' + roomType + ' room "' + data.roomName + '"' });
+					var room = {
+						_id:         '_' + uuid.v1(),
+						name:        data.roomName,
+						password:    data.roomPassword,
+						code:        data.roomCode,
+						creatorId:   user._id,
+						peopleCount: 0
+					};
+
+					rooms.insert(room);
+
+					socket.emit('createRoom', { room: room });
+					socket.broadcast.emit('createRoom', { room: room, message: user.name + ' added ' + roomType + ' room "' + data.roomName + '"' });
+				});
 			});
 		});
 
@@ -186,10 +204,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 							socket.broadcast.to(user.room).emit('changeRoom', { message: user.name + ' left room', whoLeft: user });
 							socket.leave(user.room);
-							var userName = user.name;
-							if (user.status === 'doctor') {
-								user.name += '(doctor)';
-							}
+							// var userName = user.name;
+							// if (user.status === 'doctor') {
+							// 	user.name += '(doctor)';
+							// }
 							clients.in(data.newRoom).emit('changeRoom', { user: user, message: user.name + ' joined room' });
 
 							rooms.update({ name: user.room }, { $inc: { peopleCount: -1 } });
@@ -200,16 +218,16 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 								oldRoomInfo = oldRoomInfo[0];
 								socket.broadcast.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
 
-								user.name = userName + '(you)';
+								// user.name = userName + '(you)';
 
 								people.find({ room: data.newRoom }).toArray(function(err, users) {
 									if (err) return err;
 
-									for(var i = 0; i < users.length; ++i) {
-										if (users[i].status === 'doctor') {
-											users[i].name += '(doctor)';
-										}
-									}
+									// for(var i = 0; i < users.length; ++i) {
+									// 	if (users[i].status === 'doctor') {
+									// 		users[i].name += '(doctor)';
+									// 	}
+									// }
 
 									messages.find({ room: data.newRoom }).toArray(function(err, messages) {
 										if (err) return err;
@@ -261,7 +279,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 									socket.broadcast.emit('removeRoom', { roomId: room._id, message: user.name + ' has removed "' + data.roomName + '" room.' });
 
-									user.name += '(you)';
+									// user.name += '(you)';
 
 									socket.emit('removeRoom', { self: true, roomId: room._id, user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'Room "' + data.roomName + '" has been removed successfully. You have been transferred to global room' });
 
@@ -275,7 +293,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 												if (peopleFromRemovedRoom[i]._id === '_' + clientId) {
 													user = peopleFromRemovedRoom[i];
 													name = user.name;
-													user.name += '(you)';
+													// user.name += '(you)';
 												}
 											}
 											allClients[clientId].emit('removeRoom', { user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'You have been transferred to global room.'});
@@ -310,14 +328,25 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			});
 		});
 
-		socket.on('establishPrivateConversation', function(userId) {
+		socket.on('establishPrivateConversation', function(userIdForPrivateConversation) {
 			people.find({ _id: '_' + socket.id }).toArray(function(err, users) {
 				if (err) return err;
 
 				var user = users[0];
 
-				var client = clients.sockets.connected[userId.slice(1)];
+				var client = clients.sockets.connected[userIdForPrivateConversation.slice(1)];
 				client.emit('establishPrivateConversation', user.name + ' established private conversation with you');
+			});
+		});
+
+		socket.on('disablePrivateConversation', function (userIdForPrivateConversation) {
+			people.find({ _id: '_' + socket.id }).toArray(function (err, users) {
+				if (err) return err;
+
+				var user = users[0];
+
+				var client = clients.sockets.connected[userIdForPrivateConversation.slice(1)];
+				client.emit('disablePrivateConversation', user.name + ' disabled private conversatin with you');
 			});
 		});
 
