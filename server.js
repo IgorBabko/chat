@@ -171,11 +171,9 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 				newRoomInfo = newRoomInfo[0];
 				if (newRoomInfo.password !== '' && data.newRoomPassword === undefined) {
 					socket.emit('openRoomPasswordModal');
-					return;
 				} else {
 					if (newRoomInfo.password !== '' && newRoomInfo.password !== data.newRoomPassword) {
 						socket.emit('warning', { message: 'Room password is wrong!' });
-						return;
 					} else {
 						var isRoomPrivate = false;
 						if (data.newRoomPassword) {
@@ -200,7 +198,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 							rooms.find({ name: user.room }).toArray(function(err, oldRoomInfo) {
 
 								oldRoomInfo = oldRoomInfo[0];
-								clients.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
+								socket.broadcast.emit('changeRoom', { forAllClients: true, oldRoomInfo: oldRoomInfo, newRoomInfo: newRoomInfo });
 
 								user.name = userName + '(you)';
 
@@ -232,20 +230,66 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 		socket.on('removeRoom', function(data) {
 			if (typeof data === 'string') {
-				people.find({ room: data }).count(function(error, peopleInRoom) {
+				people.find({ room: data }).count(function(err, peopleInRoom) {
+					if (err) return err;
 					socket.emit('removeRoom', { peopleCount: peopleInRoom - 1 });
 					return;
 				});
 			} else {
-				rooms.find({ room: data.activeRoomName }).toArray(function(err, roomsInfo) {
+				rooms.find({ name: data.roomName }).toArray(function(err, roomsInfo) {
 					var room = roomsInfo[0];
 					if (!room.code && data.code !== '' || room.code && room.code !== data.code) {
 						socket.emit('warning', { message: 'Room code is wrong!' });
 						return;
 					}
-					clients.emit('removeRoom', { message: 'Room "' + data.activeRoomName + '" has been deleted.' });
-					people.broadcast.to(data.activeRoomName).emit('removeRoom', { message: 'You have been transfered to global room.'});
-					people.update({ room: data.activeRoomName }, { $set: { room: 'global' } });
+
+					people.find({ room: data.roomName }).toArray(function (err, peopleFromRemovedRoom) {
+						if (err) return err;
+
+						socket.broadcast.to('global').emit('transferPeopleFromRemovedRoom', peopleFromRemovedRoom);
+
+						people.find({ _id: '_' + socket.id }).toArray(function (err, users) {
+							if (err) return err;
+
+							var user = users[0];
+
+							people.find({ room: 'global' }).toArray(function (err, peopleFromGlobalRoom) {
+								if (err) return err;
+
+								messages.find({ room: 'global' }).toArray(function (err, messagesFromGlobalRoom) {
+									if (err) return err;
+
+									socket.broadcast.emit('removeRoom', { roomId: room._id, message: user.name + ' has removed "' + data.roomName + '" room.' });
+
+									user.name += '(you)';
+
+									socket.emit('removeRoom', { self: true, roomId: room._id, user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'Room "' + data.roomName + '" has been removed successfully. You have been transferred to global room' });
+
+									var allClients = clients.sockets.connected;
+
+									var name = '';
+									for (var clientId in allClients) {
+										if (clientId !== socket.id && allClients[clientId].room === data.roomName) {
+											var len = peopleFromRemovedRoom.length;
+											for (var i = 0; i < len; ++i) {
+												if (peopleFromRemovedRoom[i]._id === '_' + clientId) {
+													user = peopleFromRemovedRoom[i];
+													name = user.name;
+													user.name += '(you)';
+												}
+											}
+											allClients[clientId].emit('removeRoom', { user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'You have been transferred to global room.'});
+
+											user.name = name;
+										}
+									}
+									people.update({ room: data.roomName }, { $set: { room: 'global' } }, { multi: true });
+									rooms.remove({ name: data.roomName });
+									messages.remove({ room: data.roomName });
+								});
+							});
+						});
+					});
 				});
 			}
 		});
@@ -272,9 +316,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				var user = users[0];
 
-				console.log(userId);
 				var client = clients.sockets.connected[userId.slice(1)];
-				console.log(client);
 				client.emit('establishPrivateConversation', user.name + ' established private conversation with you');
 			});
 		});

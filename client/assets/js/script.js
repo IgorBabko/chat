@@ -32,7 +32,6 @@ window.onload = function() {
 
 	function addMessage(messageDiv, data) {
 		var message = document.createElement('div');
-		console.log('self: ' + data.self);
 		if (data.isPrivate && data.self) {
 			message.innerHTML = '<p>to: <span class="name">' + data.addresseeName + '</span><em class="date">' + data.date + '</em></p><p>' + data.text + '</p><hr>';
 		} else if (data.isPrivate) {
@@ -106,9 +105,12 @@ window.onload = function() {
 
 	function getElements() {
 		var elements = {
+			sendRoomCodeButton:       getNode('#sendRoomCode'),
+			createRoomButton:         getNode('#createRoom'),
+			sendPasswordButton:       getNode('#sendPassword'),
 			joinButton:               getNode('#enterChat'),
-			privateConversationLink:  getNode('#privateConversationLink'),
 			sendMessageButton:        getNode('#sendMessage'),
+			privateConversationLink:  getNode('#privateConversationLink'),
 			roomMessagesLink:         getNode("#roomMessagesLink"),
 			privateMessagesLink:      getNode("#privateMessagesLink"),
 			closePrivateMessageModal: getNode('#closePrivateMessageModal'),
@@ -216,9 +218,14 @@ window.onload = function() {
 		}
 	}
 
+	// ------------------ refactoring tasks -------------------- //
+
 	// change keyup -> keypress
 	// chage img tags on background-image property
 	// make cloner
+	// exact names
+	// findOne method
+	// make len variable global
 
 	elements.privateMessageTextarea.addEventListener('keypress', function(e) {
 		if (e.ctrlKey && e.keyCode == 13) {
@@ -234,14 +241,25 @@ window.onload = function() {
 	});
 
 	elements.passwordInput.addEventListener('keyup', function(e) {
-		if (e.keyCode == 13) {
-			socket.emit('changeRoom', { newRoom: activeItemName, newRoomPassword: this.value });
-			this.value = '';
-		}
+		changeRoomFormSender(e);
 	});
 
+	function removeRoomFormSender(e) {
+		if (e.keyCode == 13 || e.type === 'click') {
+			socket.emit('removeRoom', { roomName: activeItemName, code: elements.codeInput.value });
+			elements.codeInput.value = '';
+		}
+	}
+
+	function changeRoomFormSender(e) {
+		if (e.keyCode == 13 || e.type === 'click') {
+			socket.emit('changeRoom', { newRoom: activeItemName, newRoomPassword: elements.passwordInput.value });
+			elements.passwordInput.value = '';
+		}
+	}
+
 	function newRoomFormSender(e) {
-		if (e.keyCode == 13) {
+		if (e.keyCode == 13 || e.type === 'click') {
 			socket.emit('createRoom', { roomName: elements.roomNameField.value, roomPassword: elements.roomPasswordField.value,
 										roomPasswordRepeat: elements.roomPasswordRepeatField.value, roomCode: elements.roomCodeField.value,
 										roomCodeRepeat: elements.roomCodeRepeatField.value });
@@ -252,44 +270,49 @@ window.onload = function() {
 		}
 	}
 
-	function removeRoomFormSender(e) {
-		if (e.keyCode == 13) {
-			socket.emit('removeRoom', { roomName: activeItemName, code: elements.codeInput.value });
-			elements.codeInput.value = '';
+	elements.showNewRoomModal[0].addEventListener('click', function(e) {
+		elements.roomNameField.focus();
+	});
+
+	elements.showNewRoomModal[1].addEventListener('click', function(e) {
+		elements.roomNameField.focus();
+	});
+
+	elements.showRemoveRoomModal[0].addEventListener('click', function(e) {
+		if (elements.pTag) {
+			elements.codeInput.parentNode.removeChild(elements.pTag);
+			elements.pTag = undefined;
 		}
-	}
+		socket.emit('removeRoom', activeItemName);
+		elements.codeInput.focus();
+	});
 
-	// elements.showNewRoomModal[0].addEventListener('click', function(e) {
-	// 	elements.roomNameField.focus();
-	// });
-
-	// elements.showNewRoomModal[1].addEventListener('click', function(e) {
-	// 	elements.roomNameField.focus();
-	// });
-
-	// elements.showRemoveRoomModal[0].addEventListener('click', function(e) {
-	// 	if (elements.pTag) {
-	// 		elements.codeInput.parentNode.removeChild(elements.pTag);
-	// 		elements.pTag = undefined;
-	// 	}
-	// 	socket.emit('removeRoom', activeItemName);
-	// 	elements.codeInput.focus();
-	// });
-
-	// elements.showRemoveRoomModal[1].addEventListener('click', function(e) {
-	// 	if (elements.pTag) {
-	// 		elements.codeInput.parentNode.removeChild(elements.pTag);
-	// 		elements.pTag = undefined;
-	// 	}
-	// 	socket.emit('removeRoom', activeItemName);
-	// 	elements.codeInput.focus();
-	// });
+	elements.showRemoveRoomModal[1].addEventListener('click', function(e) {
+		if (elements.pTag) {
+			elements.codeInput.parentNode.removeChild(elements.pTag);
+			elements.pTag = undefined;
+		}
+		socket.emit('removeRoom', activeItemName);
+		elements.codeInput.focus();
+	});
 
 	elements.roomNameField.addEventListener('keyup', function(e) {
 		newRoomFormSender(e);
 	});
 
 	elements.roomPasswordField.addEventListener('keyup', function(e) {
+		newRoomFormSender(e);
+	});
+
+	elements.roomPasswordRepeatField.addEventListener('keyup', function(e) {
+		newRoomFormSender(e);
+	});
+
+	elements.roomCodeField.addEventListener('keyup', function(e) {
+		newRoomFormSender(e);
+	});
+
+	elements.roomCodeRepeatField.addEventListener('keyup', function(e) {
 		newRoomFormSender(e);
 	});
 
@@ -303,7 +326,70 @@ window.onload = function() {
 			pTag.innerHTML = 'There\'re <strong>' + data.peopleCount + '</strong> men at this room. When room gets removed all people will be moved to "global" room';
 			elements.codeInput.parentNode.insertBefore(pTag, elements.codeInput);
 			elements.pTag = pTag;
-			return;
+		} else {
+
+			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+
+			if (data.self) {
+				elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
+			}
+
+			if (data.roomId) {
+				var removedRoomItems = getNode('.' + data.roomId, true);
+				removedRoomItems[0].parentNode.removeChild(removedRoomItems[0]);
+				removedRoomItems[1].parentNode.removeChild(removedRoomItems[1]);
+			}
+
+			if (data.user) {
+
+				var i;
+				elements.activeItem = getNode('.roomsSidebar ul li:first-child', true);
+				elements.activeItem[0].classList.add('activeItem');
+				elements.activeItem[1].classList.add('activeItem');
+
+				elements.peopleLists[0].innerHTML = '';
+				elements.peopleLists[1].innerHTML = '';
+				elements.messageDiv.innerHTML = '';
+
+				var len;
+
+				if (data.peopleFromGlobalRoom.length !== 0) {
+					len = data.peopleFromGlobalRoom.length;
+					for(i = 0; i < len; ++i) {
+						personItems = addListItem(elements.peopleLists, data.peopleFromGlobalRoom[i]);
+						personItems[0].addEventListener('click', privateMessageHandler);
+						personItems[1].addEventListener('click', privateMessageHandler);
+					}
+				}
+
+				if (data.peopleFromRemovedRoom.length !== 0) {
+					len = data.peopleFromRemovedRoom.length;
+					for(i = 0; i < len; ++i) {
+						if ('_' + socket.id !== data.peopleFromRemovedRoom[i]._id) {
+							personItems = addListItem(elements.peopleLists, data.peopleFromRemovedRoom[i]);
+							personItems[0].addEventListener('click', privateMessageHandler);
+							personItems[1].addEventListener('click', privateMessageHandler);
+						}
+					}
+				}
+
+				if (data.messages.length !== 0) {
+					for(i = 0; i < data.messages.length; ++i) {
+						addMessage(elements.messageDiv, data.messages[i]);
+					}
+				}
+
+				addListItem(elements.peopleLists, data.user);
+			}
+		}
+	});
+
+	socket.on('transferPeopleFromRemovedRoom', function (peopleFromRemovedRoom) {
+		var len = peopleFromRemovedRoom.length;
+		for(var i = 0; i < len; ++i) {
+			personItems = addListItem(elements.peopleLists, peopleFromRemovedRoom[i]);
+			personItems[0].addEventListener('click', privateMessageHandler);
+			personItems[1].addEventListener('click', privateMessageHandler);
 		}
 	});
 
@@ -515,7 +601,10 @@ window.onload = function() {
 			}
 
 			var subscribtionButtons = getNode('.subscribtionButton', true);
-			for(var i = 0; i < subscribtionButtons.length; ++i) {
+
+			var len = subscribtionButtons.length;
+
+			for(var i = 0; i < len; ++i) {
 				subscribtionButtons[i].addEventListener('mouseenter', function(e) {
 					if (this.classList.contains('subscribed')) {
 						this.src = '/images/unsubscribe.png';
@@ -679,7 +768,6 @@ window.onload = function() {
 		}
 
 		userItems = getNode('.' + userIdForPrivateConversation, true);
-		console.log(userItems);
 		userItems[0].classList.add('activeItem');
 		userItems[1].classList.add('activeItem');
 
@@ -737,7 +825,7 @@ window.onload = function() {
 	});
 
 	socket.on('getUserName', function(userName) {
-		elements.messageInput.placeholder = 'Message to ' + userName;
+		elements.messageInput.placeholder = 'Private message to ' + userName;
 	});
 
 	socket.on('left', function(data) {
@@ -755,6 +843,18 @@ window.onload = function() {
 			socket.emit('joined', { userName: elements.nameInput.value, identificationCode: elements.identificationCodeInput.value });
 		}
 	}
+
+	elements.sendRoomCodeButton.addEventListener('click', function (e) {
+		removeRoomFormSender(e);
+	});
+
+	elements.createRoomButton.addEventListener('click', function (e) {
+		newRoomFormSender(e);
+	});
+
+	elements.sendPasswordButton.addEventListener('click', function (e) {
+		changeRoomFormSender(e);
+	});
 
 	elements.joinButton.addEventListener('click', function(e) {
 		joinedHandler(e);
