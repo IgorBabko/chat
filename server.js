@@ -96,9 +96,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					// if (user.status === 'doctor') {
 					// 	user.name += '(doctor)';
 					// }
-					socket.broadcast.emit('joined', { room: room, user: user, message: user.name + ' joined chat.' });
+					socket.broadcast.in('global').emit('joined', { user: user, message: user.name + ' joined chat.' });
 					// user.name = userName + '(you)';
-					socket.emit('joined', { room: room, user: user, status: status });
+					socket.emit('joined', { user: user, status: status });
+					clients.emit('joined', { room: room });
 				});
 			});
 		});
@@ -117,7 +118,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 				rooms.find({ name: whoLeft.room }).toArray(function(err, roomsData) {
 					var room = roomsData[0];
-					clients.in(whoLeft.room).emit('left', { room: room, user: whoLeft, message: whoLeft.name + ' left chat.' });
+					clients.in(whoLeft.room).emit('left', { user: whoLeft, message: whoLeft.name + ' left chat.' });
+					clients.emit('left', { room: room });
 					people.remove({ _id: whoLeft._id });
 				});
 			});

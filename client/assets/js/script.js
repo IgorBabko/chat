@@ -612,75 +612,72 @@ window.onload = function() {
 	socket.on('joined', function(data) {
 		if (data.message) {
 			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
-		} else {
-			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
-		}
 
-		if (data.status === 'doctor') {
-			socket.status = 'doctor';
-			var roomItems = getNode('.roomsSidebar li + li', true);
-			for(var i = 0; i < roomItems.length; ++i) {
-				var subscribtionButton = document.createElement('img');
-				subscribtionButton.src = '/images/subscribtion.png';
-				subscribtionButton.className = 'subscribtionButton';
-				roomItems[i].appendChild(subscribtionButton);
-			}
-
-			var subscribtionButtons = getNode('.subscribtionButton', true);
-
-			var len = subscribtionButtons.length;
-
-			for(var i = 0; i < len; ++i) {
-				subscribtionButtons[i].addEventListener('mouseenter', function(e) {
-					if (this.classList.contains('subscribed')) {
-						this.src = '/images/unsubscribe.png';
-					} else {
-						this.src = '/images/subscribe.png';
-					}
-				});
-				subscribtionButtons[i].addEventListener('mouseleave', function(e) {
-					if (this.classList.contains('subscribed')) {
-						this.src = '/images/subscribed.png';
-					} else {
-						this.src = '/images/subscribtion.png';
-					}
-				});
-
-				subscribtionButtons[i].addEventListener('click', function(e) {
-					e.stopPropagation();
-
-					var roomItemClass = this.parentNode.classList[0];
-					var subscribtionButtons = getNode('.' + roomItemClass + ' .subscribtionButton', true);
-					var roomName = this.parentNode.firstChild.textContent;
-					if (!this.classList.contains('subscribed')) {
-						subscribtionButtons[0].src = '/images/subscribed.png';
-						subscribtionButtons[1].src = '/images/subscribed.png';
-						subscribtionButtons[0].className += ' subscribed';
-						subscribtionButtons[1].className += ' subscribed';
-						socket.emit('subscribe', roomName);
-					} else {
-						subscribtionButtons[0].src = '/images/subscribtion.png';
-						subscribtionButtons[1].src = '/images/subscribtion.png';
-						subscribtionButtons[0].className = 'subscribtionButton';
-						subscribtionButtons[1].className = 'subscribtionButton';
-						socket.emit('unsubscribe', roomName);
-					}
-				});
-			}
-		}
-
-		window.onunload = function() {
-			socket.emit('left');
-		};
-
-		updatePeopleCounters(data.room);
-
-		if (data.message) {
 			var personItems = addListItem(elements.peopleLists, data.user);
 			personItems[0].addEventListener('click', privateMessageHandler);
 			personItems[1].addEventListener('click', privateMessageHandler);
-		} else {
+		} else if (data.status) {
+
+			if (data.status === 'doctor') {
+				socket.status = 'doctor';
+				var roomItems = getNode('.roomsSidebar li + li', true);
+				for(var i = 0; i < roomItems.length; ++i) {
+					var subscribtionButton = document.createElement('img');
+					subscribtionButton.src = '/images/subscribtion.png';
+					subscribtionButton.className = 'subscribtionButton';
+					roomItems[i].appendChild(subscribtionButton);
+				}
+
+				var subscribtionButtons = getNode('.subscribtionButton', true);
+
+				var len = subscribtionButtons.length;
+
+				for(var i = 0; i < len; ++i) {
+					subscribtionButtons[i].addEventListener('mouseenter', function(e) {
+						if (this.classList.contains('subscribed')) {
+							this.src = '/images/unsubscribe.png';
+						} else {
+							this.src = '/images/subscribe.png';
+						}
+					});
+					subscribtionButtons[i].addEventListener('mouseleave', function(e) {
+						if (this.classList.contains('subscribed')) {
+							this.src = '/images/subscribed.png';
+						} else {
+							this.src = '/images/subscribtion.png';
+						}
+					});
+
+					subscribtionButtons[i].addEventListener('click', function(e) {
+						e.stopPropagation();
+
+						var roomItemClass = this.parentNode.classList[0];
+						var subscribtionButtons = getNode('.' + roomItemClass + ' .subscribtionButton', true);
+						var roomName = this.parentNode.firstChild.textContent;
+						if (!this.classList.contains('subscribed')) {
+							subscribtionButtons[0].src = '/images/subscribed.png';
+							subscribtionButtons[1].src = '/images/subscribed.png';
+							subscribtionButtons[0].className += ' subscribed';
+							subscribtionButtons[1].className += ' subscribed';
+							socket.emit('subscribe', roomName);
+						} else {
+							subscribtionButtons[0].src = '/images/subscribtion.png';
+							subscribtionButtons[1].src = '/images/subscribtion.png';
+							subscribtionButtons[0].className = 'subscribtionButton';
+							subscribtionButtons[1].className = 'subscribtionButton';
+							socket.emit('unsubscribe', roomName);
+						}
+					});
+				}
+			}
+
+			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
 			addListItem(elements.peopleLists, data.user);
+			window.onunload = function() {
+				socket.emit('left');
+			};
+		} else if (data.room) {
+			updatePeopleCounters(data.room);
 		}
 	});
 
@@ -883,15 +880,18 @@ window.onload = function() {
 
 	socket.on('left', function(data) {
 
-		if (data.user._id === userIdForPrivateConversation) {
-			removePrivateConversationIcons(getNode('.privateConversation', true));
-			userIdForPrivateConversation = null;
-			elements.messageInput.placeholder = 'Message';
-		}
+		if (data.room) {
+			updatePeopleCounters(data.room);
+		} else {
+			if (data.user._id === userIdForPrivateConversation) {
+				removePrivateConversationIcons(getNode('.privateConversation', true));
+				userIdForPrivateConversation = null;
+				elements.messageInput.placeholder = 'Message';
+			}
 
-		updatePeopleCounters(data.room);
-		removeListItem(data.user._id);
-		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+			removeListItem(data.user._id);
+			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+		}
 	});
 
 	socket.on('disconnect', function() {
