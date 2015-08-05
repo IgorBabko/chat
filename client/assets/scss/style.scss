@@ -82,10 +82,18 @@ body {
 	border-bottom: 2px solid rgba(52, 82, 203, 0.51) !important;
 }
 
+/*.grid-block.vertical {
+	position: relative;
+}*/
+
 #messages, #privateMessages {
 	/*background-image: url('../images/notepad_texture.png');*/
 	background-repeat: repeat-y;
 	padding: 0 25px;
+	margin-top: 48px;
+	/*position: absolute;
+	top: 20px;
+	left: 0;*/
 }
 
 #privateMessages {
@@ -259,7 +267,7 @@ header, .avatar-section {
 hr {
 	background-color: rgba(52, 82, 203, 0.1);
 	border: 0;
-	height: 1px;
+	height: 1px !important;
 }
 
 .date {
@@ -352,7 +360,25 @@ hr {
 	color: green !important;
 }
 
+#changeMessagesLinks {
+	position: absolute;
+	width: 100%;
+}
+
+@media (max-width: 799px) {
+	#changeMessagesLinks {
+		top: 48px;
+	}
+
+	#messages {
+		margin-top: 96px;
+	}
+}
+
+
+
 .header {
+	position: absolute;
 	height: 48px;
 	width: 100%;
 	background: rgba(52, 82, 203, 0.51) !important;
