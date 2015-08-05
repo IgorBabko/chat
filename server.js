@@ -269,6 +269,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					people.find({ room: data.roomName }).toArray(function (err, peopleFromRemovedRoom) {
 						if (err) return err;
 
+						var peopleCountInRemovedRoom = peopleFromRemovedRoom.length;
+
 						socket.broadcast.to('global').emit('transferPeopleFromRemovedRoom', peopleFromRemovedRoom);
 
 						people.find({ _id: '_' + socket.id }).toArray(function (err, users) {
@@ -279,36 +281,47 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 							people.find({ room: 'global' }).toArray(function (err, peopleFromGlobalRoom) {
 								if (err) return err;
 
+								var peopleCountInGlobalRoom = peopleFromGlobalRoom.length;
+
+								rooms.update({ name: 'global' }, { $set: { peopleCount: peopleCountInRemovedRoom + peopleCountInGlobalRoom } });
+
 								messages.find({ room: 'global' }).toArray(function (err, messagesFromGlobalRoom) {
 									if (err) return err;
 
-									socket.broadcast.emit('removeRoom', { roomId: room._id, message: user.name + ' has removed "' + data.roomName + '" room.' });
+									rooms.find({ name: 'global' }).toArray(function (err, roomsInfo) {
+										if (err) return err;
 
-									// user.name += '(you)';
+										var globalRoomInfo = roomsInfo[0];
 
-									socket.emit('removeRoom', { self: true, roomId: room._id, user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'Room "' + data.roomName + '" has been removed successfully. You have been transferred to global room' });
+										socket.broadcast.emit('removeRoom', { roomId: room._id, message: user.name + ' has removed "' + data.roomName + '" room.' });
 
-									var allClients = clients.sockets.connected;
+										// user.name += '(you)';
 
-									var name = '';
-									for (var clientId in allClients) {
-										if (clientId !== socket.id && allClients[clientId].room === data.roomName) {
-											var len = peopleFromRemovedRoom.length;
-											for (var i = 0; i < len; ++i) {
-												if (peopleFromRemovedRoom[i]._id === '_' + clientId) {
-													user = peopleFromRemovedRoom[i];
-													name = user.name;
-													// user.name += '(you)';
+										socket.emit('removeRoom', { self: true, roomId: room._id, user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'Room "' + data.roomName + '" has been removed successfully. You have been transferred to global room' });
+
+										var allClients = clients.sockets.connected;
+
+										var name = '';
+										for (var clientId in allClients) {
+											if (clientId !== socket.id && allClients[clientId].room === data.roomName) {
+												var len = peopleFromRemovedRoom.length;
+												for (var i = 0; i < len; ++i) {
+													if (peopleFromRemovedRoom[i]._id === '_' + clientId) {
+														user = peopleFromRemovedRoom[i];
+														name = user.name;
+														// user.name += '(you)';
+													}
 												}
-											}
-											allClients[clientId].emit('removeRoom', { user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'You have been transferred to global room.'});
+												allClients[clientId].emit('removeRoom', { user: user, peopleFromRemovedRoom: peopleFromRemovedRoom, peopleFromGlobalRoom: peopleFromGlobalRoom, messages: messagesFromGlobalRoom, message: 'You have been transferred to global room.'});
 
-											user.name = name;
+												user.name = name;
+											}
 										}
-									}
-									people.update({ room: data.roomName }, { $set: { room: 'global' } }, { multi: true });
-									rooms.remove({ name: data.roomName });
-									messages.remove({ room: data.roomName });
+										people.update({ room: data.roomName }, { $set: { room: 'global' } }, { multi: true });
+										rooms.remove({ name: data.roomName });
+										messages.remove({ room: data.roomName });
+										clients.emit('removeRoom', { globalRoomInfo: globalRoomInfo });
+									});
 								});
 							});
 						});

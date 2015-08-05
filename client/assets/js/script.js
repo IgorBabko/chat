@@ -230,6 +230,7 @@ window.onload = function() {
 	// fix date
 	// add tooltips on hover
 	// put focus on message input when changing between room and private messages
+	// remove outlines when pressing tab key to move between elements on page
 	// change keyup -> keypress
 	// chage img tags on background-image property
 	// make cloner
@@ -353,58 +354,62 @@ window.onload = function() {
 			elements.pTag = pTag;
 		} else {
 
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+			if (data.globalRoomInfo) {
+				updatePeopleCounters(data.globalRoomInfo);
+			} else {
+				toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 
-			if (data.self) {
-				elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
-			}
-
-			if (data.roomId) {
-				var removedRoomItems = getNode('.' + data.roomId, true);
-				removedRoomItems[0].parentNode.removeChild(removedRoomItems[0]);
-				removedRoomItems[1].parentNode.removeChild(removedRoomItems[1]);
-			}
-
-			if (data.user) {
-
-				var i;
-				elements.activeItem = getNode('.roomsSidebar ul li:first-child', true);
-				elements.activeItem[0].classList.add('activeItem');
-				elements.activeItem[1].classList.add('activeItem');
-
-				elements.peopleLists[0].innerHTML = '';
-				elements.peopleLists[1].innerHTML = '';
-				elements.messageDiv.innerHTML = '';
-
-				var len;
-
-				if (data.peopleFromGlobalRoom.length !== 0) {
-					len = data.peopleFromGlobalRoom.length;
-					for(i = 0; i < len; ++i) {
-						personItems = addListItem(elements.peopleLists, data.peopleFromGlobalRoom[i]);
-						personItems[0].addEventListener('click', privateMessageHandler);
-						personItems[1].addEventListener('click', privateMessageHandler);
-					}
+				if (data.self) {
+					elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
 				}
 
-				if (data.peopleFromRemovedRoom.length !== 0) {
-					len = data.peopleFromRemovedRoom.length;
-					for(i = 0; i < len; ++i) {
-						if ('_' + socket.id !== data.peopleFromRemovedRoom[i]._id) {
-							personItems = addListItem(elements.peopleLists, data.peopleFromRemovedRoom[i]);
+				if (data.roomId) {
+					var removedRoomItems = getNode('.' + data.roomId, true);
+					removedRoomItems[0].parentNode.removeChild(removedRoomItems[0]);
+					removedRoomItems[1].parentNode.removeChild(removedRoomItems[1]);
+				}
+
+				if (data.user) {
+
+					var i;
+					elements.activeItem = getNode('.roomsSidebar ul li:first-child', true);
+					elements.activeItem[0].classList.add('activeItem');
+					elements.activeItem[1].classList.add('activeItem');
+
+					elements.peopleLists[0].innerHTML = '';
+					elements.peopleLists[1].innerHTML = '';
+					elements.messageDiv.innerHTML = '';
+
+					var len;
+
+					if (data.peopleFromGlobalRoom.length !== 0) {
+						len = data.peopleFromGlobalRoom.length;
+						for(i = 0; i < len; ++i) {
+							personItems = addListItem(elements.peopleLists, data.peopleFromGlobalRoom[i]);
 							personItems[0].addEventListener('click', privateMessageHandler);
 							personItems[1].addEventListener('click', privateMessageHandler);
 						}
 					}
-				}
 
-				if (data.messages.length !== 0) {
-					for(i = 0; i < data.messages.length; ++i) {
-						addMessage(elements.messageDiv, data.messages[i]);
+					if (data.peopleFromRemovedRoom.length !== 0) {
+						len = data.peopleFromRemovedRoom.length;
+						for(i = 0; i < len; ++i) {
+							if ('_' + socket.id !== data.peopleFromRemovedRoom[i]._id) {
+								personItems = addListItem(elements.peopleLists, data.peopleFromRemovedRoom[i]);
+								personItems[0].addEventListener('click', privateMessageHandler);
+								personItems[1].addEventListener('click', privateMessageHandler);
+							}
+						}
 					}
-				}
 
-				addListItem(elements.peopleLists, data.user);
+					if (data.messages.length !== 0) {
+						for(i = 0; i < data.messages.length; ++i) {
+							addMessage(elements.messageDiv, data.messages[i]);
+						}
+					}
+
+					addListItem(elements.peopleLists, data.user);
+				}
 			}
 		}
 	});
