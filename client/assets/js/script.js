@@ -227,6 +227,8 @@ window.onload = function() {
 
 	// ------------------ refactoring tasks -------------------- //
 
+	// fix date
+	// put focus on message input when changing between room and private messages
 	// change keyup -> keypress
 	// chage img tags on background-image property
 	// make cloner
@@ -234,6 +236,8 @@ window.onload = function() {
 	// findOne method
 	// make len variable global
 	// on esc close all opened modals
+	// hide pen when somebody writes private message
+	// watch all connections between users into the database (like who's having private conversation with who etc.)
 
 	elements.privateMessageTextarea.addEventListener('keypress', function(e) {
 		if (e.ctrlKey && e.keyCode == 13) {
@@ -749,10 +753,20 @@ window.onload = function() {
 				toastr.success(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 				addMessage(elements.privateMessageDiv, data.message);
 			} else {
+
+				if (userIdForPrivateConversation && elements.privateMessageDiv.style.display === ''
+					|| elements.privateMessageDiv.style.display === 'none') {
+					elements.messageDiv.style.display = 'none';
+					elements.roomMessagesLink.classList.add('unactiveMessagesLink');
+
+					elements.privateMessageDiv.style.display = 'block';
+					elements.privateMessagesLink.classList.remove('unactiveMessagesLink');
+				}
+
 				addMessage(elements.privateMessageDiv, data.message);
+				elements.privateMessageDiv.scrollTop = elements.privateMessageDiv.scrollHeight;
 			}
 		} else {
-			addMessage(elements.messageDiv, data.message);
 
 			if (data.self) {
 				if (elements.privateMessageDiv.style.display === 'block') {
@@ -763,8 +777,10 @@ window.onload = function() {
 					elements.privateMessageDiv.style.display = 'none';
 					elements.privateMessagesLink.classList.add('unactiveMessagesLink');
 				}
-				elements.messageDiv.scrollTop = elements.messageDiv.scrollHeight;
 			}
+
+			addMessage(elements.messageDiv, data.message);
+			elements.messageDiv.scrollTop = elements.messageDiv.scrollHeight;
 		}
 	});
 
@@ -774,17 +790,18 @@ window.onload = function() {
 
 	function privateConversationHandler(e, cancelPrivateConversation) {
 
-		var privateConversationIcons = getNode('.privateConversation', true); 
+		var privateConversationIcons = getNode('.privateConversation', true);
 
 		if (privateConversationIcons.length !== 0) {
-			var oldUserItems = [privateConversationIcons[0].parentNode, privateConversationIcons[1].parentNode];
-			oldUserItems[0].classList.remove('activeItem');
-			oldUserItems[1].classList.remove('activeItem');
-			oldUserItems[0].addEventListener('click', privateMessageHandler);
-			oldUserItems[1].addEventListener('click', privateMessageHandler);
+			removePrivateConversationIcons(privateConversationIcons);
+			// var oldUserItems = [privateConversationIcons[0].parentNode, privateConversationIcons[1].parentNode];
+			// oldUserItems[0].removeChild(privateConversationIcons[0]);
+			// oldUserItems[1].removeChild(privateConversationIcons[1]);
+			// oldUserItems[0].classList.remove('activeItem');
+			// oldUserItems[1].classList.remove('activeItem');
+			// oldUserItems[0].addEventListener('click', privateMessageHandler);
+			// oldUserItems[1].addEventListener('click', privateMessageHandler);
 
-			oldUserItems[0].removeChild(privateConversationIcons[0]);
-			oldUserItems[1].removeChild(privateConversationIcons[1]);
 		}
 
 		if (cancelPrivateConversation) {
@@ -795,8 +812,8 @@ window.onload = function() {
 		}
 
 		var userItems = getNode('.' + userIdForPrivateConversation, true);
-		userItems[0].classList.add('activeItem');
-		userItems[1].classList.add('activeItem');
+		// userItems[0].classList.add('activeItem');
+		// userItems[1].classList.add('activeItem');
 
 		userItems[0].removeEventListener('click', privateMessageHandler);
 		userItems[1].removeEventListener('click', privateMessageHandler);
@@ -855,11 +872,29 @@ window.onload = function() {
 		elements.messageInput.placeholder = 'Private message to ' + userName;
 	});
 
+	function removePrivateConversationIcons(privateConversationIcons) {
+		var oldUserItems = [privateConversationIcons[0].parentNode, privateConversationIcons[1].parentNode];
+		oldUserItems[0].removeChild(privateConversationIcons[0]);
+		oldUserItems[1].removeChild(privateConversationIcons[1]);
+		oldUserItems[0].addEventListener('click', privateMessageHandler);
+		oldUserItems[1].addEventListener('click', privateMessageHandler);
+	}
+
 	socket.on('left', function(data) {
+
+		if (data.user._id === userIdForPrivateConversation) {
+			removePrivateConversationIcons(getNode('.privateConversation', true));
+			userIdForPrivateConversation = null;
+			elements.messageInput.placeholder = 'Message';
+		}
 
 		updatePeopleCounters(data.room);
 		removeListItem(data.user._id);
 		toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+	});
+
+	socket.on('disconnect', function() {
+		location.reload();
 	});
 
 	elements.showInputNameModal.dispatchEvent(new MouseEvent('click'));

@@ -15,6 +15,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 	var people   = db.collection('people');
 	var messages = db.collection('messages');
 
+	people.remove({});
+
 	app.get('/', function(req, res) {
 		var html = jade.renderFile(__dirname + '/build/index.jade');
 		res.send(html);
