@@ -228,6 +228,7 @@ window.onload = function() {
 	// ------------------ refactoring tasks -------------------- //
 
 	// fix date
+	// add tooltips on hover
 	// put focus on message input when changing between room and private messages
 	// change keyup -> keypress
 	// chage img tags on background-image property
