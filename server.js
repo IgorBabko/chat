@@ -385,14 +385,17 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					_id: '_' + uuid.v1(),
 					author: user.name,
 					text: data.message,
-					room: user.room,
+					isPrivate: false,
 					date: new Date().toISOString().replace(/T|(\..)/g, ' ')//new Date().toLocaleString().replace(/[PMA,]/g, '')
 				};
 
 				if (data.whoToSend) {
 					message.isPrivate = true;
 					message.addresseeId = data.whoToSend;
+				} else {
+					message.room = user.room;
 				}
+
 
 				messages.insert(message);
 

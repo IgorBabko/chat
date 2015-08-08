@@ -1,6 +1,21 @@
 window.onload = function() {
 
+	var warningSound = new Audio('/sounds/warning-sound.mp3');
+	var infoSound = new Audio('/sounds/info-sound.mp3');
+	var messageSound = new Audio('/sounds/message-sound.mp3');
+
 	var userId, userIdForPrivateConversation = null;
+
+	function notification(message, type, timeOut) {
+		timeOut = (timeOut !== undefined) ? timeOut : 3000;
+		if (!type || type === 'info') {
+			infoSound.play();
+			toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: timeOut, preventDuplicates: true });
+		} else if (type === 'warning') {
+			warningSound.play();
+			toastr.warning(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: timeOut, preventDuplicates: true });
+		}
+	}
 
 	function addListItem(lists, itemData, type) {
 		var li = document.createElement('li');
@@ -228,9 +243,7 @@ window.onload = function() {
 	// ------------------ refactoring tasks -------------------- //
 
 	// хешировать пароли
-	// now chat print all messages from room and also private messages in "public messages block"
 	// add close modal behavior on esc
-	// private messages (margin)
 	// fix date
 	// add sound on notification
 	// add tooltips on hover
@@ -368,7 +381,8 @@ window.onload = function() {
 			if (data.globalRoomInfo) {
 				updatePeopleCounters(data.globalRoomInfo);
 			} else {
-				toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+				notification(data.message, 'info', 15000);
+				// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 
 				if (data.self) {
 					elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
@@ -436,7 +450,8 @@ window.onload = function() {
 
 	socket.on('createRoom', function(data) {
 		if (data.message) {
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+			notification(data.message, 'info', 15000);
+			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		} else {
 			elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
 		}
@@ -595,7 +610,8 @@ window.onload = function() {
 				personItems[0].addEventListener('click', privateMessageHandler);
 				personItems[1].addEventListener('click', privateMessageHandler);
 			}
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+			notification(data.message, 'info', 15000);
+			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		}
 	});
 
@@ -627,7 +643,8 @@ window.onload = function() {
 
 	socket.on('joined', function(data) {
 		if (data.message) {
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+			notification(data.message, 'info', 15000);
+			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 
 			var personItems = addListItem(elements.peopleLists, data.user);
 			personItems[0].addEventListener('click', privateMessageHandler);
@@ -717,7 +734,8 @@ window.onload = function() {
 	});
 
 	socket.on('notifySubscriber', function (info) {
-		toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 0, preventDuplicates: true, closeHtml: '<button>hello</button>' });
+		notification(info, 'info', 60000);
+		// toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 0, preventDuplicates: true, closeHtml: '<button>hello</button>' });
 	});
 
 	socket.on('userIsTyping', function(userId) {
@@ -742,7 +760,9 @@ window.onload = function() {
 		if (data.identificationCode) {
 			elements.identificationCodeInput.value = '';
 		}
-		toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+
+		notification(data.message, 'warning', 3000);
+		// toastr.warning(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 	});
 
 	elements.roomMessagesLink.addEventListener('click', function(e) {
@@ -764,7 +784,8 @@ window.onload = function() {
 	socket.on('message', function(data) {
 		if (data.isPrivate) {
 			if (data.sender) {
-				toastr.success(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+				notification(data.sender + ' send you private message: "' + data.message.text + '".', 'info', 10000);
+				// toastr.success(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 				addMessage(elements.privateMessageDiv, data.message);
 			} else {
 
@@ -781,6 +802,8 @@ window.onload = function() {
 				elements.privateMessageDiv.scrollTop = elements.privateMessageDiv.scrollHeight;
 			}
 		} else {
+
+			messageSound.play();
 
 			if (data.self) {
 				if (elements.privateMessageDiv.style.display === 'block') {
@@ -799,7 +822,8 @@ window.onload = function() {
 	});
 
 	socket.on('disablePrivateConversation', function (message) {
-		toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+		notification(message, 'info', 0);
+		// toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 	});
 
 	function privateConversationHandler(e, cancelPrivateConversation) {
@@ -879,7 +903,8 @@ window.onload = function() {
 	});
 
 	socket.on('establishPrivateConversation', function(message) {
-		toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+		notification(message, 'info', 0);
+		// toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 	});
 
 	socket.on('getUserName', function(userName) {
@@ -906,7 +931,8 @@ window.onload = function() {
 			}
 
 			removeListItem(data.user._id);
-			toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+			notification(data.message, 'info', 15000);
+			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		}
 	});
 
