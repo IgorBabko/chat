@@ -227,7 +227,12 @@ window.onload = function() {
 
 	// ------------------ refactoring tasks -------------------- //
 
+	// хешировать пароли
+	// now chat print all messages from room and also private messages in "public messages block"
+	// add close modal behavior on esc
+	// private messages (margin)
 	// fix date
+	// add sound on notification
 	// add tooltips on hover
 	// put focus on message input when changing between room and private messages
 	// remove outlines when pressing tab key to move between elements on page
@@ -240,6 +245,12 @@ window.onload = function() {
 	// on esc close all opened modals
 	// hide pen when somebody writes private message
 	// watch all connections between users into the database (like who's having private conversation with who etc.)
+
+	// -------------- future features -----------------
+
+	// add file uploading
+	// add avatars
+	// add approvement button that message is red
 
 	elements.privateMessageTextarea.addEventListener('keypress', function(e) {
 		if (e.ctrlKey && e.keyCode == 13) {
