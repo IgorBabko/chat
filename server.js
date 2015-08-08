@@ -259,6 +259,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					return;
 				});
 			} else {
+				console.log('removeRoom');
 				rooms.find({ name: data.roomName }).toArray(function(err, roomsInfo) {
 					var room = roomsInfo[0];
 					if (!room.code && data.code !== '' || room.code && room.code !== data.code) {

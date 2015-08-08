@@ -6,9 +6,13 @@ window.onload = function() {
 
 	var userId, userIdForPrivateConversation = null;
 
+	var isPrivateMessageModalOpened = false, isRoomPasswordModalOpened = false, 
+		isNewRoomModalOpened = false, isRemoveRoomModalOpened = false;
+
 	function notification(message, type, timeOut) {
 		timeOut = (timeOut !== undefined) ? timeOut : 3000;
 		if (!type || type === 'info') {
+			console.log('info');
 			infoSound.play();
 			toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: timeOut, preventDuplicates: true });
 		} else if (type === 'warning') {
@@ -225,6 +229,7 @@ window.onload = function() {
 	function privateMessageHandler() {
 		userId = this.className;
 		elements.openPrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+		isPrivateMessageModalOpened = true;
 		elements.privateMessageTextarea.focus();
 		elements.privateMessageTextarea.select();
 	}
@@ -236,6 +241,7 @@ window.onload = function() {
 			socket.emit('message', { isMessagePrivate: true, whoToSend: userId, message: elements.privateMessageTextarea.value });
 		} else {
 			elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+			isPrivateMessageModalOpened = false;
 			socket.emit('message', { isMessagePrivate: true, whoToSend: userId, message: elements.privateMessageTextarea.value });
 		}
 	}
@@ -244,8 +250,9 @@ window.onload = function() {
 
 	// хешировать пароли
 	// add close modal behavior on esc
+	// add close buttons to individually close each block (.roomsSidebar and .peopleSidebar)
 	// fix date
-	// add sound on notification
+	// add sound on notification (done)
 	// add tooltips on hover
 	// put focus on message input when changing between room and private messages
 	// remove outlines when pressing tab key to move between elements on page
@@ -311,18 +318,22 @@ window.onload = function() {
 	}
 
 	elements.showNewRoomModal[0].addEventListener('click', function() {
+		isNewRoomModalOpened = true;
 		cleanNewRoomForm();
 		elements.roomNameField.focus();
 		elements.roomNameField.select();
 	});
 
 	elements.showNewRoomModal[1].addEventListener('click', function() {
+		isNewRoomModalOpened = true;
 		cleanNewRoomForm();
 		elements.roomNameField.focus();
 		elements.roomNameField.select();
 	});
 
 	elements.showRemoveRoomModal[0].addEventListener('click', function() {
+
+		isRemoveRoomModalOpened = true;
 
 		elements.codeInput.value = '';
 
@@ -335,6 +346,8 @@ window.onload = function() {
 	});
 
 	elements.showRemoveRoomModal[1].addEventListener('click', function() {
+
+		isRemoveRoomModalOpened = true;
 
 		elements.codeInput.value = '';
 
@@ -376,65 +389,67 @@ window.onload = function() {
 			pTag.innerHTML = 'There\'re <strong>' + data.peopleCount + '</strong> men at this room. When room gets removed all people will be moved to "global" room';
 			elements.codeInput.parentNode.insertBefore(pTag, elements.codeInput);
 			elements.pTag = pTag;
-		} else {
+		}
 
-			if (data.globalRoomInfo) {
-				updatePeopleCounters(data.globalRoomInfo);
-			} else {
-				notification(data.message, 'info', 15000);
-				// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+		if (data.globalRoomInfo) {
+			updatePeopleCounters(data.globalRoomInfo);
+		}
 
-				if (data.self) {
-					elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
+		if (data.message) {
+			notification(data.message, 'info', 15000);
+			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+
+			if (data.self) {
+				elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
+				isRemoveRoomModalOpened = false;
+			}
+
+			if (data.roomId) {
+				var removedRoomItems = getNode('.' + data.roomId, true);
+				removedRoomItems[0].parentNode.removeChild(removedRoomItems[0]);
+				removedRoomItems[1].parentNode.removeChild(removedRoomItems[1]);
+			}
+
+			if (data.user) {
+
+				var i;
+				elements.activeItem = getNode('.roomsSidebar ul li:first-child', true);
+				elements.activeItem[0].classList.add('activeItem');
+				elements.activeItem[1].classList.add('activeItem');
+
+				elements.peopleLists[0].innerHTML = '';
+				elements.peopleLists[1].innerHTML = '';
+				elements.messageDiv.innerHTML = '';
+
+				var len;
+
+				if (data.peopleFromGlobalRoom.length !== 0) {
+					len = data.peopleFromGlobalRoom.length;
+					for(i = 0; i < len; ++i) {
+						personItems = addListItem(elements.peopleLists, data.peopleFromGlobalRoom[i]);
+						personItems[0].addEventListener('click', privateMessageHandler);
+						personItems[1].addEventListener('click', privateMessageHandler);
+					}
 				}
 
-				if (data.roomId) {
-					var removedRoomItems = getNode('.' + data.roomId, true);
-					removedRoomItems[0].parentNode.removeChild(removedRoomItems[0]);
-					removedRoomItems[1].parentNode.removeChild(removedRoomItems[1]);
-				}
-
-				if (data.user) {
-
-					var i;
-					elements.activeItem = getNode('.roomsSidebar ul li:first-child', true);
-					elements.activeItem[0].classList.add('activeItem');
-					elements.activeItem[1].classList.add('activeItem');
-
-					elements.peopleLists[0].innerHTML = '';
-					elements.peopleLists[1].innerHTML = '';
-					elements.messageDiv.innerHTML = '';
-
-					var len;
-
-					if (data.peopleFromGlobalRoom.length !== 0) {
-						len = data.peopleFromGlobalRoom.length;
-						for(i = 0; i < len; ++i) {
-							personItems = addListItem(elements.peopleLists, data.peopleFromGlobalRoom[i]);
+				if (data.peopleFromRemovedRoom.length !== 0) {
+					len = data.peopleFromRemovedRoom.length;
+					for(i = 0; i < len; ++i) {
+						if ('_' + socket.id !== data.peopleFromRemovedRoom[i]._id) {
+							personItems = addListItem(elements.peopleLists, data.peopleFromRemovedRoom[i]);
 							personItems[0].addEventListener('click', privateMessageHandler);
 							personItems[1].addEventListener('click', privateMessageHandler);
 						}
 					}
-
-					if (data.peopleFromRemovedRoom.length !== 0) {
-						len = data.peopleFromRemovedRoom.length;
-						for(i = 0; i < len; ++i) {
-							if ('_' + socket.id !== data.peopleFromRemovedRoom[i]._id) {
-								personItems = addListItem(elements.peopleLists, data.peopleFromRemovedRoom[i]);
-								personItems[0].addEventListener('click', privateMessageHandler);
-								personItems[1].addEventListener('click', privateMessageHandler);
-							}
-						}
-					}
-
-					if (data.messages.length !== 0) {
-						for(i = 0; i < data.messages.length; ++i) {
-							addMessage(elements.messageDiv, data.messages[i]);
-						}
-					}
-
-					addListItem(elements.peopleLists, data.user);
 				}
+
+				if (data.messages.length !== 0) {
+					for(i = 0; i < data.messages.length; ++i) {
+						addMessage(elements.messageDiv, data.messages[i]);
+					}
+				}
+
+				addListItem(elements.peopleLists, data.user);
 			}
 		}
 	});
@@ -454,6 +469,7 @@ window.onload = function() {
 			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		} else {
 			elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
+			isNewRoomModalOpened = false;
 		}
 		var newRoomItem = addListItem(elements.roomLists, data.room, 'room');
 
@@ -514,6 +530,7 @@ window.onload = function() {
 	socket.on('openRoomPasswordModal', function() {
 		elements.passwordInput.value = '';
 		elements.showRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+		isRoomPasswordModalOpened = true;
 		elements.passwordInput.focus();
 	});
 
@@ -536,6 +553,7 @@ window.onload = function() {
 			var lockImgs;
 			if (data.isRoomPrivate) {
 				elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+				isRoomPasswordModalOpened = false;
 			}
 			if (data.newRoomInfo.password !== '') {
 
@@ -624,7 +642,8 @@ window.onload = function() {
 	elements.privateMessageDiv.addEventListener('click', panelHandler);
 	elements.messageInput.addEventListener('click', panelHandler);
 	document.addEventListener('keyup', function(e) {
-		if (e.keyCode == 27) {
+		if (e.keyCode == 27 && !(isPrivateMessageModalOpened || isRoomPasswordModalOpened
+			|| isNewRoomModalOpened || isRemoveRoomModalOpened)) {
 			panelHandler(e);
 		}
 	});
@@ -893,6 +912,7 @@ window.onload = function() {
 		userItems[1].appendChild(cancelPrivateConversationIconClone);
 
 		elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+		isPrivateMessageModalOpened = false;
 	}
 
 	elements.privateConversationLink.addEventListener('click', function(e) {
@@ -971,5 +991,23 @@ window.onload = function() {
 
 	elements.identificationCodeInput.addEventListener('keyup', function (e) {
 		joinedHandler(e);
+	});
+
+	window.addEventListener('keyup', function (e) {
+		if (e.keyCode === 27) {
+			if (isPrivateMessageModalOpened) {
+				elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+				isPrivateMessageModalOpened = false;
+			} else if (isRoomPasswordModalOpened) {
+				elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+				isRoomPasswordModalOpened = false;
+			} else if (isNewRoomModalOpened) {
+				elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
+				isNewRoomModalOpened = false;
+			} else if (isRemoveRoomModalOpened) {
+				elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
+				isRemoveRoomModalOpened = false;
+			}
+		}
 	});
 };
