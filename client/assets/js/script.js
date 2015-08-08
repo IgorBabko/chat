@@ -9,10 +9,11 @@ window.onload = function() {
 	var isPrivateMessageModalOpened = false, isRoomPasswordModalOpened = false, 
 		isNewRoomModalOpened = false, isRemoveRoomModalOpened = false;
 
+	var isPrivateMessagesBlockOpened = false;
+
 	function notification(message, type, timeOut) {
 		timeOut = (timeOut !== undefined) ? timeOut : 3000;
 		if (!type || type === 'info') {
-			console.log('info');
 			infoSound.play();
 			toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: timeOut, preventDuplicates: true });
 		} else if (type === 'warning') {
@@ -249,12 +250,12 @@ window.onload = function() {
 	// ------------------ refactoring tasks -------------------- //
 
 	// хешировать пароли
-	// add close modal behavior on esc
+	// add close modal behavior on esc (done)
 	// add close buttons to individually close each block (.roomsSidebar and .peopleSidebar)
 	// fix date
 	// add sound on notification (done)
 	// add tooltips on hover
-	// put focus on message input when changing between room and private messages
+	// put focus on message input when changing between room and private messages (in process)
 	// remove outlines when pressing tab key to move between elements on page
 	// change keyup -> keypress
 	// chage img tags on background-image property
@@ -661,6 +662,7 @@ window.onload = function() {
 	});
 
 	socket.on('joined', function(data) {
+		elements.messageInput.focus();
 		if (data.message) {
 			notification(data.message, 'info', 15000);
 			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
@@ -785,19 +787,31 @@ window.onload = function() {
 	});
 
 	elements.roomMessagesLink.addEventListener('click', function(e) {
-		elements.messageDiv.style.display = 'block';
-		elements.roomMessagesLink.classList.remove('unactiveMessagesLink');
+		if (isPrivateMessagesBlockOpened) {
+			elements.messageDiv.style.display = 'block';
+			elements.roomMessagesLink.classList.remove('unactiveMessagesLink');
 
-		elements.privateMessageDiv.style.display = 'none';
-		elements.privateMessagesLink.classList.add('unactiveMessagesLink');
+			elements.privateMessageDiv.style.display = 'none';
+			elements.privateMessagesLink.classList.add('unactiveMessagesLink');
+			elements.messageInput.select();
+			elements.messageInput.focus();
+
+			isPrivateMessagesBlockOpened = false;
+		}
 	});
 
 	elements.privateMessagesLink.addEventListener('click', function(e) {
-		elements.messageDiv.style.display = 'none';
-		elements.roomMessagesLink.classList.add('unactiveMessagesLink');
+		if (!isPrivateMessagesBlockOpened) {
+			elements.messageDiv.style.display = 'none';
+			elements.roomMessagesLink.classList.add('unactiveMessagesLink');
 
-		elements.privateMessageDiv.style.display = 'block';
-		elements.privateMessagesLink.classList.remove('unactiveMessagesLink');
+			elements.privateMessageDiv.style.display = 'block';
+			elements.privateMessagesLink.classList.remove('unactiveMessagesLink');
+			elements.messageInput.select();
+			elements.messageInput.focus();
+
+			isPrivateMessagesBlockOpened = true;
+		}
 	});
 
 	socket.on('message', function(data) {
@@ -815,6 +829,8 @@ window.onload = function() {
 
 					elements.privateMessageDiv.style.display = 'block';
 					elements.privateMessagesLink.classList.remove('unactiveMessagesLink');
+
+					isPrivateMessagesBlockOpened = true;
 				}
 
 				addMessage(elements.privateMessageDiv, data.message);
@@ -830,6 +846,8 @@ window.onload = function() {
 
 					elements.privateMessageDiv.style.display = 'none';
 					elements.privateMessagesLink.classList.add('unactiveMessagesLink');
+
+					isPrivateMessagesBlockOpened = false;
 				}
 			} else {
 				messageSound.play();
