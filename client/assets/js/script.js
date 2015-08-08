@@ -822,8 +822,6 @@ window.onload = function() {
 			}
 		} else {
 
-			messageSound.play();
-
 			if (data.self) {
 				if (elements.privateMessageDiv.style.display === 'block') {
 
@@ -833,6 +831,8 @@ window.onload = function() {
 					elements.privateMessageDiv.style.display = 'none';
 					elements.privateMessagesLink.classList.add('unactiveMessagesLink');
 				}
+			} else {
+				messageSound.play();
 			}
 
 			addMessage(elements.messageDiv, data.message);
