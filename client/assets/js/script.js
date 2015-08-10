@@ -249,13 +249,15 @@ window.onload = function() {
 
 	// ------------------ refactoring tasks -------------------- //
 
+	// choose standard font
+	// add date to some notifications
 	// хешировать пароли
 	// add close modal behavior on esc (done)
 	// add close buttons to individually close each block (.roomsSidebar and .peopleSidebar)
 	// fix date
 	// add sound on notification (done)
 	// add tooltips on hover
-	// put focus on message input when changing between room and private messages (in process)
+	// put focus on message input when changing between room and private messages (done)
 	// remove outlines when pressing tab key to move between elements on page
 	// change keyup -> keypress
 	// chage img tags on background-image property
@@ -662,7 +664,6 @@ window.onload = function() {
 	});
 
 	socket.on('joined', function(data) {
-		elements.messageInput.focus();
 		if (data.message) {
 			notification(data.message, 'info', 15000);
 			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
@@ -671,6 +672,8 @@ window.onload = function() {
 			personItems[0].addEventListener('click', privateMessageHandler);
 			personItems[1].addEventListener('click', privateMessageHandler);
 		} else if (data.status) {
+
+			elements.messageInput.focus();
 
 			if (data.status === 'doctor') {
 				socket.status = 'doctor';
@@ -796,6 +799,8 @@ window.onload = function() {
 			elements.messageInput.select();
 			elements.messageInput.focus();
 
+			elements.messageDiv.scrollTop = elements.messageDiv.scrollHeight;
+
 			isPrivateMessagesBlockOpened = false;
 		}
 	});
@@ -810,6 +815,8 @@ window.onload = function() {
 			elements.messageInput.select();
 			elements.messageInput.focus();
 
+			elements.privateMessageDiv.scrollTop = elements.privateMessageDiv.scrollHeight;
+
 			isPrivateMessagesBlockOpened = true;
 		}
 	});
@@ -817,7 +824,7 @@ window.onload = function() {
 	socket.on('message', function(data) {
 		if (data.isPrivate) {
 			if (data.sender) {
-				notification(data.sender + ' send you private message: "' + data.message.text + '".', 'info', 10000);
+				notification(data.sender + ' send you private message: "' + data.message.text + '".', 'info', 0);
 				// toastr.success(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 				addMessage(elements.privateMessageDiv, data.message);
 			} else {
@@ -938,6 +945,8 @@ window.onload = function() {
 		userIdForPrivateConversation = userId;
 		socket.emit('getUserName', userIdForPrivateConversation);
 		privateConversationHandler(e);
+
+		elements.messageInput.select();
 	});
 
 	socket.on('establishPrivateConversation', function(message) {
