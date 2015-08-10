@@ -131,52 +131,54 @@ window.onload = function() {
 
 	function getElements() {
 		var elements = {
-			sendRoomCodeButton:       getNode('#sendRoomCode'),
-			createRoomButton:         getNode('#createRoom'),
-			sendPasswordButton:       getNode('#sendPassword'),
-			joinButton:               getNode('#enterChat'),
-			sendMessageButton:        getNode('#sendMessage'),
-			privateConversationLink:  getNode('#privateConversationLink'),
-			roomMessagesLink:         getNode("#roomMessagesLink"),
-			privateMessagesLink:      getNode("#privateMessagesLink"),
-			closePrivateMessageModal: getNode('#closePrivateMessageModal'),
-			privateMessageDiv:        getNode('#privateMessages'),
-			privateMessageTextarea:   getNode('#privateMessage'),
-			sendPrivateMessageButton: getNode('#sendPrivateMessage'),
-			openPrivateMessageModal:  getNode('#showPrivateMessageModal'),
-			removeRoomModal:          getNode('#removeRoomModal'),
-			showNewRoomModal:         getNode('.showNewRoomModal', true),
-			showRemoveRoomModal:      getNode('.showRemoveRoomModal', true),
-			closeRemoveRoomModal:     getNode('#closeRemoveRoomModal'),
-			codeInput:                getNode('#code'),
-			showRoomPasswordModal:    getNode('#showRoomPasswordModal'),
-			closeRoomPasswordModal:   getNode('#closeRoomPasswordModal'),
-			passwordInput:            getNode('#passwordInput'),
-			roomNameField:            getNode('#roomName'),
-			roomPasswordField:        getNode('#roomPassword'),
-			roomPasswordRepeatField:  getNode('#roomPasswordRepeat'),
-			roomCodeField:            getNode('#roomCode'),
-			roomCodeRepeatField:      getNode('#roomCodeRepeat'),
-			showInputNameModal:       getNode('#showInputNameModal'),
-			closeInputNameModal:      getNode('#closeInputNameModal'),
-			closeNewRoomModal:        getNode('#closeNewRoomModal'),
-			messageInput:             getNode('.message-input input'),
-			messageDiv:               getNode('#messages'),
-			nameInput:                getNode('#name'),
-			identificationCodeInput:  getNode('#identificationCode'),
-			header:                   getNode('.header'),
-			roomLists:                getNode('.roomsSidebar ul', true),
-			peopleLists:              getNode('.peopleSidebar ul', true),
-			peopleSidebar:            getNode('.peopleSidebar'),
-			roomsSidebar:             getNode('.roomsSidebar'),
-			roomsSidebarSmall:        getNode('.roomsSidebarSmall'),
-			peopleSidebarSmall:       getNode('.peopleSidebarSmall'),
-			roomsSidebarContent:      getNode('.roomsSidebar section'),
-			peopleSidebarContent:     getNode('.peopleSidebar section'),
-			roomsButton:              getNode('.header img:nth-child(1)'),
-			peopleButton:             getNode('.header img:nth-child(2)'),
-			roomsIcon:                getNode('.roomsIcon'),
-			peopleIcon:               getNode('.peopleIcon')
+			closeRoomsSidebarSmallButton:  getNode('#closeRoomsSidebarSmallButton'),
+			closePeopleSidebarSmallButton: getNode('#closePeopleSidebarSmallButton'),
+			sendRoomCodeButton:            getNode('#sendRoomCode'),
+			createRoomButton:              getNode('#createRoom'),
+			sendPasswordButton:            getNode('#sendPassword'),
+			joinButton:                    getNode('#enterChat'),
+			sendMessageButton:             getNode('#sendMessage'),
+			privateConversationLink:       getNode('#privateConversationLink'),
+			roomMessagesLink:              getNode("#roomMessagesLink"),
+			privateMessagesLink:           getNode("#privateMessagesLink"),
+			closePrivateMessageModal:      getNode('#closePrivateMessageModal'),
+			privateMessageDiv:             getNode('#privateMessages'),
+			privateMessageTextarea:        getNode('#privateMessage'),
+			sendPrivateMessageButton:      getNode('#sendPrivateMessage'),
+			openPrivateMessageModal:       getNode('#showPrivateMessageModal'),
+			removeRoomModal:               getNode('#removeRoomModal'),
+			showNewRoomModal:              getNode('.showNewRoomModal', true),
+			showRemoveRoomModal:           getNode('.showRemoveRoomModal', true),
+			closeRemoveRoomModal:          getNode('#closeRemoveRoomModal'),
+			codeInput:                     getNode('#code'),
+			showRoomPasswordModal:         getNode('#showRoomPasswordModal'),
+			closeRoomPasswordModal:        getNode('#closeRoomPasswordModal'),
+			passwordInput:                 getNode('#passwordInput'),
+			roomNameField:                 getNode('#roomName'),
+			roomPasswordField:             getNode('#roomPassword'),
+			roomPasswordRepeatField:       getNode('#roomPasswordRepeat'),
+			roomCodeField:                 getNode('#roomCode'),
+			roomCodeRepeatField:           getNode('#roomCodeRepeat'),
+			showInputNameModal:            getNode('#showInputNameModal'),
+			closeInputNameModal:           getNode('#closeInputNameModal'),
+			closeNewRoomModal:             getNode('#closeNewRoomModal'),
+			messageInput:                  getNode('.message-input input'),
+			messageDiv:                    getNode('#messages'),
+			nameInput:                     getNode('#name'),
+			identificationCodeInput:       getNode('#identificationCode'),
+			header:                        getNode('.header'),
+			roomLists:                     getNode('.roomsSidebar ul', true),
+			peopleLists:                   getNode('.peopleSidebar ul', true),
+			peopleSidebar:                 getNode('.peopleSidebar'),
+			roomsSidebar:                  getNode('.roomsSidebar'),
+			roomsSidebarSmall:             getNode('.roomsSidebarSmall'),
+			peopleSidebarSmall:            getNode('.peopleSidebarSmall'),
+			roomsSidebarContent:           getNode('.roomsSidebar section'),
+			peopleSidebarContent:          getNode('.peopleSidebar section'),
+			roomsButton:                   getNode('.header img:nth-child(1)'),
+			peopleButton:                  getNode('.header img:nth-child(2)'),
+			roomsIcon:                     getNode('.roomsIcon'),
+			peopleIcon:                    getNode('.peopleIcon')
 		};
 		return elements;
 	}
@@ -638,6 +640,16 @@ window.onload = function() {
 
 	window.addEventListener('resize', function() {
 		transformSidebarsForSmallScreenSizes();
+	});
+
+	elements.closeRoomsSidebarSmallButton.addEventListener('click', function (e) {
+		elements.roomsButton.dispatchEvent(new MouseEvent('click'));
+		roomsOpened = false;
+	});
+
+	elements.closePeopleSidebarSmallButton.addEventListener('click', function (e) {
+		elements.peopleButton.dispatchEvent(new MouseEvent('click'));
+		peopleOpened = false;
 	});
 
 	elements.header.addEventListener('click', panelHandler);

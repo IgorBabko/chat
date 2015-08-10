@@ -486,6 +486,18 @@ input:focus, textarea:focus {
 	display: inline !important;
 }
 
-#newPrivateMessageIcon {
-	width: 20px;
+.roomsSidebarSmall .roomsSidebar, .peopleSidebarSmall .peopleSidebar {
+	position: relative;
 }
+
+#closeRoomsSidebarSmallButton, #closePeopleSidebarSmallButton {
+	position: absolute;
+	top: auto;
+	right: 10px;
+	bottom: 15px;
+}
+
+#closePeopleSidebarSmallButton {
+	left: 10px;
+}
+

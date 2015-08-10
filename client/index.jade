@@ -54,8 +54,9 @@ html(lang='en', ng-app='application')
 			a(id="sendRoomCode", href="#", class="button info") Go
 
 		div(class='grid-frame')
-			div(zf-panel='', class='small-5 roomsSidebarSmall', id='rooms')
+			div(zf-panel='', class='small-6 roomsSidebarSmall', id="rooms")
 				section(class='block-list roomsSidebar')
+					a(class='close-button', id="closeRoomsSidebarSmallButton") ×
 					div
 						i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
 						img(src='images/rooms1.gif', class='roomsIcon', alt='rooms')
@@ -65,8 +66,9 @@ html(lang='en', ng-app='application')
 						//- li(class='buttons')
 						//- 	a(zf-open='newRoomModal', class='showNewRoomModal success button') add
 						//- 	a(zf-open='removeRoomModal', class='showRemoveRoomModal alert button') remove
-			div(zf-panel='', class='small-5 peopleSidebarSmall', id='people', position='right')
+			div(zf-panel='', class='small-6 peopleSidebarSmall', id="people", position='right')
 				section(class='block-list peopleSidebar')
+					a(class='close-button', id="closePeopleSidebarSmallButton") ×
 					div
 						| people
 						img(src='images/people.aspx', class='peopleIcon', alt='people')
