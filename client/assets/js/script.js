@@ -1,5 +1,8 @@
 window.onload = function() {
 
+	var oldUserName = '';
+	var renameUserItem = null;
+
 	var warningSound = new Audio('/sounds/warning-sound.mp3');
 	var infoSound = new Audio('/sounds/info-sound.mp3');
 	var messageSound = new Audio('/sounds/message-sound.mp3');
@@ -20,6 +23,21 @@ window.onload = function() {
 			warningSound.play();
 			toastr.warning(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: timeOut, preventDuplicates: true });
 		}
+	}
+
+	function assignRenameHandlers(currentUserItems) {
+		currentUserItems[0].addEventListener('click', function (e) {
+			e.stopPropagation();
+			if (!renameUserItem) {
+				renameHandler(this);
+			}
+		});
+		currentUserItems[1].addEventListener('click', function (e) {
+			e.stopPropagation();
+			if (!renameUserItem) {
+				renameHandler(this);
+			}
+		});
 	}
 
 	function addListItem(lists, itemData, type) {
@@ -470,7 +488,8 @@ window.onload = function() {
 					}
 				}
 
-				addListItem(elements.peopleLists, data.user);
+				var currentUserItems = addListItem(elements.peopleLists, data.user);
+				assignRenameHandlers(currentUserItems);
 			}
 		}
 	});
@@ -640,7 +659,8 @@ window.onload = function() {
 					addMessage(elements.messageDiv, data.messages[i]);
 				}
 			}
-			addListItem(elements.peopleLists, data.user);
+			var currentUserItems = addListItem(elements.peopleLists, data.user);
+			assignRenameHandlers(currentUserItems);
 		} else {
 			if (data.whoLeft) {
 				removeListItem(data.whoLeft._id);
@@ -714,9 +734,6 @@ window.onload = function() {
 			}
 		});
 	}
-
-	var oldUserName = '';
-	var renameUserItem = null;
 
 	window.addEventListener('click', function (e) {
 		if (renameUserItem) {
@@ -811,18 +828,7 @@ window.onload = function() {
 
 			var currentUserItems = addListItem(elements.peopleLists, data.user);
 
-			currentUserItems[0].addEventListener('click', function (e) {
-				e.stopPropagation();
-				if (!renameUserItem) {
-					renameHandler(this);
-				}
-			});
-			currentUserItems[1].addEventListener('click', function (e) {
-				e.stopPropagation();
-				if (!renameUserItem) {
-					renameHandler(this);
-				}
-			});
+			assignRenameHandlers(currentUserItems);
 
 			window.onunload = function() {
 				socket.emit('left');

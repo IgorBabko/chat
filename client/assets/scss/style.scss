@@ -318,7 +318,7 @@ hr {
 }
 
 .roomsSidebar li:not(.activeItem), .roomsSidebar li:not(.activeItem) *,
-.peopleSidebar li:not(.activeItem):not(.meItem), .peopleSidebar li:not(.activeItem):not(.meItem) * {
+.peopleSidebar li:not(.activeItem), .peopleSidebar li:not(.activeItem) * {
 	cursor: pointer;
 }
 
