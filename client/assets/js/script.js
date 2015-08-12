@@ -691,6 +691,57 @@ window.onload = function() {
 		e.stopPropagation();
 	});
 
+	function renameHandler(currentUserItem) {
+
+		renameUserItem = currentUserItem;
+		renameUserItem.id = 'clearPaddingLeft';
+		renameUserItem.classList.add('renameItem');
+
+		var renameField = document.createElement('input');
+		var userNameSpan = renameUserItem.firstChild;
+		oldUserName = userNameSpan.textContent;
+		renameField.type = 'text';
+		renameField.id = 'renameInput';
+		renameField.value = oldUserName;
+		renameUserItem.innerHTML = '';
+		renameUserItem.appendChild(renameField);
+		renameField.focus();
+		renameField.select();
+
+		renameField.addEventListener('keyup', function (e) {
+			if (e.keyCode === 13) {
+				socket.emit('rename', this.value);
+			}
+		});
+	}
+
+	var oldUserName = '';
+	var renameUserItem = null;
+
+	window.addEventListener('click', function (e) {
+		if (renameUserItem) {
+			renameUserItem.innerHTML = '<span>' + oldUserName + '</span>';
+			renameUserItem.classList.remove('renameItem');
+			renameUserItem = null;
+		}
+	});
+
+	socket.on('rename', function (data) {
+		console.log('renamed');
+		if (data.self) {
+			renameUserItem.innerHTML = '<span>' + data.newUserName + '</span>';
+			renameUserItem.classList.remove('renameItem');
+			renameUserItem = null;
+		} else {
+			var renamedUserItems = getNode('.' + data.userId, true);
+			renamedUserItems[0].innerHTML = '<span>' + data.newUserName + '</span>';
+			renamedUserItems[1].innerHTML = '<span>' + data.newUserName + '</span>';
+
+			notification(data.message, 'info', 15000);
+		}
+
+	});
+
 	socket.on('joined', function(data) {
 		if (data.message) {
 			notification(data.message, 'info', 15000);
@@ -757,7 +808,22 @@ window.onload = function() {
 			}
 
 			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
-			addListItem(elements.peopleLists, data.user);
+
+			var currentUserItems = addListItem(elements.peopleLists, data.user);
+
+			currentUserItems[0].addEventListener('click', function (e) {
+				e.stopPropagation();
+				if (!renameUserItem) {
+					renameHandler(this);
+				}
+			});
+			currentUserItems[1].addEventListener('click', function (e) {
+				e.stopPropagation();
+				if (!renameUserItem) {
+					renameHandler(this);
+				}
+			});
+
 			window.onunload = function() {
 				socket.emit('left');
 			};
@@ -1050,6 +1116,13 @@ window.onload = function() {
 
 	window.addEventListener('keyup', function (e) {
 		if (e.keyCode === 27) {
+			if (renameUserItem) {
+				renameUserItem.innerHTML = '<span>' + oldUserName + '</span>';
+				renameUserItem.classList.remove('renameItem');
+				renameUserItem = null;
+				return;
+			}
+
 			if (isPrivateMessageModalOpened) {
 				elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
 				isPrivateMessageModalOpened = false;

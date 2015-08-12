@@ -23,6 +23,11 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 		res.send(html);
 	});
 
+	function isEmpty(value) {
+		var whitespacePattern = /^\s*$/;
+		return whitespacePattern.test(value);
+	}
+
 	clients.on('connection', function(socket) {
 
 		socket.join('global');
@@ -53,10 +58,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 			socket.room = 'global';
 
-			var whitespacePattern = /^\s*$/;
-			userData.userName = userData.userName.trim();
+			// var whitespacePattern = /^\s*$/;
+			// userData.userName = userData.userName.trim();
 
-			if (whitespacePattern.test(userData.userName)) {
+			if (isEmpty(userData.userName.trim())/*whitespacePattern.test(userData.userName)*/) {
 				socket.emit('warning', { message: 'Name should not be empty!' });
 				return;
 			}
@@ -137,9 +142,11 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 
 		socket.on('createRoom', function(data) {
 
-			var whitespacePattern = /^\s*$/;
+			// var whitespacePattern = /^\s*$/;
 
-			if (whitespacePattern.test(data.roomName)) {
+
+
+			if (isEmpty(data.roomName)/*whitespacePattern.test(data.roomName)*/) {
 				socket.emit('warning', { message: 'Room name should not be empty!' });
 				return;
 			}
@@ -369,10 +376,37 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 			});
 		});
 
-		socket.on('message', function(data) {
-			var whitespacePattern = /^\s*$/;
+		socket.on('rename', function (newUserName) {
+			if (isEmpty(newUserName)) {
+				socket.emit('warning', { message: 'User name should not be empty!' });
+			} else {
+				people.find({ name: newUserName }).toArray(function (err, users) {
+					if (err) return err;
 
-			if (whitespacePattern.test(data.message)) {
+					if (users.length !== 0 && users[0]._id === '_' + socket.id) {
+						socket.emit('warning', { message: 'You\'re already named "' + newUserName + '"!' });
+					} else if (users.length !== 0) {
+						socket.emit('warning', { message: 'User "' + newUserName + '" already exists!' });
+					} else {
+						people.find({ _id: '_' + socket.id }).toArray(function (err, users) {
+							if (err) return err;
+
+							var currentUser = users[0];
+
+							people.update({ _id: '_' + socket.id }, { $set: { name: newUserName } });
+							socket.broadcast.to(socket.room).emit('rename', { userId: currentUser._id, newUserName: newUserName, message: 'User "' + currentUser.name + '" changed name on "' + newUserName + '"' });
+							socket.emit('rename', { self: true, newUserName: newUserName });
+						});
+					}
+				});
+			}
+		});
+
+		socket.on('message', function(data) {
+			// var whitespacePattern = /^\s*$/;
+
+
+			if (isEmpty(data.message)/*whitespacePattern.test(data.message)*/) {
 				socket.emit('warning', { message: 'Message should not be empty!' });
 				return;
 			}

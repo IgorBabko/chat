@@ -413,8 +413,8 @@ hr {
 }
 
 .peopleSidebar li {
-	padding-left: 12px !important;
 	height: 44px;
+	padding-left: 10px !important;
 }
 
 .peopleSidebar li span {
@@ -502,3 +502,17 @@ input:focus, textarea:focus {
 	left: 10px;
 }
 
+.renameItem {
+	padding: 0 !important;
+}
+
+#renameInput {
+	height: 100%;
+	text-align: right;
+	background-color: #F0F3FE;
+	padding: 0 10px 0 0;
+}
+
+#clearPaddingLeft {
+	padding-left: 0 !important;
+}
