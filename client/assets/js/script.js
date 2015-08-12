@@ -58,12 +58,28 @@ window.onload = function() {
 
 	function addMessage(messageDiv, data) {
 		var message = document.createElement('div');
+
+		var messageDate = new Date(data.date);
+ 		var timezoneOffsetInHours = new Date().getTimezoneOffset() / 60;
+
+ 		// @TODO detect Locale
+
+		var dateString = messageDate.getDate();
+		var currentMonth = messageDate.getMonth() + 1;
+		if (('' + currentMonth).length === 1) {
+			currentMonth = '0' + currentMonth;
+		}
+		dateString += '.' + currentMonth;
+		dateString += '.' + (messageDate.getYear() - 100);
+		dateString += '  ' + (messageDate.getHours() - timezoneOffsetInHours);
+		dateString += ':' + messageDate.getMinutes();
+
 		if (data.isPrivate && data.self) {
-			message.innerHTML = '<p>to: <span class="name">' + data.addresseeName + '</span><em class="date">' + data.date + '</em></p><p>' + data.text + '</p><hr>';
+			message.innerHTML = '<p>to: <span class="name">' + data.addresseeName + '</span><em class="date">' + dateString + '</em></p><p>' + data.text + '</p><hr>';
 		} else if (data.isPrivate) {
-			message.innerHTML = '<p>from: <span class="name">' + data.author + '</span><em class="date">' + data.date + '</em></p><p>' + data.text + '</p><hr>';
+			message.innerHTML = '<p>from: <span class="name">' + data.author + '</span><em class="date">' + dateString + '</em></p><p>' + data.text + '</p><hr>';
 		} else {
-			message.innerHTML = '<p><span class="name">' + data.author + '</span><em class="date">' + data.date + '</em></p><p>' + data.text + '</p><hr>';
+			message.innerHTML = '<p><span class="name">' + data.author + '</span><em class="date">' + dateString + '</em></p><p>' + data.text + '</p><hr>';
 		}
 
 		messageDiv.appendChild(message);
@@ -97,10 +113,10 @@ window.onload = function() {
 	}
 
 	function transformSidebarsForSmallScreenSizes() {
-		if (window.outerWidth <= 640 && isScreenLarge) {
+		if (window.outerWidth <= 799 && isScreenLarge) {
 			isScreenLarge = false;
 		} 
-		if (window.outerWidth > 640 && !isScreenLarge) {
+		if (window.outerWidth > 799 && !isScreenLarge) {
 			isScreenLarge = true;
 			panelHandler();
 		}

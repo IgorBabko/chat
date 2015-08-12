@@ -387,7 +387,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function(err, db) {
 					author: user.name,
 					text: data.message,
 					isPrivate: false,
-					date: new Date().toISOString().replace(/T|(\..)/g, ' ')//new Date().toLocaleString().replace(/[PMA,]/g, '')
+					date: new Date().getTime()//new Date().toISOString().replace(/T|(\..)/g, ' ')//new Date().toLocaleString().replace(/[PMA,]/g, '')
 				};
 
 				if (data.whoToSend) {
