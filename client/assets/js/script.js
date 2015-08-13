@@ -773,7 +773,7 @@ window.onload = function() {
 
 			if (data.status === 'doctor') {
 				socket.status = 'doctor';
-				var roomItems = getNode('.roomsSidebar li + li', true);
+				var roomItems = getNode('.roomsSidebar li', true);
 				for(var i = 0; i < roomItems.length; ++i) {
 					var subscribtionButton = document.createElement('img');
 					subscribtionButton.src = '/images/subscribtion.png';
