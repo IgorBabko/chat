@@ -715,7 +715,6 @@ window.onload = function() {
 
 		renameUserItem = currentUserItem;
 		renameUserItem.id = 'clearPaddingLeft';
-		renameUserItem.classList.add('renameItem');
 
 		var renameField = document.createElement('input');
 		var userNameSpan = renameUserItem.firstChild;
@@ -738,7 +737,7 @@ window.onload = function() {
 	window.addEventListener('click', function (e) {
 		if (renameUserItem) {
 			renameUserItem.innerHTML = '<span>' + oldUserName + '</span>';
-			renameUserItem.classList.remove('renameItem');
+			renameUserItem.id = '';
 			renameUserItem = null;
 		}
 	});
@@ -747,7 +746,7 @@ window.onload = function() {
 		console.log('renamed');
 		if (data.self) {
 			renameUserItem.innerHTML = '<span>' + data.newUserName + '</span>';
-			renameUserItem.classList.remove('renameItem');
+			renameUserItem.id = '';
 			renameUserItem = null;
 		} else {
 			var renamedUserItems = getNode('.' + data.userId, true);
@@ -1124,7 +1123,7 @@ window.onload = function() {
 		if (e.keyCode === 27) {
 			if (renameUserItem) {
 				renameUserItem.innerHTML = '<span>' + oldUserName + '</span>';
-				renameUserItem.classList.remove('renameItem');
+				renameUserItem.id = '';
 				renameUserItem = null;
 				return;
 			}
