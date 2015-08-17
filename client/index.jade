@@ -88,6 +88,7 @@ html(lang='en', ng-app='application')
 				div(class='grid-block small-12 vertical')
 					div(class='hide-for-medium header')
 						img(zf-toggle='rooms', src='images/rooms1.gif', class='roomsIcon', alt='rooms')
+						| ! Be In Touch !
 						img(zf-toggle='people', src='images/people.aspx', class='peopleIcon', alt='people')
 					div(id="changeMessagesLinks")
 						a(id="roomMessagesLink") room messages
@@ -96,7 +97,7 @@ html(lang='en', ng-app='application')
 					div(class='grid-content', id="privateMessages")
 						// img(src='http://placehold.it/30x30')
 					div(class='message-input grid-content collapse shrink')
-						input(type='text', placeholder='Message')
+						input(type='text', placeholder='Message:')
 						a(href="#", class="button info", id="sendMessage") Send
 			div(class='grid-content medium-3 right show-for-medium peopleSidebar')
 				section(class='block-list')

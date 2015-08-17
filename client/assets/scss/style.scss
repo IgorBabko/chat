@@ -22,8 +22,13 @@
 /* mine */
 
 @font-face {
-	font-family: 'Monaco';
-	src: url('/fonts/monaco.ttf');
+	font-family: Monaco;
+	src: url(/fonts/monaco.ttf);
+}
+
+@font-face {
+	font-family: Consolas;
+	src: url(/fonts/consolas.ttf);
 }
 
 #sendMessage {
@@ -32,7 +37,7 @@
 	bottom: 0;
 	height: 100%;
 	margin: 0;
-	background-color: rgba(52, 82, 203, 0.51);
+	background-color: #97a7e4;
 	cursor: pointer;
 	color: white;
 }
@@ -57,7 +62,7 @@
 
 body {
 	background-color: white;
-	font-family: 'Monaco';
+	font-family: 'Consolas', sans-serif;
 }
 
 .modal {
@@ -65,26 +70,27 @@ body {
 }
 
 .unactiveMessagesLink {
-	color: black;
+	color: white !important;
 	font-size: 30px;
-	background: rgba(52, 82, 203, 0.1) !important;
+	background-color: #97a7e4 !important;
 	cursor: pointer !important;
+	border: none !important;
 }
 
 .unactiveMessagesLink:hover {
-	color: rgb(52, 82, 203) !important;
+	text-decoration: underline;
 }
 
 #changeMessagesLinks a {
-	padding-top: 15px;
+	line-height: 2.4;
 	width: 50%;
-	font-size: 16px;
+	font-size: 20px;
 	display: inline-block;
 	height: 48px;
 	text-align: center;
-	color: rgb(52, 82, 203);
+	color: #97A6E4;
 	cursor: default;
-	border-bottom: 2px solid rgba(52, 82, 203, 0.51) !important;
+	border-bottom: 1px solid #97a7e4;
 }
 
 /*.grid-block.vertical {
@@ -129,8 +135,7 @@ body {
 }
 
 .showNewRoomModal:hover, .showRemoveRoomModal:hover {
-	color: rgb(29, 131, 210);
-
+	color: rgb(52, 82, 203);
 }
 
 .showNewRoomModal, .showRemoveRoomModal {
@@ -151,17 +156,16 @@ body {
 }
 
 .block-list div {
-	background: rgba(52, 82, 203, 0.51);
+	background: #97a7e4;
 	color: white;
 	height: 48px;
 	font-size: 24px;
 	text-align: center;
 	line-height: 2.1;
-	/*border-bottom: 1px solid rgba(52, 82, 203, 0.51);*/
 }
 
 .block-list li {
-	border-bottom: 1px solid rgba(52, 82, 203, 0.3);
+	border-bottom: 1px solid rgba(52, 82, 203, 0.3) !important;
 }
 
 .message-input input, .message-input input:hover, .message-input input:focus {
@@ -192,7 +196,7 @@ header, .avatar-section {
 	float: right;
 	margin: 10px 0 0 0;
 	color: white;
-	background-color: rgba(52, 82, 203, 0.51);
+	background-color: #97a7e4;
 }
 
 #removeRoomModal p {
@@ -242,14 +246,16 @@ header, .avatar-section {
 }
 
 .privateConversation {
-	position: absolute;
-	top: 12px;
-	left: 10px;
 	cursor: pointer;
+	width: 20px;
+	float: left;
+	margin-top: 4px;
 }
 
-.privateConversation {
+.userIsTypingIcon {
+	float: left;
 	width: 20px;
+	margin: 4px 10px 0 0;
 }
 
 .roomsSidebar li:first-child img {
@@ -301,7 +307,8 @@ header, .avatar-section {
 }
 
 .name {
-	color: rgb(52, 82, 203);
+	color: rgb(112, 131, 210);
+	font-size: 1.1rem;
 }
 
 hr {
@@ -311,7 +318,7 @@ hr {
 }
 
 .date {
-	color: rgba(52, 82, 203, 0.51);
+	color: #97a7e4;
 	font-size: 10px;
 	float: right;
 }
@@ -327,7 +334,6 @@ hr {
 }
 
 .block-list ul {
-	padding-bottom: 50px;
 	color: rgb(52, 82, 203);
 }
 
@@ -341,7 +347,7 @@ hr {
 }
 
 .roomsSidebar li:not(.activeItem):hover, .peopleSidebar li:not(.activeItem):hover {
-	background-color: rgba(52, 82, 203, 0.10);
+	background-color: rgba(52, 82, 203, 0.10) !important;
 }
 
 .buttons {
@@ -366,20 +372,14 @@ hr {
 	padding: 0;
 }
 
-.grid-content.left {
+.roomsSidebar ul {
 	border-right: 1px solid rgba(52, 82, 203, 0.3);
 }
 
-.grid-content.right {
+.peopleSidebar ul {
 	border-left: 1px solid rgba(52, 82, 203, 0.3);
 }
 
-.userIsTypingIcon {
-	position: absolute;
-	top: 12px;
-	left: 10px;
-	width: 20px;
-}
 
 .toast-success {
 	background-color: rgba(52, 82, 203, 0.81);
@@ -393,6 +393,14 @@ hr {
 	color: #E22F2A !important;
 }
 
+.renameMark {
+	display: none !important;
+}
+
+.meItem:hover .renameMark {
+	display: inline-block;
+}
+
 .doctorItem span {
 	color: green !important;
 }
@@ -400,6 +408,7 @@ hr {
 #changeMessagesLinks {
 	position: absolute;
 	width: 100%;
+	background-color: white;
 }
 
 @media (max-width: 799px) {
@@ -416,8 +425,8 @@ hr {
 	position: absolute;
 	height: 48px;
 	width: 100%;
-	background: rgba(52, 82, 203, 0.51) !important;
-	color: black;
+	background: #97a7e4 !important;
+	color: white;
 	font-size: 24px;
 	text-align: center;
 	padding: 0;
@@ -451,8 +460,9 @@ hr {
 	position: relative;
 	min-height: 44px;
 	overflow: hidden;
-	padding: 12px 20px 12px 60px !important;
+	padding: 12px 20px 12px 16px !important;
 	text-align: right;
+	background-color: white !important;
 }
 
 .peopleSidebar li span {
@@ -474,6 +484,10 @@ hr {
 .block-list li > span {
 	padding: 0 !important;
 	line-height: 1.5;
+}
+
+.block-list li:first-child {
+	border: none;
 }
 
 ::-webkit-input-placeholder {
@@ -502,7 +516,7 @@ hr {
 }
 
 .close-button:hover {
-	color: rgba(52, 82, 203, .51);
+	color: #97a7e4;
 	-webkit-transition: color 200ms linear;
 	-moz-transition: color 200ms linear;
 	-o-transition: color 200ms linear;
@@ -517,10 +531,10 @@ input, textarea {
 
 input:focus, textarea:focus { 
 	outline:none;
-	border: 1px solid rgba(52, 82, 203, .51); 
-	box-shadow: 0px 0px 8px rgba(52, 82, 203, .51); 
-	-moz-box-shadow: 0px 0px 8px rgba(52, 82, 203, .51);
-	-webkit-box-shadow: 0px 0px 8px rgba(52, 82, 203, .51);  
+	border: 1px solid #97a7e4; 
+	box-shadow: 0px 0px 8px #97a7e4; 
+	-moz-box-shadow: 0px 0px 8px #97a7e4;
+	-webkit-box-shadow: 0px 0px 8px #97a7e4;  
 }​
 
 .block-list span {
@@ -530,7 +544,8 @@ input:focus, textarea:focus {
 
 .roomsSidebarSmall .roomsSidebar, .peopleSidebarSmall .peopleSidebar {
 	position: relative;
-	/*background: pink;*/
+	padding-bottom: 86px;
+	background: #EBEEFA;
 }
 
 #closeRoomsSidebarSmallButton, #closePeopleSidebarSmallButton {
@@ -538,6 +553,10 @@ input:focus, textarea:focus {
 	top: auto;
 	right: 10px;
 	bottom: 15px;
+}
+
+.block-list ul {
+	background-color: white;
 }
 
 #closePeopleSidebarSmallButton {
@@ -549,9 +568,18 @@ input:focus, textarea:focus {
 	text-align: right;
 	background-color: #F0F3FE;
 	cursor: default;
-	padding-right: 20px;
+	padding-right: 19px;
+	border: 1px solid #F0F3FE !important;
 }
 
 #clearPaddingLeft {
 	padding: 0 !important;
+}
+
+#peopleCountLeftInRoom {
+	color: red;
+}
+
+.messageText {
+	font-size: .9rem;
 }

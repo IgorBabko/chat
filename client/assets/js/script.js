@@ -93,11 +93,11 @@ window.onload = function() {
 		dateString += ':' + messageDate.getMinutes();
 
 		if (data.isPrivate && data.self) {
-			message.innerHTML = '<p>to: <span class="name">' + data.addresseeName + '</span><em class="date">' + dateString + '</em></p><p>' + data.text + '</p><hr>';
+			message.innerHTML = '<p>to: <span class="name">' + data.addresseeName + '</span><em class="date">' + dateString + '</em></p><p class="messageText">' + data.text + '</p><hr>';
 		} else if (data.isPrivate) {
-			message.innerHTML = '<p>from: <span class="name">' + data.author + '</span><em class="date">' + dateString + '</em></p><p>' + data.text + '</p><hr>';
+			message.innerHTML = '<p>from: <span class="name">' + data.author + '</span><em class="date">' + dateString + '</em></p><p class="messageText">' + data.text + '</p><hr>';
 		} else {
-			message.innerHTML = '<p><span class="name">' + data.author + '</span><em class="date">' + dateString + '</em></p><p>' + data.text + '</p><hr>';
+			message.innerHTML = '<p><span class="name">' + data.author + '</span><em class="date">' + dateString + '</em></p><p class="messageText">' + data.text + '</p><hr>';
 		}
 
 		messageDiv.appendChild(message);
@@ -150,10 +150,10 @@ window.onload = function() {
 
 	function panelHandler() {
 		if (roomsOpened) {
-			elements.roomsButton.dispatchEvent(new MouseEvent('click'));
+			elements.roomsButton.click();//dispatchEvent(new MouseEvent('click'));
 		}
 		if (peopleOpened) {
-			elements.peopleButton.dispatchEvent(new MouseEvent('click'));
+			elements.peopleButton.click();//dispatchEvent(new MouseEvent('click'));
 		}
 	}
 
@@ -265,7 +265,7 @@ window.onload = function() {
 
 	function privateMessageHandler() {
 		userId = this.className;
-		elements.openPrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+		elements.openPrivateMessageModal.click();//dispatchEvent(new MouseEvent('click'));
 		isPrivateMessageModalOpened = true;
 		elements.privateMessageTextarea.focus();
 		elements.privateMessageTextarea.select();
@@ -277,7 +277,7 @@ window.onload = function() {
 		if (whitespacePattern.test(elements.privateMessageTextarea.value)) {
 			socket.emit('message', { isMessagePrivate: true, whoToSend: userId, message: elements.privateMessageTextarea.value });
 		} else {
-			elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+			elements.closePrivateMessageModal.click();//dispatchEvent(new MouseEvent('click'));
 			isPrivateMessageModalOpened = false;
 			socket.emit('message', { isMessagePrivate: true, whoToSend: userId, message: elements.privateMessageTextarea.value });
 		}
@@ -425,7 +425,8 @@ window.onload = function() {
 	socket.on('removeRoom', function(data) {
 		if (data.peopleCount && data.peopleCount !== 0) {
 			var pTag = document.createElement('p');
-			pTag.innerHTML = 'There\'re <strong>' + data.peopleCount + '</strong> men at this room. When room gets removed all people will be moved to "global" room';
+			pTag.style.color = '#7083d2';
+			pTag.innerHTML = 'There\'re <strong id="peopleCountLeftInRoom">' + data.peopleCount + '</strong> men at this room. When room gets removed all people will be moved to "global" room';
 			elements.codeInput.parentNode.insertBefore(pTag, elements.codeInput);
 			elements.pTag = pTag;
 		}
@@ -439,8 +440,13 @@ window.onload = function() {
 			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 
 			if (data.self) {
-				elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
+				elements.closeRemoveRoomModal.click();//dispatchEvent(new MouseEvent('click'));
 				isRemoveRoomModalOpened = false;
+			}
+
+			if (userIdForPrivateConversation) {
+				userIdForPrivateConversation = null;
+				elements.messageInput.placeholder = 'Message:';
 			}
 
 			if (data.roomId) {
@@ -508,7 +514,7 @@ window.onload = function() {
 			notification(data.message, 'info', 15000);
 			// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 		} else {
-			elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
+			elements.closeNewRoomModal.click();//dispatchEvent(new MouseEvent('click'));
 			isNewRoomModalOpened = false;
 		}
 		var newRoomItem = addListItem(elements.roomLists, data.room, 'room');
@@ -569,7 +575,7 @@ window.onload = function() {
 
 	socket.on('openRoomPasswordModal', function() {
 		elements.passwordInput.value = '';
-		elements.showRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+		elements.showRoomPasswordModal.click();//dispatchEvent(new MouseEvent('click'));
 		isRoomPasswordModalOpened = true;
 		elements.passwordInput.focus();
 	});
@@ -590,9 +596,15 @@ window.onload = function() {
 				updatePeopleCounters(data.newRoomInfo);
 			}
 		} else if (data.people) {
+
+			if (userIdForPrivateConversation) {
+				userIdForPrivateConversation = null;
+				elements.messageInput.placeholder = 'Message:';
+			}
+
 			var lockImgs;
 			if (data.isRoomPrivate) {
-				elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+				elements.closeRoomPasswordModal.click();//dispatchEvent(new MouseEvent('click'));
 				isRoomPasswordModalOpened = false;
 			}
 			if (data.newRoomInfo.password !== '') {
@@ -663,6 +675,10 @@ window.onload = function() {
 			assignRenameHandlers(currentUserItems);
 		} else {
 			if (data.whoLeft) {
+				if (userIdForPrivateConversation === data.whoLeft._id) {
+					userIdForPrivateConversation = null;
+					elements.messageInput.placeholder = 'Message:';
+				}
 				removeListItem(data.whoLeft._id);
 			} else {
 				personItems = addListItem(elements.peopleLists, data.user);
@@ -679,12 +695,12 @@ window.onload = function() {
 	});
 
 	elements.closeRoomsSidebarSmallButton.addEventListener('click', function (e) {
-		elements.roomsButton.dispatchEvent(new MouseEvent('click'));
+		elements.roomsButton.click();//dispatchEvent(new MouseEvent('click'));
 		roomsOpened = false;
 	});
 
 	elements.closePeopleSidebarSmallButton.addEventListener('click', function (e) {
-		elements.peopleButton.dispatchEvent(new MouseEvent('click'));
+		elements.peopleButton.click();//dispatchEvent(new MouseEvent('click'));
 		peopleOpened = false;
 	});
 
@@ -743,7 +759,6 @@ window.onload = function() {
 	});
 
 	socket.on('rename', function (data) {
-		console.log('renamed');
 		if (data.self) {
 			renameUserItem.innerHTML = '<span>' + data.newUserName + '</span>';
 			renameUserItem.id = '';
@@ -823,7 +838,7 @@ window.onload = function() {
 				}
 			}
 
-			elements.closeInputNameModal.dispatchEvent(new MouseEvent('click'));
+			elements.closeInputNameModal.click();//dispatchEvent(new MouseEvent('click'));
 
 			var currentUserItems = addListItem(elements.peopleLists, data.user);
 
@@ -838,7 +853,7 @@ window.onload = function() {
 	});
 
 	function sendMessage() {
-		if (userIdForPrivateConversation !== null) {
+		if (userIdForPrivateConversation) {
 			socket.emit('message', { isMessagePrivate: true, whoToSend: userIdForPrivateConversation, message: elements.messageInput.value });
 		} else {
 			socket.emit('message', { message: elements.messageInput.value });
@@ -866,14 +881,19 @@ window.onload = function() {
 		var img = document.createElement('img');
 		img.src = 'images/pen.gif';
 		img.className = 'userIsTypingIcon';
-		li[0].appendChild(img);
-		li[1].appendChild(img.cloneNode());
+
+		li[0].insertBefore(img, li[0].firstChild);
+		li[1].insertBefore(img.cloneNode(), li[1].firstChild);
+		// li[0].appendChild(img);
+		// li[1].appendChild(img.cloneNode());
 	});
 
 	socket.on('userStopTyping', function(userId) {
 		var li = getNode('.' + userId, true);
-		li[0].removeChild(li[0].lastChild);
-		li[1].removeChild(li[1].lastChild);
+		// li[0].removeChild(li[0].lastChild);
+		// li[1].removeChild(li[1].lastChild);
+		li[0].removeChild(li[0].firstChild);
+		li[1].removeChild(li[1].firstChild);
 	});
 
 	socket.on('warning', function(data) {
@@ -985,14 +1005,20 @@ window.onload = function() {
 
 		}
 
+		var userItems;
 		if (cancelPrivateConversation) {
 			socket.emit('disablePrivateConversation', userIdForPrivateConversation);
+			
+			userItems = getNode('.' + userIdForPrivateConversation, true);
+			userItems[0].style.cursor = 'pointer';
+			userItems[1].style.cursor = 'pointer';
+
 			userIdForPrivateConversation = null;
-			elements.messageInput.placeholder = 'Message';
+			elements.messageInput.placeholder = 'Message:';
 			return;
 		}
 
-		var userItems = getNode('.' + userIdForPrivateConversation, true);
+		userItems = getNode('.' + userIdForPrivateConversation, true);
 		// userItems[0].classList.add('activeItem');
 		// userItems[1].classList.add('activeItem');
 
@@ -1035,7 +1061,7 @@ window.onload = function() {
 
 		userItems[1].appendChild(cancelPrivateConversationIconClone);
 
-		elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+		elements.closePrivateMessageModal.click();//dispatchEvent(new MouseEvent('click'));
 		isPrivateMessageModalOpened = false;
 	}
 
@@ -1044,6 +1070,10 @@ window.onload = function() {
 		userIdForPrivateConversation = userId;
 		socket.emit('getUserName', userIdForPrivateConversation);
 		privateConversationHandler(e);
+
+		var userItems = getNode('.' + userIdForPrivateConversation, true);
+		userItems[0].style.cursor = 'default';
+		userItems[1].style.cursor = 'default';
 
 		elements.messageInput.select();
 	});
@@ -1054,7 +1084,7 @@ window.onload = function() {
 	});
 
 	socket.on('getUserName', function(userName) {
-		elements.messageInput.placeholder = 'Private message to ' + userName;
+		elements.messageInput.placeholder = 'Private message to ' + userName + ':';
 	});
 
 	function removePrivateConversationIcons(privateConversationIcons) {
@@ -1073,7 +1103,7 @@ window.onload = function() {
 			if (data.user._id === userIdForPrivateConversation) {
 				removePrivateConversationIcons(getNode('.privateConversation', true));
 				userIdForPrivateConversation = null;
-				elements.messageInput.placeholder = 'Message';
+				elements.messageInput.placeholder = 'Message:';
 			}
 
 			removeListItem(data.user._id);
@@ -1086,7 +1116,7 @@ window.onload = function() {
 		location.reload();
 	});
 
-	elements.showInputNameModal.dispatchEvent(new MouseEvent('click'));
+	elements.showInputNameModal.click();//dispatchEvent(new MouseEvent('click'));
 	elements.nameInput.focus();
 
 	function joinedHandler(e) {
@@ -1129,16 +1159,16 @@ window.onload = function() {
 			}
 
 			if (isPrivateMessageModalOpened) {
-				elements.closePrivateMessageModal.dispatchEvent(new MouseEvent('click'));
+				elements.closePrivateMessageModal.click();//dispatchEvent(new MouseEvent('click'));
 				isPrivateMessageModalOpened = false;
 			} else if (isRoomPasswordModalOpened) {
-				elements.closeRoomPasswordModal.dispatchEvent(new MouseEvent('click'));
+				elements.closeRoomPasswordModal.click();//dispatchEvent(new MouseEvent('click'));
 				isRoomPasswordModalOpened = false;
 			} else if (isNewRoomModalOpened) {
-				elements.closeNewRoomModal.dispatchEvent(new MouseEvent('click'));
+				elements.closeNewRoomModal.click();//dispatchEvent(new MouseEvent('click'));
 				isNewRoomModalOpened = false;
 			} else if (isRemoveRoomModalOpened) {
-				elements.closeRemoveRoomModal.dispatchEvent(new MouseEvent('click'));
+				elements.closeRemoveRoomModal.click();//dispatchEvent(new MouseEvent('click'));
 				isRemoveRoomModalOpened = false;
 			}
 		}
