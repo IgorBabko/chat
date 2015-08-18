@@ -229,7 +229,7 @@ header, .avatar-section {
 
 .roomsSidebar li {
 	min-height: 44px;
-	overflow: hidden;
+	overflow: auto;
 	padding-left: 10px;
 	padding-right: 60px !important;
 	position: relative;
@@ -237,8 +237,9 @@ header, .avatar-section {
 
 .roomsSidebar span:first-child {
 	/*float: left;*/
-	line-height: 0;
+	/*line-height: 0;*/
 	padding-left: 20px;
+	height: 20px;
 }
 
 .roomsSidebar span:first-child:after {
@@ -459,8 +460,9 @@ hr {
 .peopleSidebar li {
 	position: relative;
 	min-height: 44px;
-	overflow: hidden;
-	padding: 12px 20px 12px 16px !important;
+	overflow: auto;
+	/*overflow: hidden;*/
+	/*padding: 12px 20px 12px 16px !important;*/
 	text-align: right;
 	background-color: white !important;
 }
@@ -470,7 +472,7 @@ hr {
 }
 
 .block-list li {
-	padding: 9px 10px 9px 20px;
+	padding: 9px 20px 9px 20px;
 }
 
 .block-list li > a, .block-list li > span, .block-list li > label {
@@ -563,12 +565,27 @@ input:focus, textarea:focus {
 	left: 10px;
 }
 
+.roomsSidebar li > span:first-child, .peopleSidebar li > span {
+	position: absolute;
+	left: 0;
+	margin-left: 20px;
+	width: 200px;
+	overflow: auto;
+	height: 25px;
+}
+
+.peopleSidebar li > span {
+	left: auto;
+	right: 0;
+	margin-right: 20px;
+}
+
 #renameInput {
-	height: 100%;
+	min-height: 43px;
 	text-align: right;
 	background-color: #F0F3FE;
 	cursor: default;
-	padding-right: 19px;
+	padding: 0 19px;
 	border: 1px solid #F0F3FE !important;
 }
 
