@@ -8,6 +8,7 @@
 var $ = require('gulp-load-plugins')();
 var argv = require('yargs').argv;
 var gulp = require('gulp');
+var livereload = require('gulp-livereload');
 var rimraf = require('rimraf');
 var router = require('front-router');
 var sequence = require('run-sequence');
@@ -67,7 +68,8 @@ gulp.task('copy', function () {
     return gulp.src(paths.assets, {
             base: './client/'
         })
-        .pipe(gulp.dest('./build'));
+        .pipe(gulp.dest('./build'))
+        .pipe(livereload());
 });
 
 // Copies your app's page templates and generates URLs for them
@@ -77,7 +79,8 @@ gulp.task('copy:templates', function () {
             path: 'build/assets/js/routes.js',
             root: 'client'
         }))
-        .pipe(gulp.dest('./build/templates'));
+        .pipe(gulp.dest('./build/templates'))
+        .pipe(livereload());
 });
 
 // Compiles the Foundation for Apps directive partials into a single JavaScript file
@@ -118,7 +121,8 @@ gulp.task('copy:foundation', function (cb) {
 gulp.task('sass', function () {
     gulp.src('client/assets/scss/*')
         .pipe(sass().on('error', sass.logError))
-        .pipe(gulp.dest('./build/assets/css/'));
+        .pipe(gulp.dest('./build/assets/css/'))
+        .pipe(livereload());
 });
 
 gulp.task('templates', function () {
@@ -128,7 +132,8 @@ gulp.task('templates', function () {
         .pipe(jade({
             locals: YOUR_LOCALS
         }))
-        .pipe(gulp.dest('./build/'));
+        .pipe(gulp.dest('./build/'))
+        .pipe(livereload());
 });
 
 // Compiles and copies the Foundation for Apps JavaScript, as well as your app's custom JS
@@ -178,6 +183,10 @@ gulp.task('build', function (cb) {
 
 // Default task: builds your app, starts a server, and recompiles assets when they change
 gulp.task('default', ['build' /*'server'*/], function () {
+
+    // Start LiveReload server
+    livereload.listen();
+
     // Watch Sass
     gulp.watch(['./client/assets/scss/**/*', './scss/**/*'], ['sass']);
 
