@@ -1,25 +1,64 @@
 // vars
 $main-color: #0275d8
+$main-color-darker: darken($main-color, 10)
+$main-color-lighter: lighten($main-color, 25)
 
 // rulse
 
-h1
+body
+    background: lighten($main-color, 50) !important
+
+
+h1,
+#messages-header
     color: white
     background-color: $main-color
     margin: 0
     text-align: center
     height: 48px
+    text-shadow: 3px 3px 1px $main-color-darker
     .btn
         margin-left: 0 !important
         border: none
-        background-color: darken($main-color, 10)
+        background-color: $main-color-darker
+        cursor: default
+        &:not(.active)
+            cursor: pointer
         &.active
             background-color: lighten($main-color, 30)
+
+#messages-header
+    text-shadow: none
+    padding-top: 5px
 
 .col-xs-3,
 .col-xs-6
     padding-left: 0 !important
     padding-right: 0 !important
+
+#rooms-sidebar
+    .list-items
+        height: calc(100vh - 50px)
+        box-shadow: 2px 0 8px -3px lighten($main-color, 30)
+
+#people-sidebar
+    .list-items
+        height: calc(100vh - 50px)
+        box-shadow: -2px 0 8px -3px lighten($main-color, 30)
+
+        .list-group-item
+            text-align: right
+
+.list-group
+    .list-group-item
+        border-color: lighten($main-color, 50)
+        &:not(.active)
+            cursor: pointer
+        &:hover
+            background-color: lighten($main-color, 40)
+            border-color: lighten($main-color, 40)
+
+
 
 .form-control,
 .input-group-addon,
@@ -29,15 +68,15 @@ h1
 
 .input-group-addon
     color: white
-    background-color: darken($main-color, 10)
+    background-color: $main-color
     border: none
     cursor: pointer
     &:hover
-        background-color: $main-color
+        background-color: $main-color-lighter
 
 .active
-    background: lighten($main-color, 30) !important
-    border-color: lighten($main-color, 30) !important
+    background: lighten($main-color, 15) !important
+    border-color: lighten($main-color, 15) !important
 
 .pull-left
     float: left !important
@@ -50,14 +89,22 @@ h1
 
 .media
     margin: 40px 20px !important
-
+    background: white
+    padding: 10px
+    //box-shadow: 2px 2px 5px rgba(55,58,60,0.1)
+    box-shadow: 3px 3px 5px lighten($main-color, 46)
 #messages
-    max-height: calc(100vh - 88px)
+    max-height: calc(100vh - 93px)
     overflow-y: scroll
 
 #messageInput
-    border: 2px inset
+    height: 45px
+    border-bottom-width: 0
+    border-right-width: 0
+    border-color: lighten($main-color, 30) !important
 
+    &:focus
+        border-bottom-width: 0
 
 
 //.hide-for-medium {
