@@ -16,22 +16,6 @@ html(lang='en', ng-app='application')
         script(src='socket.io/socket.io.js')
 
 body
-    nav.navbar.navbar-dark.bg-primary.bg-faded
-        a.navbar-brand(href='#') Navbar
-        ul.nav.navbar-nav
-            li.nav-item.active
-                a.nav-link(href='#')
-                    | Home
-                    span.sr-only (current)
-            li.nav-item
-                a.nav-link(href='#') Features
-            li.nav-item
-                a.nav-link(href='#') Pricing
-            li.nav-item
-                a.nav-link(href='#') About
-        //form.form-inline.pull-xs-right
-        //    input.form-control(type='text', placeholder='Search')
-        //    button.btn.btn-success-outline(type='submit') Search
 
     #enterChatModal.modal.fade(role='dialog', aria-labelledby='myModalLabel', aria-hidden='false')
         .modal-dialog(role='document')
@@ -44,6 +28,7 @@ body
     .row
         .col-xs-3
             ul.list-group
+                h1 Rooms
                 li.list-group-item.active
                     span.label.label-default.label-pill.pull-xs-right 14
                     | Cras justo odio
@@ -54,6 +39,14 @@ body
                     span.label.label-default.label-pill.pull-xs-right 1
                     | Morbi leo risus
         .col-xs-6
+            h1
+                .btn-group(data-toggle='buttons')
+                    label.btn.btn-primary.active
+                        input#option2(type='radio', name='options', autocomplete='off')
+                        | Public msg
+                    label.btn.btn-primary
+                        input#option3(type='radio', name='options', autocomplete='off')
+                        | Private msg
             each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
                 .media
                     a.pull-left(href='#')
@@ -64,6 +57,7 @@ body
                         | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
         .col-xs-3
             ul.list-group
+                h1 Rooms
                 li.list-group-item Cras justo odio
                 li.list-group-item.active Dapibus ac facilisis in
                 li.list-group-item Morbi leo risus

@@ -1,15 +1,34 @@
 // vars
-$navbar-color: #0275d8
+$main-color: #0275d8
 
 // rulse
+
+h1
+    color: white
+    background-color: $main-color
+    margin: 0
+    text-align: center
+    height: 48px
+    .btn
+        margin-left: 0 !important
+        border: none
+        background-color: #025aa5
+        &.active
+            background-color: lighten($main-color, 30)
+
+.col-xs-3,
+.col-xs-6
+    padding-left: 0 !important
+    padding-right: 0 !important
+
 .navbar,
 .list-group-item:first-child,
 .list-group-item:last-child
     border-radius: 0 !important
 
 .active
-    background: lighten($navbar-color, 30) !important
-    border-color: lighten($navbar-color, 30) !important
+    background: lighten($main-color, 30) !important
+    border-color: lighten($main-color, 30) !important
 
 .pull-left
     float: left !important
@@ -21,7 +40,7 @@ $navbar-color: #0275d8
     font-size: 50% !important
 
 .media
-    margin: 40px 0 !important
+    margin: 40px 20px !important
 
 
 
