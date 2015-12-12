@@ -12,7 +12,7 @@ h1
     .btn
         margin-left: 0 !important
         border: none
-        background-color: #025aa5
+        background-color: darken($main-color, 10)
         &.active
             background-color: lighten($main-color, 30)
 
@@ -21,10 +21,19 @@ h1
     padding-left: 0 !important
     padding-right: 0 !important
 
-.navbar,
+.form-control,
+.input-group-addon,
 .list-group-item:first-child,
 .list-group-item:last-child
     border-radius: 0 !important
+
+.input-group-addon
+    color: white
+    background-color: darken($main-color, 10)
+    border: none
+    cursor: pointer
+    &:hover
+        background-color: $main-color
 
 .active
     background: lighten($main-color, 30) !important
@@ -42,6 +51,12 @@ h1
 .media
     margin: 40px 20px !important
 
+#messages
+    max-height: calc(100vh - 88px)
+    overflow-y: scroll
+
+#messageInput
+    border: 2px inset
 
 
 

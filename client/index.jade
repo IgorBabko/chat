@@ -47,14 +47,18 @@ body
                     label.btn.btn-primary
                         input#option3(type='radio', name='options', autocomplete='off')
                         | Private msg
-            each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
-                .media
-                    a.pull-left(href='#')
-                        img.media-object(src='http://placehold.it/64x64', alt='')
-                    .media-body
-                        h4.media-heading.name #{val.name}
-                            small.posted-date #{val.postedDate}
-                        | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            #messages
+                each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
+                    .media
+                        a.pull-left(href='#')
+                            img.media-object(src='http://placehold.it/64x64', alt='')
+                        .media-body
+                            h4.media-heading.name #{val.name}
+                                small.posted-date #{val.postedDate}
+                            | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            .input-group
+                input#messageInput.form-control(type='text', placeholder="Recipient's username", aria-describedby='basic-addon2')
+                span#basic-addon2.input-group-addon send
         .col-xs-3
             ul.list-group
                 h1 Rooms
