@@ -16,6 +16,23 @@ html(lang='en', ng-app='application')
         script(src='socket.io/socket.io.js')
 
 body
+    nav.navbar.navbar-dark.bg-primary.bg-faded
+        a.navbar-brand(href='#') Navbar
+        ul.nav.navbar-nav
+            li.nav-item.active
+                a.nav-link(href='#')
+                    | Home
+                    span.sr-only (current)
+            li.nav-item
+                a.nav-link(href='#') Features
+            li.nav-item
+                a.nav-link(href='#') Pricing
+            li.nav-item
+                a.nav-link(href='#') About
+        form.form-inline.pull-xs-right
+            input.form-control(type='text', placeholder='Search')
+            button.btn.btn-success-outline(type='submit') Search
+
     #enterChatModal.modal.fade(role='dialog', aria-labelledby='myModalLabel', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
@@ -23,6 +40,23 @@ body
                     .form-group
                         input#name.form-control(type='text', autofocus, placeholder="Your name:")
                     button#enter.btn.btn-primary(type='button') Enter
+
+    .row
+        .col-xs-3
+            .list-group
+                a.list-group-item.active(href='#') Cras justo odio
+                a.list-group-item(href='#') Dapibus ac facilisis in
+                a.list-group-item(href='#') Morbi leo risus
+                a.list-group-item(href='#') Porta ac consectetur ac
+                a.list-group-item(href='#') Vestibulum at eros
+        .col-xs-6
+        .col-xs-3
+            .list-group
+                a.list-group-item.active(href='#') Cras justo odio
+                a.list-group-item(href='#') Dapibus ac facilisis in
+                a.list-group-item(href='#') Morbi leo risus
+                a.list-group-item(href='#') Porta ac consectetur ac
+                a.list-group-item(href='#') Vestibulum at eros
     //
     //button.btn.btn-primary.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
     //    | Launch demo modal
@@ -62,7 +96,9 @@ body
     //    a(zf-close='', id='closeRemoveRoomModal', class='close-button') ×
     //    input(type='password', id='code', autocomplete='off', placeholder='Room code:')
     //    a(id="sendRoomCode", href="#", class="button info") Go
-    //
+
+
+
     //div(class='grid-frame')
     //    div(zf-panel='', class='small-6 roomsSidebarSmall', id="rooms")
     //        section(class='block-list roomsSidebar')
