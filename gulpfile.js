@@ -23,29 +23,29 @@ var jade = require('gulp-jade');
 //});
 
 gulp.task('sass', function () {
-    gulp.src('client/assets/scss/*')
-        .pipe(sass().on('error', sass.logError))
-        .pipe(gulp.dest('./build/assets/css/'))
+    return gulp.src('client/assets/sass/*')
+        .pipe(sass()/*.on('error', sass.logError)*/)
+        .pipe(gulp.dest('build/assets/css/'))
         .pipe(livereload());
 });
 
 gulp.task('jade', function () {
-    return gulp.src('./client/*.jade')
+    return gulp.src('client/*.jade')
         .pipe(jade())
         .pipe(gulp.dest('./build/'))
         .pipe(livereload());
 });
 
 gulp.task('concatJS', function () {
-    return gulp.src('./client/assets/js/*')
+    return gulp.src('client/assets/js/*')
         //.pipe(uglify)
         //.pipe($.concat('app.js'))
-        .pipe(gulp.dest('./build/assets/js'));
+        .pipe(gulp.dest('build/assets/js'));
 });
 
 // Builds your entire app once, without starting a server
 gulp.task('build', function (cb) {
-    sequence(['jade', 'concatJS'], cb);
+    sequence(['jade', 'sass', 'concatJS'], cb);
 });
 
 // Default task: builds your app and recompiles assets when they change
@@ -55,13 +55,13 @@ gulp.task('default', ['build'], function () {
     livereload.listen();
 
     // Watch Sass
-    //gulp.watch(['./client/assets/scss/**/*', './scss/**/*'], ['sass']);
+    gulp.watch(['client/assets/sass/**/*'], ['sass']);
 
     // Watch Jade
-    gulp.watch(['./client/index.jade'], ['jade']);
+    gulp.watch(['client/index.jade'], ['jade']);
 
     // Concat JavaScript files
-    gulp.watch(['./client/assets/js/**/*'], ['concatJS']);
+    gulp.watch(['client/assets/js/**/*'], ['concatJS']);
 
     // Watch static files
     //gulp.watch(['./client/**/*.*'], ['copy']);
