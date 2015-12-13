@@ -1,12 +1,13 @@
 // vars
-$main-color: #0275d8
+$main-color: rgb(2, 117, 216)
 $main-color-darker: darken($main-color, 10)
 $main-color-lighter: lighten($main-color, 25)
+$main-color-lightest: lighten($main-color, 50)
 
 // rulse
 
 body
-    background: lighten($main-color, 50) !important
+    background: $main-color-lightest !important
     overflow: hidden
 
 
@@ -26,7 +27,7 @@ h1,
         &:not(.active)
             cursor: pointer
         &.active
-            background-color: lighten($main-color, 30)
+            background-color: $main-color-lighter
 
 #messages-header
     text-shadow: none
@@ -39,33 +40,25 @@ h1,
     padding-left: 0 !important
     padding-right: 0 !important
 
-@media (max-width: 991px)
-    #messages
-        padding: 0 20px
-
-    .content
-        .input-group
-            padding: 0 15px !important
-
 .content .input-group
     padding: 0
 
 #rooms-sidebar
     .list-items
         height: calc(100vh - 50px)
-        box-shadow: 2px 0 8px -3px lighten($main-color, 30)
+        box-shadow: 2px 0 8px -3px $main-color-lighter
 
 #people-sidebar
     .list-items
         height: calc(100vh - 50px)
-        box-shadow: -2px 0 8px -3px lighten($main-color, 30)
+        box-shadow: -2px 0 8px -3px $main-color-lighter
 
         .list-group-item
             text-align: right
 
 .list-group
     .list-group-item
-        border-color: lighten($main-color, 50)
+        border-color: $main-color-lightest
         &:not(.active)
             cursor: pointer
         &:hover
@@ -88,7 +81,7 @@ h1,
     border: none
     cursor: pointer
     &:hover
-        background-color: $main-color-lighter
+        background-color: $main-color-darker
 
 .active
     background: lighten($main-color, 15) !important
@@ -97,6 +90,13 @@ h1,
 .pull-left
     float: left !important
     padding-right: 10px !important
+
+.list-group
+    overflow: auto
+    height: calc(100vh - 86px) !important
+
+.list-group-item
+    overflow-x: scroll
 
 .posted-date
     float: right
@@ -109,8 +109,11 @@ h1,
     padding: 10px
     box-shadow: 3px 3px 5px lighten($main-color, 46)
 #messages
-    max-height: calc(100vh - 93px)
+    max-height: calc(100vh - 86px)
     overflow-y: scroll
+
+input
+    background-color: #EFEFEF !important
 
 #messageInput
     height: 45px
@@ -120,6 +123,39 @@ h1,
 
     &:focus
         border-bottom-width: 0
+
+.searchRoom,
+.searchPeople
+    padding: 0
+    position: relative
+    .input-group
+        display: block
+
+        input
+            height: 50px
+            padding: 0 20px
+            border: none
+            background-color: #D6FBFF
+
+            &:hover
+                border: none
+
+        i
+            position: absolute
+            top: 15px
+            right: 22px
+            z-index: 1000
+            font-size: 22px
+            color: $main-color
+
+.searchPeople
+    .input-group
+        input
+            text-align: right
+        i
+            right: auto
+            left: 22px !important
+
 
 
 //.hide-for-medium {

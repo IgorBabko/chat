@@ -6,6 +6,8 @@ html(lang='en', ng-app='application')
 
         title zChat
 
+        link(rel='stylesheet', href='components-font-awesome/css/font-awesome.min.css')
+
         link(rel='stylesheet', href='tether/dist/css/tether.min.css')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
@@ -25,50 +27,123 @@ body
                         input#name.form-control(type='text', autofocus, placeholder="Your name:")
                     button#enter.btn.btn-primary(type='button') Enter
 
-    .row
-        .hidden-md-down.col-lg-3
-            ul#rooms-sidebar.list-group
+    .container-fluid
+        .row
+            .hidden-md-down.col-lg-3
                 h1 rooms
-                .list-items
-                    li.list-group-item.active
-                        span.label.label-primary.label-pill.pull-xs-right 14
-                        | Cras justo odio
+                ul.list-group
                     li.list-group-item
-                        span.label.label-primary.label-pill.pull-xs-right 2
-                        | Dapibus ac facilisis in
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odi
                     li.list-group-item
                         span.label.label-primary.label-pill.pull-xs-right 1
                         | Morbi leo risus
-        .col-xs-12.col-lg-6.content
-            #messages-header
-                .btn-group(data-toggle='buttons')
-                    label.btn.btn-primary.active
-                        input#option2(type='radio', name='options', autocomplete='off')
-                        | Public msg
-                    label.btn.btn-primary
-                        input#option3(type='radio', name='options', autocomplete='off')
-                        | Private msg
-            #messages
-                each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
-                    .media
-                        a.pull-left(href='#')
-                            img.media-object(src='http://placehold.it/64x64', alt='')
-                        .media-body
-                            h4.media-heading.name #{val.name}
-                                small.posted-date #{val.postedDate}
-                            | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-            .input-group
-                input#messageInput.form-control(type='text', placeholder="Your message:", aria-describedby='basic-addon2')
-                span#basic-addon2.input-group-addon send
-        .hidden-md-down.col-lg-3
-            ul#people-sidebar.list-group
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                    li.list-group-item
+                        span.label.label-primary.label-pill.pull-xs-right 14
+                        | Cras justo odio
+                .input-group
+                    input.searchPeopleInput.form-control(type='text', placeholder="Search for room:")
+                    span.input-group-addon
+                        i.fa.fa-search
+            .col-xs-12.col-lg-6.content
+                #messages-header
+                    .btn-group(data-toggle='buttons')
+                        label.btn.btn-primary.active
+                            input#option2(type='radio', name='options', autocomplete='off')
+                            | Public msg
+                        label.btn.btn-primary
+                            input#option3(type='radio', name='options', autocomplete='off')
+                            | Private msg
+                #messages
+                    each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
+                        .media
+                            a.pull-left(href='#')
+                                img.media-object(src='http://placehold.it/64x64', alt='')
+                            .media-body
+                                h4.media-heading.name #{val.name}
+                                    small.posted-date #{val.postedDate}
+                                | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                .input-group
+                    input.searchRoomInput.form-control(type='text', placeholder="Your message:")
+                    span.input-group-addon send
+            .hidden-md-down.col-lg-3
                 h1 people
-                .list-items
+                ul.list-group
                     li.list-group-item Cras justo odio
-                    li.list-group-item.active Dapibus ac facilisis in
+                    li.list-group-item Dapibus ac facilisis in
                     li.list-group-item Morbi leo risus
                     li.list-group-item Porta ac consectetur ac
                     li.list-group-item Vestibulum at eros
+                    li.list-group-item Cras justo odio
+                    li.list-group-item Dapibus ac facilisis in
+                    li.list-group-item Morbi leo risus
+                    li.list-group-item Porta ac consectetur ac
+                    li.list-group-item Vestibulum at eros
+                    li.list-group-item Cras justo odio
+                    li.list-group-item Dapibus ac facilisis in
+                    li.list-group-item Morbi leo risus
+                    li.list-group-item Porta ac consectetur ac
+                    li.list-group-item Vestibulum at eros
+                    li.list-group-item Cras justo odio
+                    li.list-group-item Dapibus ac facilisis in
+                    li.list-group-item Morbi leo risus
+                    li.list-group-item Porta ac consectetur ac
+                    li.list-group-item Vestibulum at eros
+                    li.list-group-item Cras justo odio
+                    li.list-group-item Dapibus ac facilisis in
+                    li.list-group-item Morbi leo risus
+                    li.list-group-item Porta ac consectetur ac
+                    li.list-group-item Vestibulum at eros
+                .input-group
+                    input.searchRoomInput.form-control(type='text', placeholder="Search for person:")
+                    span.input-group-addon
+                        i.fa.fa-search
+
     //
     //button.btn.btn-primary.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
     //    | Launch demo modal
