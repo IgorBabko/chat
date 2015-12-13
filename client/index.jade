@@ -26,7 +26,7 @@ body
                     button#enter.btn.btn-primary(type='button') Enter
 
     .row
-        .col-xs-3
+        .hidden-md-down.col-lg-3
             ul#rooms-sidebar.list-group
                 h1 rooms
                 .list-items
@@ -39,7 +39,7 @@ body
                     li.list-group-item
                         span.label.label-primary.label-pill.pull-xs-right 1
                         | Morbi leo risus
-        .col-xs-6
+        .col-xs-12.col-lg-6.content
             #messages-header
                 .btn-group(data-toggle='buttons')
                     label.btn.btn-primary.active
@@ -60,7 +60,7 @@ body
             .input-group
                 input#messageInput.form-control(type='text', placeholder="Your message:", aria-describedby='basic-addon2')
                 span#basic-addon2.input-group-addon send
-        .col-xs-3
+        .hidden-md-down.col-lg-3
             ul#people-sidebar.list-group
                 h1 people
                 .list-items
