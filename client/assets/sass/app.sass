@@ -33,6 +33,11 @@ h1,
     text-shadow: none
     padding-top: 5px
 
+.right-sidebar
+    .list-group-item
+        text-align: right
+
+
 .col-xs-3,
 .col-xs-6,
 .col-lg-3,
@@ -43,14 +48,14 @@ h1,
 .content .input-group
     padding: 0
 
-#rooms-sidebar
-    .list-items
+.left-sidebar,
+.right-sidebar
+    ul
         height: calc(100vh - 50px)
         box-shadow: 2px 0 8px -3px $main-color-lighter
 
-#people-sidebar
-    .list-items
-        height: calc(100vh - 50px)
+.right-sidebar
+    ul
         box-shadow: -2px 0 8px -3px $main-color-lighter
 
         .list-group-item
@@ -113,7 +118,7 @@ h1,
     overflow-y: scroll
 
 input
-    background-color: #EFEFEF !important
+    background-color: rgb(247, 247, 247) !important
 
 #messageInput
     height: 45px
