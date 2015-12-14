@@ -12,6 +12,7 @@
         init: function () {
             this.defineInitialGrid();
             this.setupHandlers();
+            $("html").css("display", "block");
             return this;
         },
         defineInitialGrid: function () {
