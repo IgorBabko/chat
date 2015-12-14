@@ -6,13 +6,14 @@
         isPeopleVisible: true,
         contentMarginLeft: 300,
         contentMarginRight: 300,
+        isOverlayShown: false,
         isScreenWide: true,
         contentWidthCrop: 600,
 
         init: function () {
             this.defineInitialGrid();
             this.setupHandlers();
-            $("html").css("display", "block");
+            $("html").show();
             return this;
         },
         defineInitialGrid: function () {
@@ -28,22 +29,25 @@
                 this.contentMarginRight = 0;
                 this.isScreenWide = false;
                 this.contentWidthCrop = 600;
+                $(".rooms-sidebar, .people-sidebar").addClass("hidden");
+                $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
                 $(".content").css({"width": "100%", "margin": "0"});
             }
         },
         setupHandlers: function () {
             $(".rooms-label, .people-label").on("click", this.togglingSidebarsHandler);
             $(window).on("resize", this.resizingWindowHandler);
+            $(".content").on("click", this.clickOverlayHandler);
         },
         togglingSidebarsHandler: function () {
             var $this = $(this);
             var _this = gridManager;
             $this.toggleClass("active");
             if ($this.hasClass("rooms-label")) {
-                $(".rooms-sidebar").toggleClass("visible");
+                $(".rooms-sidebar").toggleClass("hidden");
                 _this.isRoomsVisible = !_this.isRoomsVisible;
             } else {
-                $(".people-sidebar").toggleClass("visible");
+                $(".people-sidebar").toggleClass("hidden");
                 _this.isPeopleVisible = !_this.isPeopleVisible;
             }
 
@@ -56,26 +60,52 @@
                     "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else {
+                _this.toggleOverlay();
                 $(".content").css({"width": "100%", "margin": "0"});
             }
         },
         resizingWindowHandler: function () {
             var _this = gridManager;
             if ($(window).width() > 992 && !_this.isScreenWide) {
+                $(".rooms-sidebar ul, .people-sidebar ul").removeClass("shadowless");
                 _this.isScreenWide = true;
                 _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
                 _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
                 _this.contentMarginRight = _this.isPeopleVisible ? 300 : 0;
-                $(".content").css({
+                $(".content").removeClass("shadowed").css({
                     "width": "calc(100% - " + _this.contentWidthCrop + "px)",
                     "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else if ($(window).width() <= 992 && _this.isScreenWide) {
+                $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
                 _this.isScreenWide = false;
+                _this.toggleOverlay();
                 $(".content").css({"width": "100%", "margin": "0"});
             }
         },
-
+        clickOverlayHandler: function () {
+            if ($(window).width() <= 992) {
+                var _this = gridManager;
+                if (_this.isOverlayShown) {
+                    $(".rooms-label, .people-label").removeClass("active");
+                    $(".rooms-sidebar, .people-sidebar").addClass("hidden");
+                    $(".content").removeClass("shadowed");
+                    _this.isRoomsVisible = false;
+                    _this.isPeopleVisible = false;
+                    _this.isOverlayShown = false;
+                }
+            }
+        },
+        toggleOverlay: function () {
+            var _this = gridManager;
+            if (_this.isRoomsVisible || _this.isPeopleVisible) {
+                $(".content").addClass("shadowed");
+                _this.isOverlayShown = true;
+            } else {
+                $(".content").removeClass("shadowed");
+                _this.isOverlayShown = false;
+            }
+        }
     };
 
     gridManager.init();

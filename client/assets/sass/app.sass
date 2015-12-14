@@ -10,8 +10,8 @@ html
     display: none
 
 body
-    background: $main-color-lightest !important
     overflow: hidden
+    background: black
 
 // header
 header
@@ -55,18 +55,33 @@ header
 
 .content
     transition: all 0.3s ease-in-out
+    background: $main-color-lightest
+    opacity: 1
+
     .input-group
         padding: 0
+
+    &.shadowed
+        opacity: 0.5
+
+//.content-overlay
+//    display: none
+//    opacity: 0
+//    transition: all 0.3s ease-in-out
+//
+//    &.visible
+//        display: block
+//        opacity: 0.7
 
 .rooms-sidebar
     z-index: 3
     transition: all 0.3s ease-in-out
     position: fixed
     top: 50px
-    left: -300px
+    left: 0
     width: 300px
-    &.visible
-        left: 0
+    &.hidden
+        left: -300px
     ul
         height: calc(100vh - 50px)
         box-shadow: 2px 0 8px -3px $main-color-lighter
@@ -76,15 +91,21 @@ header
     transition: all 0.3s ease-in-out
     position: fixed
     top: 50px
-    right: -300px
+    right: 0
     width: 300px
-    &.visible
-        right: 0
+    &.hidden
+        right: -300px
     ul
         height: calc(100vh - 50px)
         box-shadow: -2px 0 8px -3px $main-color-lighter
         .list-group-item
             text-align: right
+
+.rooms-sidebar,
+.people-sidebar
+    ul
+        &.shadowless
+            box-shadow: none !important
 
 .list-group
     .list-group-item
@@ -141,6 +162,7 @@ header
 #messages
     max-height: calc(100vh - 86px)
     overflow-y: scroll
+
 
 input
     background-color: rgb(247, 247, 247) !important
