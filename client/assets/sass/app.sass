@@ -50,63 +50,36 @@ header
 .btn-group .btn+.btn
     margin: 0
 
-//
-//.col-xs-3,
-//.col-xs-6,
-//.col-lg-3,
-//.col-lg-6
-//    padding-left: 0 !important
-//    padding-right: 0 !important
-
-
 .content
-    //width: 100vw
     transition: all 0.3s ease-in-out
     .input-group
         padding: 0
-    //
-    //@media (min-width: 992px)
-    //    width: calc(100% - 600px)
 
-.rooms-sidebar,
-.people-sidebar
+.rooms-sidebar
     z-index: 3
     transition: all 0.3s ease-in-out
-
-    //@media (min-width: 992px)
-    //    width: 300px
-    //    margin: 0 0 0 -300px
-    //    &.visible
-    //        margin: 0
-
-    //@media (max-width: 992px)
     position: fixed
-    margin: 0
-    width: 300px
     top: 50px
     left: -300px
+    width: 300px
     &.visible
         left: 0
     ul
         height: calc(100vh - 50px)
         box-shadow: 2px 0 8px -3px $main-color-lighter
 
-
-
 .people-sidebar
-    //@media (min-width: 992px)
-    //    margin: 0 -300px 0 0
-
-    //@media (max-width: 992px)
-    left: auto
+    z-index: 3
+    transition: all 0.3s ease-in-out
+    position: fixed
+    top: 50px
     right: -300px
+    width: 300px
     &.visible
-        left: auto
         right: 0
-
     ul
+        height: calc(100vh - 50px)
         box-shadow: -2px 0 8px -3px $main-color-lighter
-
         .list-group-item
             text-align: right
 
@@ -202,16 +175,16 @@ input
 //            font-size: 22px
 //            color: $main-color
 
-.searchPeople
-    .input-group
-        input
-            text-align: right
-        i
-            right: auto
-            left: 22px !important
-
-.row > div
-    float: left
+//.searchPeople
+//    .input-group
+//        input
+//            text-align: right
+//        i
+//            right: auto
+//            left: 22px !important
+//
+//.row > div
+//    float: left
 //.hide-for-medium {
 //	font-family: 'Monaco';
 //	font-size: 18px;

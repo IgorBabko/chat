@@ -1,25 +1,83 @@
 ;$(function () {
 
-    var isRoomsVisible = true,
-        isPeopleVisible = true,
-        v = 0;
-    $(".rooms-label, .people-label").on("click", function() {
-        var $this = $(this);
-        $this.toggleClass("active");
-        if ($this.hasClass("rooms-label")) {
-            $(".rooms-sidebar").toggleClass("visible");
-            isRoomsVisible = !isRoomsVisible;
-        } else {
-            $(".people-sidebar").toggleClass("visible");
-            isPeopleVisible = !isPeopleVisible;
-        }
+    var gridManager = {
 
-        //if ($(window).width() > 992) {
+        isRoomsVisible: true,
+        isPeopleVisible: true,
+        contentMarginLeft: 300,
+        contentMarginRight: 300,
+        isScreenWide: true,
+        contentWidthCrop: 600,
 
-            v = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
-            $(".content").css("width", "calc(100% - " + v + "px)");
-        //}
-    });
+        init: function () {
+            this.defineInitialGrid();
+            this.setupHandlers();
+            return this;
+        },
+        defineInitialGrid: function () {
+            if ($(window).width() > 992) {
+                $(".content").css({
+                    "width": "calc(100% - " + this.contentWidthCrop + "px)",
+                    "margin": "0 " + this.contentMarginRight + "px 0 " + this.contentMarginLeft + "px"
+                });
+            } else {
+                this.isRoomsVisible = false;
+                this.isPeopleVisible = false;
+                this.contentMarginLeft = 0;
+                this.contentMarginRight = 0;
+                this.isScreenWide = false;
+                this.contentWidthCrop = 600;
+                $(".content").css({"width": "100%", "margin": "0"});
+            }
+        },
+        setupHandlers: function () {
+            $(".rooms-label, .people-label").on("click", this.togglingSidebarsHandler);
+            $(window).on("resize", this.resizingWindowHandler);
+        },
+        togglingSidebarsHandler: function () {
+            var $this = $(this);
+            var _this = gridManager;
+            $this.toggleClass("active");
+            if ($this.hasClass("rooms-label")) {
+                $(".rooms-sidebar").toggleClass("visible");
+                _this.isRoomsVisible = !_this.isRoomsVisible;
+            } else {
+                $(".people-sidebar").toggleClass("visible");
+                _this.isPeopleVisible = !_this.isPeopleVisible;
+            }
+
+            if ($(window).width() > 992) {
+                _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
+                _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
+                _this.contentMarginRight = _this.isPeopleVisible ? 300 : 0;
+                $(".content").css({
+                    "width": "calc(100% - " + _this.contentWidthCrop + "px)",
+                    "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
+                });
+            } else {
+                $(".content").css({"width": "100%", "margin": "0"});
+            }
+        },
+        resizingWindowHandler: function () {
+            var _this = gridManager;
+            if ($(window).width() > 992 && !_this.isScreenWide) {
+                _this.isScreenWide = true;
+                _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
+                _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
+                _this.contentMarginRight = _this.isPeopleVisible ? 300 : 0;
+                $(".content").css({
+                    "width": "calc(100% - " + _this.contentWidthCrop + "px)",
+                    "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
+                });
+            } else if ($(window).width() <= 992 && _this.isScreenWide) {
+                _this.isScreenWide = false;
+                $(".content").css({"width": "100%", "margin": "0"});
+            }
+        },
+
+    };
+
+    gridManager.init();
 
     //var oldUserName = '';
     //var renameUserItem = null;
@@ -104,6 +162,7 @@
 
         return [li, li2];
     }
+
     //
     //function addMessage(messageDiv, data) {
     //    var message = document.createElement('div');
@@ -180,6 +239,7 @@
             return document.querySelector(selector);
         }
     }
+
     //
     //function panelHandler() {
     //    if (roomsOpened) {
@@ -250,6 +310,7 @@
         };
         return elements;
     }
+
     //
     var elements = getElements();
 
@@ -1181,6 +1242,7 @@
             });
         }
     }
+
     //
     //elements.sendRoomCodeButton.addEventListener('click', function (e) {
     //    removeRoomFormSender(e);
