@@ -28,33 +28,19 @@ body
                     button#enter.btn.btn-primary(type='button') Enter
 
     header(style="display: flex; justify-content: space-between; align-items: center")
-        .btn-group(data-toggle='buttons')
-            label.btn.btn-primary.active.rooms-label
-                input(type='radio', name='options', autocomplete='off')
-                | Rooms
+        label.btn.btn-primary.rooms-label.active Rooms
         .btn-group.switchers(data-toggle='buttons')
             label.btn.btn-primary.active
-                input(type='radio', name='options', autocomplete='off')
+                input(type='radio', autocomplete='off')
                 | Public msg
             label.btn.btn-primary
-                input(type='radio', name='options', autocomplete='off')
+                input(type='radio', autocomplete='off')
                 | Private msg
-        .btn-group(data-toggle='buttons')
-            label.btn.btn-primary.active.people-label
-                input(type='radio', name='options', autocomplete='off')
-                | People
+        label.btn.btn-primary.active.people-label People
 
     .container-fluid
         .row
-            .hidden-md-down.col-lg-3.left-sidebar
-                //h1
-                //    .btn-group(data-toggle='buttons')
-                //        label.btn.btn-primary.active
-                //            input#option2(type='radio', name='options', autocomplete='off')
-                //            | Public msg
-                //        label.btn.btn-primary
-                //            input#option3(type='radio', name='options', autocomplete='off')
-                //            | Private msg
+            .rooms-sidebar.visible
                 ul.list-group
                     li.list-group-item
                         span.label.label-primary.label-pill.pull-xs-right 14
@@ -110,15 +96,7 @@ body
                     input.searchPeopleInput.form-control(type='text', placeholder="Search for room:")
                     span.input-group-addon
                         i.fa.fa-search
-            .col-xs-12.col-lg-6.content
-                //#messages-header
-                //    .btn-group(data-toggle='buttons')
-                    //    label.btn.btn-primary.active
-                    //        input#option2(type='radio', name='options', autocomplete='off')
-                    //        | Public msg
-                    //    label.btn.btn-primary
-                    //        input#option3(type='radio', name='options', autocomplete='off')
-                    //        | Private msg
+            .content
                 #messages
                     each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
                         .media
@@ -131,8 +109,7 @@ body
                 .input-group
                     input.searchRoomInput.form-control(type='text', placeholder="Your message:")
                     span.input-group-addon send
-            .hidden-md-down.col-lg-3.right-sidebar
-                //h1 people
+            .people-sidebar.visible
                 ul.list-group
                     li.list-group-item Cras justo odio
                     li.list-group-item Dapibus ac facilisis in
@@ -164,9 +141,7 @@ body
                     span.input-group-addon
                         i.fa.fa-search
 
-    //
-    //button.btn.btn-primary.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
-    //    | Launch demo modal
+    script(src='js/app.js')
 
 
 
@@ -256,4 +231,3 @@ body
     //                img(src='images/people.aspx', class='peopleIcon', alt='people')
     //            ul
     //
-    script(src='js/app.js')

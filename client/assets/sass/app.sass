@@ -16,12 +16,13 @@ header
     background-color: $main-color
     label
         margin: 0
+        cursor: pointer !important
 
     .rooms-label
-        margin-left: 22px !important
+        margin-left: 20px !important
 
     .people-label
-        margin-right: 22px
+        margin-right: 20px
 
     .btn
         border: none
@@ -30,8 +31,8 @@ header
 
     .switchers
         .btn
-            &:not(.active)
-                cursor: pointer
+            //&:not(.active)
+            //    cursor: pointer
             &.active
                 background-color: $main-color-lighter
 
@@ -39,9 +40,12 @@ header
     text-shadow: none
     padding-top: 5px
 
-.right-sidebar
+.people-sidebar
     .list-group-item
         text-align: right
+
+.list-group
+    background-color: white
 
 
 .col-xs-3,
@@ -51,16 +55,32 @@ header
     padding-left: 0 !important
     padding-right: 0 !important
 
-.content .input-group
-    padding: 0
 
-.left-sidebar,
-.right-sidebar
+.content
+    width: calc(100% - 600px)
+    transition: all 0.3s ease-in-out
+    .input-group
+        padding: 0
+
+.rooms-sidebar,
+.people-sidebar
+    width: 300px
+    transition: all 0.3s ease-in-out
+    //transform: translate(-100%, 0)
+    margin: 0 0 0 -300px
+    &.visible
+        margin: 0
+        //transform: translate(0, 0)
     ul
         height: calc(100vh - 50px)
         box-shadow: 2px 0 8px -3px $main-color-lighter
 
-.right-sidebar
+
+
+.people-sidebar
+    //transform: translate(100%, 0)
+    margin: 0 -300px 0 0
+
     ul
         box-shadow: -2px 0 8px -3px $main-color-lighter
 
@@ -167,8 +187,8 @@ input
             right: auto
             left: 22px !important
 
-
-
+.row > div
+    float: left
 //.hide-for-medium {
 //	font-family: 'Monaco';
 //	font-size: 18px;

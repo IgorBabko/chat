@@ -1,5 +1,22 @@
 ;$(function () {
 
+    var isRoomsVisible = true,
+        isPeopleVisible = true,
+        v = 0;
+    $(".rooms-label, .people-label").on("click", function() {
+        var $this = $(this);
+        $this.toggleClass("active");
+        if ($this.hasClass("rooms-label")) {
+            $(".rooms-sidebar").toggleClass("visible");
+            isRoomsVisible = !isRoomsVisible;
+        } else {
+            $(".people-sidebar").toggleClass("visible");
+            isPeopleVisible = !isPeopleVisible;
+        }
+        v = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
+        $(".content").css("width", "calc(100% - " + v + "px)");
+    });
+
     //var oldUserName = '';
     //var renameUserItem = null;
     //
