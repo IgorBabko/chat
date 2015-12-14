@@ -10,24 +10,30 @@ body
     background: $main-color-lightest !important
     overflow: hidden
 
-
-h1,
-#messages-header
-    color: white
+// header
+header
+    height: 50px
     background-color: $main-color
-    margin: 0
-    text-align: center
-    height: 48px
-    text-shadow: 3px 3px 1px $main-color-darker
+    label
+        margin: 0
+
+    .rooms-label
+        margin-left: 22px !important
+
+    .people-label
+        margin-right: 22px
+
     .btn
-        margin-left: 0 !important
         border: none
         background-color: $main-color-darker
         cursor: default
-        &:not(.active)
-            cursor: pointer
-        &.active
-            background-color: $main-color-lighter
+
+    .switchers
+        .btn
+            &:not(.active)
+                cursor: pointer
+            &.active
+                background-color: $main-color-lighter
 
 #messages-header
     text-shadow: none
