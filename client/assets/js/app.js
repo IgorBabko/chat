@@ -13,8 +13,12 @@
             $(".people-sidebar").toggleClass("visible");
             isPeopleVisible = !isPeopleVisible;
         }
-        v = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
-        $(".content").css("width", "calc(100% - " + v + "px)");
+
+        //if ($(window).width() > 992) {
+
+            v = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
+            $(".content").css("width", "calc(100% - " + v + "px)");
+        //}
     });
 
     //var oldUserName = '';
