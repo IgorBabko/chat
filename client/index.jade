@@ -42,11 +42,23 @@ body
                 .modal-body
                     .form
                         .form-group
-                            label.form-control-label(for='room-name') Name:
+                            label.form-control-label(for='room-name') Name:&nbsp;
+                                span.asterisk *
                             input#room-name-input.form-control(type='text')
                         .form-group
                             label.form-control-label(for='room-password') Password:
-                            input#room-password-input.form-control(type='text')
+                            input#room-password-input.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='room-password-repeat') Password again:
+                            input#room-password-repeat-input.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='room-code') Code:&nbsp;
+                                span.asterisk *
+                            input#room-code-input.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='room-code-repeat') Code again:&nbsp;
+                                span.asterisk *
+                            input#room-code-repeat-input.form-control(type='text')
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-primary(type='button') Create
