@@ -127,6 +127,12 @@
         });
     });
 
+    $(".rooms-sidebar li").on("click", function () {
+        $("#room-password-modal").modal().on("shown.bs.modal", function () {
+            $("#room-pass").focus();
+        });
+    });
+
     //var oldUserName = '';
     //var renameUserItem = null;
     //
