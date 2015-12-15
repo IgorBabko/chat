@@ -111,6 +111,12 @@
 
     gridManager.init();
 
+    $(".add-room").on("click", function () {
+        $("#create-room").modal().on("shown.bs.modal", function () {
+            $("#room-name").focus();//.select();
+        });
+    });
+
     //var oldUserName = '';
     //var renameUserItem = null;
     //
@@ -305,7 +311,8 @@
             privateMessageTextarea: getNode('#privateMessage'),
             sendPrivateMessageButton: getNode('#sendPrivateMessage'),
             openPrivateMessageModal: getNode('#showPrivateMessageModal'),
-            $enterChatModal: $(getNode('#enterChatModal')),
+            $enterChatModal: $(getNode('#enter-chat')),
+            $newRoomModal: $(getNode('#new-room')),
             removeRoomModal: getNode('#removeRoomModal'),
             showNewRoomModal: getNode('.showNewRoomModal', true),
             showRemoveRoomModal: getNode('.showRemoveRoomModal', true),
@@ -324,7 +331,7 @@
             closeNewRoomModal: getNode('#closeNewRoomModal'),
             messageInput: getNode('.message-input input'),
             messageDiv: getNode('#messages'),
-            $nameInput: $(getNode('#name')),
+            $nameInput: $(getNode('#username')),
             identificationCodeInput: getNode('#identificationCode'),
             header: getNode('.header'),
             roomLists: getNode('.roomsSidebar ul', true),
