@@ -26,6 +26,7 @@
     "foundation-apps": "~1.1.0"
   },
   "devDependencies": {
-    "normalize.css": "~3.0.3"
+    "normalize.css": "~3.0.3",
+    "components-font-awesome": "~4.5.0"
   }
 }

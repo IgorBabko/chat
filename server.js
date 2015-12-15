@@ -81,71 +81,78 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 return;
             }
 
-            people.find({
-                name: userData.userName
-            }).toArray(function (err, usersInfo) {
-                if (err) return err;
+            //people.find({
+            //    name: userData.userName
+            //}).toArray(function (err, usersInfo) {
+            //    if (err) return err;
+            //
+            //    if (usersInfo.length !== 0) {
+            //        socket.emit('warning', {
+            //            message: 'User with name "' + userData.userName + '" already exists!'
+            //        });
+            //        return;
+            //    }
+            //
+            //    var status = 'patient';
+            //    socket.status = 'patient';
+            //    if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
+            //        socket.emit('warning', {
+            //            identificationCode: ' ',
+            //            message: 'Identification code is wrong!'
+            //        });
+            //        return;
+            //    } else if (userData.identificationCode === '1') {
+            //        status = 'doctor';
+            //        socket.status = 'doctor';
+            //        socket.subscribtions = [];
+            //    }
+            //
+            //    var user = {
+            //        _id: '_' + socket.id,
+            //        name: userData.userName,
+            //        room: 'global',
+            //        status: status,
+            //        subscribtions: []
+            //    };
+            //
+            //    people.insert(user);
+            //    rooms.update({
+            //        name: 'global'
+            //    }, {
+            //        $inc: {
+            //            peopleCount: 1
+            //        }
+            //    });
+            //    rooms.find({
+            //        name: 'global'
+            //    }).toArray(function (err, roomsData) {
+            //        var room = roomsData[0];
 
-                if (usersInfo.length !== 0) {
-                    socket.emit('warning', {
-                        message: 'User with name "' + userData.userName + '" already exists!'
-                    });
-                    return;
-                }
-
-                var status = 'patient';
-                socket.status = 'patient';
-                if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
-                    socket.emit('warning', {
-                        identificationCode: ' ',
-                        message: 'Identification code is wrong!'
-                    });
-                    return;
-                } else if (userData.identificationCode === '1') {
-                    status = 'doctor';
-                    socket.status = 'doctor';
-                    socket.subscribtions = [];
-                }
-
-                var user = {
-                    _id: '_' + socket.id,
-                    name: userData.userName,
-                    room: 'global',
-                    status: status,
-                    subscribtions: []
-                };
-
-                people.insert(user);
-                rooms.update({
-                    name: 'global'
-                }, {
-                    $inc: {
-                        peopleCount: 1
-                    }
-                });
-                rooms.find({
-                    name: 'global'
-                }).toArray(function (err, roomsData) {
-                    var room = roomsData[0];
 
                     // var userName = user.name;
                     // if (user.status === 'doctor') {
                     // 	user.name += '(doctor)';
                     // }
-                    socket.broadcast.in('global').emit('joined', {
-                        user: user,
-                        message: user.name + ' joined chat.'
-                    });
+
+
+                    //socket.broadcast.in('global').emit('joined', {
+                    //    user: user,
+                    //    message: user.name + ' joined chat.'
+                    //});
+
+
                     // user.name = userName + '(you)';
+
+
                     socket.emit('joined', {
-                        user: user,
-                        status: status
+                        //user: user,
+                        //status: status
                     });
-                    clients.emit('joined', {
-                        room: room
-                    });
-                });
-            });
+                    //clients.emit('joined', {
+                    //    room: room
+                    //});
+                //});
+            //});
         });
 
         socket.on('left', function () {
