@@ -113,12 +113,18 @@
 
     $("#create-room-button").on("click", function () {
         $("#create-room-modal").modal().on("shown.bs.modal", function () {
-            $("#room-name-input").focus();//.select();
+            $("#room-name-input").focus();
         });
     });
 
     $("#delete-room-button").on("click", function () {
         $("#delete-room-modal").modal();
+    });
+
+    $(".people-sidebar li").on("click", function () {
+        $("#private-message-modal").modal().on("shown.bs.modal", function () {
+            $("#private-message-textarea").focus();
+        });
     });
 
     //var oldUserName = '';

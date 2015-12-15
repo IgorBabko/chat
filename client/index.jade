@@ -64,6 +64,22 @@ body
                     button.btn.btn-primary(type='button') Yes
         
 
+    #private-message-modal.modal.fade(role='dialog', aria-labelledby='privateMessage', aria-hidden='false')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4#privateMessage.modal-title Private message
+                .modal-body
+                    .form
+                        .form-group
+                            label.form-control-label(for='private-message-textarea') Text:
+                            textarea#private-message-textarea.form-control
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                    button.btn.btn-primary(type='button') Send
+                    button#private-mode-button.btn.btn-success.pull-xs-left(type='button') Private mode
 
     header
         .btn-group
