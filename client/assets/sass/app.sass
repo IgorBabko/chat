@@ -15,6 +15,9 @@ body
 
 // header
 header
+    display: flex
+    justify-content: space-between
+    align-items: center
     height: 50px
     background-color: $main-color
     label
@@ -63,6 +66,13 @@ header
 
     &.shadowed
         opacity: 0.5
+
+.delete-room
+    width: 41.6094px
+    background-color: #F0AD4E !important
+
+.add-room
+    background-color: #449d44 !important
 
 //.content-overlay
 //    display: none
@@ -116,7 +126,8 @@ header
             background-color: lighten($main-color, 40)
             border-color: lighten($main-color, 40)
 
-
+.typing
+    padding: 0
 
 .form-control,
 .input-group-addon,

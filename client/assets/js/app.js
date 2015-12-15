@@ -29,6 +29,7 @@
                 this.contentMarginRight = 0;
                 this.isScreenWide = false;
                 this.contentWidthCrop = 600;
+                $(".rooms-label, .people-label").removeClass("active");
                 $(".rooms-sidebar, .people-sidebar").addClass("hidden");
                 $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
                 $(".content").css({"width": "100%", "margin": "0"});
