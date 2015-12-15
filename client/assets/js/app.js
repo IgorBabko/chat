@@ -133,6 +133,18 @@
         });
     });
 
+    $("#private-messages-button").on("click", function () {
+        $("#private-messages").show();
+        $("#public-messages").hide();
+    });
+
+    $("#public-messages-button").on("click", function () {
+        $("#public-messages").show();
+        $("#private-messages").hide();
+    });
+
+    $("time").timeago();
+
     //var oldUserName = '';
     //var renameUserItem = null;
     //
@@ -346,7 +358,7 @@
             closeInputNameModal: getNode('#closeInputNameModal'),
             closeNewRoomModal: getNode('#closeNewRoomModal'),
             messageInput: getNode('.message-input input'),
-            messageDiv: getNode('#messages'),
+            messageDiv: getNode('#public-messages'),
             $nameInput: $(getNode('#username-input')),
             identificationCodeInput: getNode('#identificationCode'),
             header: getNode('.header'),

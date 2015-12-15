@@ -77,6 +77,9 @@ header
 #private-mode-button
     margin: 0
 
+#private-messages
+    display: none
+
 .asterisk
     color: red
     font-size: 20px
@@ -177,8 +180,9 @@ header
     background: white
     padding: 10px
     box-shadow: 3px 3px 5px lighten($main-color, 46)
-#messages
-    max-height: calc(100vh - 86px)
+
+.messages
+    height: calc(100vh - 86px)
     overflow-y: scroll
 
 

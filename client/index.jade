@@ -15,6 +15,7 @@ html(lang='en', ng-app='application')
         script(src='jquery/dist/jquery.min.js')
         script(src='tether/dist/js/tether.min.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
+        script(src='js/jquery.timeago.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
 
 body
@@ -77,7 +78,6 @@ body
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-danger(type='button') Delete
-        
 
     #private-message-modal.modal.fade(role='dialog', aria-labelledby='privateMessage', aria-hidden='false')
         .modal-dialog(role='document')
@@ -120,10 +120,10 @@ body
             label.btn.btn-primary#create-room-button +
                 //i.fa.fa-plus
         .btn-group.switchers(data-toggle='buttons')
-            label.btn.btn-primary.active
+            label.btn.btn-primary.active#public-messages-button
                 input(type='radio', autocomplete='off')
                 | Public msg
-            label.btn.btn-primary
+            label.btn.btn-primary#private-messages-button
                 input(type='radio', autocomplete='off')
                 | Private msg
         label.btn.btn-primary.active.people-label People
@@ -188,8 +188,17 @@ body
     .container-fluid
         .row
             .content
-                #messages
+                .messages#public-messages
                     each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
+                        .media
+                            a.pull-left(href='#')
+                                img.media-object(src='http://placehold.it/64x64', alt='')
+                            .media-body
+                                h4.media-heading.name #{val.name}
+                                    time.posted-date(datetime='#{val.postedDate}')
+                                | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                .messages#private-messages
+                    each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
                         .media
                             a.pull-left(href='#')
                                 img.media-object(src='http://placehold.it/64x64', alt='')
@@ -201,6 +210,7 @@ body
                     input.searchRoomInput.form-control(type='text', placeholder="Your message:")
                     span.input-group-addon send
 
+
     .people-sidebar
         ul.list-group
             li.list-group-item Cras justo odio
@@ -211,10 +221,7 @@ body
                 | Morbi leo risus
             li.list-group-item Porta ac consectetur ac
             li.list-group-item Vestibulum at eros
-            li.list-group-item
-                span.label.pull-xs-left.typing
-                    img(src="images/typing.gif", style="width: 25px")
-                | Cras justo odio
+            li.list-group-item.active Cras justo odio
             li.list-group-item Dapibus ac facilisis in
             li.list-group-item Morbi leo risus
             li.list-group-item Porta ac consectetur ac
