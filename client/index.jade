@@ -19,7 +19,7 @@ html(lang='en', ng-app='application')
 
 body
 
-    #enter-chat.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
+    #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
                 .modal-header
@@ -28,11 +28,11 @@ body
                     .form
                         .form-group
                             label.form-control-label(for='username') Your name:
-                            input#username.form-control(type='text', autofocus)
+                            input#username-input.form-control(type='text', autofocus)
                 .modal-footer
                     button#enter.btn.btn-primary(type='button') Enter
 
-    #create-room.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
+    #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
                 .modal-header
@@ -43,20 +43,34 @@ body
                     .form
                         .form-group
                             label.form-control-label(for='room-name') Name:
-                            input#room-name.form-control(type='text')
+                            input#room-name-input.form-control(type='text')
                         .form-group
                             label.form-control-label(for='room-password') Password:
-                            input#room-password.form-control(type='text')
+                            input#room-password-input.form-control(type='text')
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-primary(type='button') Create
 
+    #delete-room-modal.modal.fade(role='dialog', aria-labelledby='deleteRoom', aria-hidden='false')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4#deleteRoom.modal-title Delete room
+                .modal-body Are you sure?
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') No
+                    button.btn.btn-primary(type='button') Yes
+        
+
+
     header
         .btn-group
             label.btn.btn-primary.rooms-label.active Rooms
-            label.btn.btn-primary.delete-room -
+            label.btn.btn-primary#delete-room-button -
                 //i.fa.fa-minus
-            label.btn.btn-primary.add-room +
+            label.btn.btn-primary#create-room-button +
                 //i.fa.fa-plus
         .btn-group.switchers(data-toggle='buttons')
             label.btn.btn-primary.active
