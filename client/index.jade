@@ -114,7 +114,7 @@ body
 
     header
         .btn-group
-            label.btn.btn-primary.rooms-label.active Rooms
+            label.btn.btn-primary#rooms-sidebar-button.active Rooms
             label.btn.btn-primary#delete-room-button -
                 //i.fa.fa-minus
             label.btn.btn-primary#create-room-button +
@@ -126,9 +126,9 @@ body
             label.btn.btn-primary#private-messages-button
                 input(type='radio', autocomplete='off')
                 | Private msg
-        label.btn.btn-primary.active.people-label People
+        label.btn.btn-primary.active#people-sidebar-button People
 
-    .rooms-sidebar
+    #rooms-sidebar
         ul.list-group
             li.list-group-item
                 span.label.label-primary.label-pill.pull-xs-right 14
@@ -195,7 +195,7 @@ body
                                 img.media-object(src='http://placehold.it/64x64', alt='')
                             .media-body
                                 h4.media-heading.name #{val.name}
-                                    time.posted-date(datetime='#{val.postedDate}')
+                                    time.posted-date(datetime='#{val.postedDate}') .
                                 | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
                 .messages#private-messages
                     each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
@@ -211,7 +211,7 @@ body
                     span.input-group-addon send
 
 
-    .people-sidebar
+    #people-sidebar
         ul.list-group
             li.list-group-item Cras justo odio
             li.list-group-item Dapibus ac facilisis in

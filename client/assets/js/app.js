@@ -29,14 +29,14 @@
                 this.contentMarginRight = 0;
                 this.isScreenWide = false;
                 this.contentWidthCrop = 600;
-                $(".rooms-label, .people-label").removeClass("active");
-                $(".rooms-sidebar, .people-sidebar").addClass("hidden");
-                $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
+                $("#rooms-sidebar-button, #people-sidebar-button").removeClass("active");
+                $("#rooms-sidebar, #people-sidebar").addClass("hidden");
+                $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 $(".content").css({"width": "100%", "margin": "0"});
             }
         },
         setupHandlers: function () {
-            $(".rooms-label, .people-label").on("click", this.togglingSidebarsHandler);
+            $("#rooms-sidebar-button, #people-sidebar-button").on("click", this.togglingSidebarsHandler);
             $(window).on("resize", this.resizingWindowHandler);
             $(".content").on("click", this.clickOverlayHandler);
         },
@@ -44,11 +44,11 @@
             var $this = $(this);
             var _this = gridManager;
             $this.toggleClass("active");
-            if ($this.hasClass("rooms-label")) {
-                $(".rooms-sidebar").toggleClass("hidden");
+            if ($this.attr("id") === "rooms-sidebar-button") {
+                $("#rooms-sidebar").toggleClass("hidden");
                 _this.isRoomsVisible = !_this.isRoomsVisible;
             } else {
-                $(".people-sidebar").toggleClass("hidden");
+                $("#people-sidebar").toggleClass("hidden");
                 _this.isPeopleVisible = !_this.isPeopleVisible;
             }
 
@@ -68,7 +68,7 @@
         resizingWindowHandler: function () {
             var _this = gridManager;
             if ($(window).width() > 992 && !_this.isScreenWide) {
-                $(".rooms-sidebar ul, .people-sidebar ul").removeClass("shadowless");
+                $("#rooms-sidebar ul, #people-sidebar ul").removeClass("shadowless");
                 _this.isScreenWide = true;
                 _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
                 _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
@@ -78,7 +78,7 @@
                     "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else if ($(window).width() <= 992 && _this.isScreenWide) {
-                $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
+                $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 _this.isScreenWide = false;
                 _this.toggleOverlay();
                 $(".content").css({"width": "100%", "margin": "0"});
@@ -88,8 +88,8 @@
             if ($(window).width() <= 992) {
                 var _this = gridManager;
                 if (_this.isOverlayShown) {
-                    $(".rooms-label, .people-label").removeClass("active");
-                    $(".rooms-sidebar, .people-sidebar").addClass("hidden");
+                    $("#rooms-sidebar-button, #people-sidebar-button").removeClass("active");
+                    $("#rooms-sidebar, #people-sidebar").addClass("hidden");
                     $(".content").removeClass("shadowed");
                     _this.isRoomsVisible = false;
                     _this.isPeopleVisible = false;
@@ -118,18 +118,20 @@
     });
 
     $("#delete-room-button").on("click", function () {
-        $("#delete-room-modal").modal();
+        $("#delete-room-modal").modal().on("shown.bs.modal", function () {
+            $("#room-c-input").focus();
+        });
     });
 
-    $(".people-sidebar li").on("click", function () {
+    $("#people-sidebar li").on("click", function () {
         $("#private-message-modal").modal().on("shown.bs.modal", function () {
             $("#private-message-textarea").focus();
         });
     });
 
-    $(".rooms-sidebar li").on("click", function () {
+    $("#rooms-sidebar li").on("click", function () {
         $("#room-password-modal").modal().on("shown.bs.modal", function () {
-            $("#room-pass").focus();
+            $("#room-pass-input").focus();
         });
     });
 

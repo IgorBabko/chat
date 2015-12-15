@@ -21,13 +21,18 @@ header
     height: 50px
     background-color: $main-color
     label
+        transition: all 0.1s ease-in-out
+        background-color: rgb(2, 104, 191) !important
         margin: 0
         cursor: pointer !important
 
-    .rooms-label
+        &:not(.active):hover
+            background-color: $main-color-darker !important
+
+    #rooms-sidebar-button
         margin-left: 20px !important
 
-    .people-label
+    #people-sidebar-button
         margin-right: 20px
 
     .btn
@@ -46,7 +51,7 @@ header
     text-shadow: none
     padding-top: 5px
 
-.people-sidebar
+#people-sidebar
     .list-group-item
         text-align: right
 
@@ -67,12 +72,15 @@ header
     &.shadowed
         opacity: 0.5
 
-#delete-room-button
-    width: 41.6094px
-    background-color: #F0AD4E !important
-
+#delete-room-button,
 #create-room-button
-    background-color: #449d44 !important
+    transition: all 0.1s ease-in-out
+    width: 41.6094px
+    margin: 0 1px
+    background-color: $main-color-darker
+    &:hover
+        background-color: #299BFD
+
 
 #private-mode-button
     margin: 0
@@ -93,7 +101,7 @@ header
 //        display: block
 //        opacity: 0.7
 
-.rooms-sidebar
+#rooms-sidebar
     z-index: 3
     transition: all 0.3s ease-in-out
     position: fixed
@@ -106,7 +114,7 @@ header
         height: calc(100vh - 50px)
         box-shadow: 2px 0 8px -3px $main-color-lighter
 
-.people-sidebar
+#people-sidebar
     z-index: 3
     transition: all 0.3s ease-in-out
     position: fixed
@@ -121,8 +129,8 @@ header
         .list-group-item
             text-align: right
 
-.rooms-sidebar,
-.people-sidebar
+#rooms-sidebar,
+#people-sidebar
     ul
         &.shadowless
             box-shadow: none !important
