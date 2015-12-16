@@ -1,5 +1,9 @@
 ;$(function () {
 
+    window.Dropzone.options.avatarUpload = {
+        dictDefaultMessage: "Drop avatar here or click to upload."
+    };
+
     var gridManager = {
 
         isRoomsVisible: true,

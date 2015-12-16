@@ -9,11 +9,13 @@ html(lang='en', ng-app='application')
         link(rel='stylesheet', href='components-font-awesome/css/font-awesome.min.css')
 
         link(rel='stylesheet', href='tether/dist/css/tether.min.css')
+        link(rel='stylesheet', href='dropzone/dist/dropzone.css')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
 
         script(src='jquery/dist/jquery.min.js')
         script(src='tether/dist/js/tether.min.js')
+        script(src='dropzone/dist/dropzone.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
         script(src='js/jquery.timeago.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
@@ -21,7 +23,7 @@ html(lang='en', ng-app='application')
 body
 
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
-        .modal-dialog(role='document')
+        .modal-dialog.modal-sm(role='document')
             .modal-content
                 .modal-header
                     h4#welcome.modal-title Welcome :)
@@ -30,6 +32,7 @@ body
                         .form-group
                             label.form-control-label(for='username-input') Your name:
                             input#username-input.form-control(type='text', autofocus)
+                    form#avatar-upload.dropzone(action='/target')
                 .modal-footer
                     button#enter.btn.btn-primary(type='button') Enter
 
