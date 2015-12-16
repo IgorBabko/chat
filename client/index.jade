@@ -24,7 +24,7 @@ body
         .modal-dialog(role='document')
             .modal-content
                 .modal-header
-                    h4#welcome.modal-title Welcome :)
+                    h4#welcome.modal-title Welcome!
                 .modal-body
                     .form
                         .form-group
@@ -116,15 +116,13 @@ body
         .btn-group
             label.btn.btn-primary#rooms-sidebar-button.active Rooms
             label.btn.btn-primary#delete-room-button -
-                //i.fa.fa-minus
             label.btn.btn-primary#create-room-button +
-                //i.fa.fa-plus
         .btn-group.switchers(data-toggle='buttons')
             label.btn.btn-primary.active#public-messages-button
-                input(type='radio', autocomplete='off')
+                input(type='radio')
                 | Public msg
             label.btn.btn-primary#private-messages-button
-                input(type='radio', autocomplete='off')
+                input(type='radio')
                 | Private msg
         label.btn.btn-primary.active#people-sidebar-button People
 
@@ -189,19 +187,15 @@ body
         .row
             .content
                 .messages#public-messages
-                    each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
+                    each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
                         .media
-                            a.pull-left(href='#')
-                                img.media-object(src='http://placehold.it/64x64', alt='')
                             .media-body
                                 h4.media-heading.name #{val.name}
                                     time.posted-date(datetime='#{val.postedDate}') .
                                 | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
                 .messages#private-messages
-                    each val in [{ name: "john", postedDate: new Date() }, { name: "john", postedDate: new Date() }]
+                    each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
                         .media
-                            a.pull-left(href='#')
-                                img.media-object(src='http://placehold.it/64x64', alt='')
                             .media-body
                                 h4.media-heading.name #{val.name}
                                     small.posted-date #{val.postedDate}
