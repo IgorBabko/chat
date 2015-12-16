@@ -1,6 +1,6 @@
 {
   "name": "chat",
-  "description": "Simple chat on Express and Socket.IO",
+  "description": "Simple handy chat on Express and Socket.IO",
   "version": "1.0.0",
   "scripts": {
     "start": "gulp"
@@ -28,11 +28,6 @@
     "socket.io": "latest",
     "yargs": "^3.6.0"
   },
-  "private": true,
   "main": "server.js",
-  "keywords": [
-    "chat"
-  ],
   "author": "Igor Babko",
-  "license": "ISC"
 }

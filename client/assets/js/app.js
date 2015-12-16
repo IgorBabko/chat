@@ -1,5 +1,9 @@
 ;$(function () {
 
+    window.Dropzone.options.avatarUpload = {
+        dictDefaultMessage: "Drop avatar here or click to upload."
+    };
+
     var gridManager = {
 
         isRoomsVisible: true,
@@ -29,13 +33,14 @@
                 this.contentMarginRight = 0;
                 this.isScreenWide = false;
                 this.contentWidthCrop = 600;
-                $(".rooms-sidebar, .people-sidebar").addClass("hidden");
-                $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
+                $("#rooms-sidebar-button, #people-sidebar-button").removeClass("active");
+                $("#rooms-sidebar, #people-sidebar").addClass("hidden");
+                $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 $(".content").css({"width": "100%", "margin": "0"});
             }
         },
         setupHandlers: function () {
-            $(".rooms-label, .people-label").on("click", this.togglingSidebarsHandler);
+            $("#rooms-sidebar-button, #people-sidebar-button").on("click", this.togglingSidebarsHandler);
             $(window).on("resize", this.resizingWindowHandler);
             $(".content").on("click", this.clickOverlayHandler);
         },
@@ -43,11 +48,11 @@
             var $this = $(this);
             var _this = gridManager;
             $this.toggleClass("active");
-            if ($this.hasClass("rooms-label")) {
-                $(".rooms-sidebar").toggleClass("hidden");
+            if ($this.attr("id") === "rooms-sidebar-button") {
+                $("#rooms-sidebar").toggleClass("hidden");
                 _this.isRoomsVisible = !_this.isRoomsVisible;
             } else {
-                $(".people-sidebar").toggleClass("hidden");
+                $("#people-sidebar").toggleClass("hidden");
                 _this.isPeopleVisible = !_this.isPeopleVisible;
             }
 
@@ -67,7 +72,7 @@
         resizingWindowHandler: function () {
             var _this = gridManager;
             if ($(window).width() > 992 && !_this.isScreenWide) {
-                $(".rooms-sidebar ul, .people-sidebar ul").removeClass("shadowless");
+                $("#rooms-sidebar ul, #people-sidebar ul").removeClass("shadowless");
                 _this.isScreenWide = true;
                 _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
                 _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
@@ -77,7 +82,7 @@
                     "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else if ($(window).width() <= 992 && _this.isScreenWide) {
-                $(".rooms-sidebar ul, .people-sidebar ul").addClass("shadowless");
+                $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 _this.isScreenWide = false;
                 _this.toggleOverlay();
                 $(".content").css({"width": "100%", "margin": "0"});
@@ -87,8 +92,8 @@
             if ($(window).width() <= 992) {
                 var _this = gridManager;
                 if (_this.isOverlayShown) {
-                    $(".rooms-label, .people-label").removeClass("active");
-                    $(".rooms-sidebar, .people-sidebar").addClass("hidden");
+                    $("#rooms-sidebar-button, #people-sidebar-button").removeClass("active");
+                    $("#rooms-sidebar, #people-sidebar").addClass("hidden");
                     $(".content").removeClass("shadowed");
                     _this.isRoomsVisible = false;
                     _this.isPeopleVisible = false;
@@ -109,6 +114,42 @@
     };
 
     gridManager.init();
+
+    $("#create-room-button").on("click", function () {
+        $("#create-room-modal").modal().on("shown.bs.modal", function () {
+            $("#room-name-input").focus();
+        });
+    });
+
+    $("#delete-room-button").on("click", function () {
+        $("#delete-room-modal").modal().on("shown.bs.modal", function () {
+            $("#room-c-input").focus();
+        });
+    });
+
+    $("#people-sidebar li").on("click", function () {
+        $("#private-message-modal").modal().on("shown.bs.modal", function () {
+            $("#private-message-textarea").focus();
+        });
+    });
+
+    $("#rooms-sidebar li").on("click", function () {
+        $("#room-password-modal").modal().on("shown.bs.modal", function () {
+            $("#room-pass-input").focus();
+        });
+    });
+
+    $("#private-messages-button").on("click", function () {
+        $("#private-messages").show();
+        $("#public-messages").hide();
+    });
+
+    $("#public-messages-button").on("click", function () {
+        $("#public-messages").show();
+        $("#private-messages").hide();
+    });
+
+    $("time").timeago();
 
     //var oldUserName = '';
     //var renameUserItem = null;
@@ -304,7 +345,8 @@
             privateMessageTextarea: getNode('#privateMessage'),
             sendPrivateMessageButton: getNode('#sendPrivateMessage'),
             openPrivateMessageModal: getNode('#showPrivateMessageModal'),
-            $enterChatModal: $(getNode('#enterChatModal')),
+            $enterChatModal: $(getNode('#enter-chat-modal')),
+            $newRoomModal: $(getNode('#create-room-modal')),
             removeRoomModal: getNode('#removeRoomModal'),
             showNewRoomModal: getNode('.showNewRoomModal', true),
             showRemoveRoomModal: getNode('.showRemoveRoomModal', true),
@@ -322,8 +364,8 @@
             closeInputNameModal: getNode('#closeInputNameModal'),
             closeNewRoomModal: getNode('#closeNewRoomModal'),
             messageInput: getNode('.message-input input'),
-            messageDiv: getNode('#messages'),
-            $nameInput: $(getNode('#name')),
+            messageDiv: getNode('#public-messages'),
+            $nameInput: $(getNode('#username-input')),
             identificationCodeInput: getNode('#identificationCode'),
             header: getNode('.header'),
             roomLists: getNode('.roomsSidebar ul', true),
