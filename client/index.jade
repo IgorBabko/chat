@@ -38,7 +38,7 @@ body
                             label.form-control-label(for='username-input') Your name:
                             input#username-input.form-control(type='text', autofocus)
                 .modal-footer
-                    button#enter-chat-button.btn.btn-primary(type='button') Enter
+                    button#enter-chat-button.btn.btn-success(type='button') Enter
 
     #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')
@@ -69,7 +69,7 @@ body
                             input#room-code-repeat-input.form-control(type='password')
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-primary(type='button') Create
+                    button.btn.btn-success(type='button') Create
 
     #delete-room-modal.modal.fade(role='dialog', aria-labelledby='deleteRoom', aria-hidden='false')
         .modal-dialog(role='document')
@@ -86,22 +86,22 @@ body
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-danger(type='button') Delete
 
-    #private-message-modal.modal.fade(role='dialog', aria-labelledby='privateMessage', aria-hidden='false')
-        .modal-dialog(role='document')
-            .modal-content
-                .modal-header
-                    button.close(type='button', data-dismiss='modal', aria-label='Close')
-                        span(aria-hidden='true') ×
-                    h4#privateMessage.modal-title Private message
-                .modal-body
-                    .form
-                        .form-group
-                            label.form-control-label(for='private-message-textarea') Text:
-                            textarea#private-message-textarea.form-control
-                .modal-footer
-                    button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-primary(type='button') Send
-                    button#private-mode-button.btn.btn-success.pull-xs-left(type='button') Private mode
+    //#private-message-modal.modal.fade(role='dialog', aria-labelledby='privateMessage', aria-hidden='false')
+    //    .modal-dialog(role='document')
+    //        .modal-content
+    //            .modal-header
+    //                button.close(type='button', data-dismiss='modal', aria-label='Close')
+    //                    span(aria-hidden='true') ×
+    //                h4#privateMessage.modal-title Private message
+    //            .modal-body
+    //                .form
+    //                    .form-group
+    //                        label.form-control-label(for='private-message-textarea') Text:
+    //                        textarea#private-message-textarea.form-control
+    //            .modal-footer
+    //                button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+    //                button.btn.btn-primary(type='button') Send
+    //                button#private-mode-button.btn.btn-success.pull-xs-left(type='button') Private mode
 
     #room-password-modal.modal.fade(role='dialog', aria-labelledby='roomPassword', aria-hidden='false')
         .modal-dialog(role='document')
@@ -117,15 +117,17 @@ body
                             input#room-pass-input.form-control(type='password')
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-primary(type='button') Enter
+                    button.btn.btn-success(type='button') Enter
 
     header
         .btn-group
             label.btn.btn-primary#rooms-sidebar-button.active Rooms
             label.btn.btn-primary#delete-room-button
-                i.fa.fa-minus
+                i.fa.fa-minus-circle
             label.btn.btn-primary#create-room-button
-                i.fa.fa-plus
+                i.fa.fa-plus-circle
+            label.btn.btn-primary#subscriptions-button
+                i.fa.fa-star
             input#search-input(type='text', placeholder='search for rooms:')
             label.btn.btn-primary#search-button
                 i.fa.fa-search
