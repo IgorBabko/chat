@@ -6,8 +6,6 @@ html(lang='en', ng-app='application')
 
         title zChat
 
-        link(rel='stylesheet', href='components-font-awesome/css/font-awesome.min.css')
-
         link(rel='stylesheet', href='tether/dist/css/tether.min.css')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
@@ -15,11 +13,18 @@ html(lang='en', ng-app='application')
         script(src='jquery/dist/jquery.min.js')
         script(src='tether/dist/js/tether.min.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
+        script(src='handlebars/handlebars.min.js')
         script(src='js/jquery.timeago.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
 
+        // templates
+        script#message-template(type="text/x-handlebars-template")
+            .media
+                .media-body
+                    h4.media-heading.name {{name}}
+                        time.posted-date(datetime='{{postedDate}}')
+                    | {{text}}
 body
-
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
@@ -31,7 +36,7 @@ body
                             label.form-control-label(for='username-input') Your name:
                             input#username-input.form-control(type='text', autofocus)
                 .modal-footer
-                    button#enter.btn.btn-primary(type='button') Enter
+                    button#enter-chat-button.btn.btn-primary(type='button') Enter
 
     #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')
@@ -117,13 +122,13 @@ body
             label.btn.btn-primary#rooms-sidebar-button.active Rooms
             label.btn.btn-primary#delete-room-button -
             label.btn.btn-primary#create-room-button +
-        .btn-group.switchers(data-toggle='buttons')
-            label.btn.btn-primary.active#public-messages-button
-                input(type='radio')
-                | Public msg
-            label.btn.btn-primary#private-messages-button
-                input(type='radio')
-                | Private msg
+        //.btn-group.switchers(data-toggle='buttons')
+        //    label.btn.btn-primary.active#public-messages-button
+        //        input(type='radio')
+        //        | Public msg
+        //    label.btn.btn-primary#private-messages-button
+        //        input(type='radio')
+        //        | Private msg
         label.btn.btn-primary.active#people-sidebar-button People
 
     #rooms-sidebar
@@ -201,8 +206,8 @@ body
                                     small.posted-date #{val.postedDate}
                                 | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
                 .input-group
-                    input.searchRoomInput.form-control(type='text', placeholder="Your message:")
-                    span.input-group-addon send
+                    input#message-input.form-control(type='text', placeholder="Your message:")
+                    span.input-group-addon#send-message-button send
 
 
     #people-sidebar

@@ -1,5 +1,11 @@
 ;$(function () {
 
+    var socket = io();
+    $("time").timeago();
+
+    $("#enter-chat-modal").modal({backdrop: 'static', keyboard: false});
+
+
     var gridManager = {
 
         isRoomsVisible: true,
@@ -145,7 +151,54 @@
         $("#private-messages").hide();
     });
 
-    $("time").timeago();
+    var whitespacePattern = /^\s*$/;
+
+    $("#send-message-button").on("click", function () {
+        if (whitespacePattern.test($("#message-input").val().trim())) {
+            // notification
+        } else {
+            console.log("niko");
+            socket.emit("message", $("#message-input").val());
+        }
+    });
+
+    // keypress handler
+
+    var messageTemplate = window.Handlebars.compile($("#message-template").html());
+
+    socket.on("message", function (data) {
+        $("#public-messages").append(messageTemplate(data)).find("time:last-child").timeago();
+    });
+
+    // join
+    function joinedHandler(e) {
+        if ((e.type === 'click' || e.keyCode == 13) && $("#username-input").val().length !== 0) {
+            socket.emit('joined', $("#username-input").val());
+        } else {
+            // notification
+        }
+    }
+
+    socket.on("joined", function (data) {
+        console.log(data);
+        $("#enter-chat-modal").modal("hide");
+    });
+
+
+    // warning
+    socket.on("warning", function (message) {
+        console.log(data);
+    });
+
+    $("#enter-chat-button").on('click', function (e) {
+        joinedHandler(e);
+    });
+    $("#username-input").on('keypress', function (e) {
+        joinedHandler(e);
+    });
+});
+
+
 
     //var oldUserName = '';
     //var renameUserItem = null;
@@ -197,39 +250,39 @@
     //    });
     //}
     //
-    function addListItem(lists, itemData, type) {
-        var li = document.createElement('li');
-        if (type === 'room') {
-            li.className = itemData._id;
-            if (itemData.name === 'global') {
-                li.className += ' activeItem';
-            }
-            if (itemData.password !== '') {
-                li.innerHTML = '<span>' + itemData.name + '</span><img class="lock" src="/images/lock.png" >';
-            } else {
-                li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
-            }
-        } else {
-            if ('_' + socket.id === itemData._id) {
-                li.className = itemData._id + ' meItem';
-            } else if (itemData.status === 'doctor') {
-                li.className = itemData._id + ' doctorItem';
-            } else {
-                li.className = itemData._id;
-            }
-            li.innerHTML = '<span>' + itemData.name + '</span>';
-        }
-        var li2 = li.cloneNode(true);
-        if (lists[0].firstChild !== null && type !== 'room') {
-            lists[0].insertBefore(li, lists[0].firstChild);
-            lists[1].insertBefore(li2, lists[1].firstChild);
-        } else {
-            lists[0].appendChild(li);
-            lists[1].appendChild(li2);
-        }
-
-        return [li, li2];
-    }
+    //function addListItem(lists, itemData, type) {
+    //    var li = document.createElement('li');
+    //    if (type === 'room') {
+    //        li.className = itemData._id;
+    //        if (itemData.name === 'global') {
+    //            li.className += ' activeItem';
+    //        }
+    //        if (itemData.password !== '') {
+    //            li.innerHTML = '<span>' + itemData.name + '</span><img class="lock" src="/images/lock.png" >';
+    //        } else {
+    //            li.innerHTML = '<span>' + itemData.name + '</span> <span>' + itemData.peopleCount + '</span>';
+    //        }
+    //    } else {
+    //        if ('_' + socket.id === itemData._id) {
+    //            li.className = itemData._id + ' meItem';
+    //        } else if (itemData.status === 'doctor') {
+    //            li.className = itemData._id + ' doctorItem';
+    //        } else {
+    //            li.className = itemData._id;
+    //        }
+    //        li.innerHTML = '<span>' + itemData.name + '</span>';
+    //    }
+    //    var li2 = li.cloneNode(true);
+    //    if (lists[0].firstChild !== null && type !== 'room') {
+    //        lists[0].insertBefore(li, lists[0].firstChild);
+    //        lists[1].insertBefore(li2, lists[1].firstChild);
+    //    } else {
+    //        lists[0].appendChild(li);
+    //        lists[1].appendChild(li2);
+    //    }
+    //
+    //    return [li, li2];
+    //}
 
     //
     //function addMessage(messageDiv, data) {
@@ -238,7 +291,6 @@
     //    var messageDate = new Date(data.date);
     //    var timezoneOffsetInHours = new Date().getTimezoneOffset() / 60;
     //
-    //    // @TODO detect Locale
     //
     //    var dateString = messageDate.getDate();
     //    var currentMonth = messageDate.getMonth() + 1;
@@ -298,15 +350,6 @@
     //    }
     //}
 
-    var socket = io();
-
-    function getNode(selector, selectAll) {
-        if (selectAll) {
-            return document.querySelectorAll(selector);
-        } else {
-            return document.querySelector(selector);
-        }
-    }
 
     //
     //function panelHandler() {
@@ -324,7 +367,7 @@
     //    peopleCounters[1].innerHTML = roomInfo.peopleCount;
     //}
 
-    function getElements() {
+    /*function getElements() {
         var elements = {
             closeRoomsSidebarSmallButton: getNode('#closeRoomsSidebarSmallButton'),
             closePeopleSidebarSmallButton: getNode('#closePeopleSidebarSmallButton'),
@@ -378,13 +421,10 @@
             peopleIcon: getNode('.peopleIcon')
         };
         return elements;
-    }
+    }*/
 
     //
-    var elements = getElements();
-
-    elements.$enterChatModal.modal({backdrop: 'static', keyboard: false});
-
+    //var elements = getElements();
     //var activeItemName = 'global';
     //
     //elements.messageInput.addEventListener('focus', function () {
@@ -953,17 +993,17 @@
     //
     //});
     //
-    socket.on('joined', function (data) {
-        if (data.message) {
+    //socket.on('joined', function (data) {
+        //if (data.message) {
             //notification(data.message, 'info', 15000);
             // toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 
-            var personItems = addListItem(elements.peopleLists, data.user);
-            personItems[0].addEventListener('click', privateMessageHandler);
-            personItems[1].addEventListener('click', privateMessageHandler);
-        } else if (data.status) {
-
-            elements.messageInput.focus();
+        //    var personItems = addListItem(elements.peopleLists, data.user);
+        //    personItems[0].addEventListener('click', privateMessageHandler);
+        //    personItems[1].addEventListener('click', privateMessageHandler);
+        //} else if (data.status) {
+        //
+        //    elements.messageInput.focus();
 
             //if (data.status === 'doctor') {
             //    socket.status = 'doctor';
@@ -1020,18 +1060,18 @@
             //elements.closeInputNameModal.click();//dispatchEvent(new MouseEvent('click'));
 
 
-            var currentUserItems = addListItem(elements.peopleLists, data.user);
-
-            assignRenameHandlers(currentUserItems);
-
-            window.onunload = function () {
-                socket.emit('left');
-            };
-        } else if (data.room) {
-            updatePeopleCounters(data.room);
-        }
-        elements.$enterChatModal.modal('hide');
-    });
+    //        var currentUserItems = addListItem(elements.peopleLists, data.user);
+    //
+    //        assignRenameHandlers(currentUserItems);
+    //
+    //        window.onunload = function () {
+    //            socket.emit('left');
+    //        };
+    //    } else if (data.room) {
+    //        updatePeopleCounters(data.room);
+    //    }
+    //    $("#enter-chat-modal").modal('hide');
+    //});
     //
     //function sendMessage() {
     //    if (userIdForPrivateConversation) {
@@ -1303,14 +1343,7 @@
     //
     //elements.showInputNameModal.click();//dispatchEvent(new MouseEvent('click'));
 
-    function joinedHandler(e) {
-        if (e.type === 'click' || e.keyCode == 13) {
 
-            socket.emit('joined', {
-                userName: elements.$nameInput.val()
-            });
-        }
-    }
 
     //
     //elements.sendRoomCodeButton.addEventListener('click', function (e) {
@@ -1325,12 +1358,7 @@
     //    changeRoomFormSender(e);
     //});
     //
-    elements.$enterChatButton.on('click', function (e) {
-        joinedHandler(e);
-    });
-    elements.$nameInput.on('keyup', function (e) {
-        joinedHandler(e);
-    });
+
     //
     //elements.identificationCodeInput.addEventListener('keyup', function (e) {
     //    joinedHandler(e);
@@ -1360,4 +1388,4 @@
     //        }
     //    }
     //});
-});
+//});

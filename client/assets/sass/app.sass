@@ -80,16 +80,18 @@ header
 
     &.shadowed
         opacity: 0.5
+        cursor: pointer
 
 #delete-room-button,
 #create-room-button
     transition: all 0.1s ease-in-out
     width: 41.6094px
-    margin: 0 1px
     background-color: $main-color-darker
     &:hover
         background-color: #299BFD
 
+#delete-room-button
+    margin: 0 2px
 
 #private-mode-button
     margin: 0
@@ -197,6 +199,9 @@ header
     background: white
     padding: 10px
     box-shadow: 3px 3px 5px lighten($main-color, 46)
+
+.media-heading
+    margin: 10px 0
 
 .messages
     height: calc(100vh - 86px)
