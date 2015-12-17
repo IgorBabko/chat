@@ -26,6 +26,12 @@ html(lang='en', ng-app='application')
                     h4.media-heading.name {{name}}
                         time.posted-date(datetime='{{postedDate}}')
                     | {{text}}
+
+        script#room-template(type="text/x-handlebars-template")
+            li.list-group-item(id="{{id}}")
+                span.label.label-primary.label-pill.pull-xs-right {{peopleCount}}
+                | {{name}}
+
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')
@@ -52,28 +58,33 @@ body
                         .form-group
                             label.form-control-label(for='room-name-input') Name:&nbsp;
                                 span.asterisk *
-                            input#room-name-input.form-control(type='text')
+                            span.invalid
+                            input#room-name.form-control(type='text')
                         .form-group
                             label.form-control-label(for='room-password-input') Password:
-                            input#room-password-input.form-control(type='password')
+                            span.invalid
+                            input#room-password.form-control(type='password')
                         .form-group
                             label.form-control-label(for='room-password-repeat-input') Password again:
-                            input#room-password-repeat-input.form-control(type='password')
+                            span.invalid
+                            input#room-password-confirm.form-control(type='password')
                         .form-group
                             label.form-control-label(for='room-code-input') Code:&nbsp;
                                 span.asterisk *
-                            input#room-code-input.form-control(type='password')
+                            span.invalid
+                            input#room-code.form-control(type='password')
                         .form-group
                             label.form-control-label(for='room-code-repeat-input') Code again:&nbsp;
                                 span.asterisk *
-                            input#room-code-repeat-input.form-control(type='password')
+                            span.invalid
+                            input#room-code-confirm.form-control(type='password')
                 .modal-footer
                     .checkbox#join-room-checkbox
                         label
                             input(type='checkbox', value='')
                             | Join newely created room
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-success(type='button') Create
+                    button.btn.btn-success#create(type='button') Create
 
     #delete-room-modal.modal.fade(role='dialog', aria-labelledby='deleteRoom', aria-hidden='false')
         .modal-dialog(role='document')

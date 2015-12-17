@@ -54,5 +54,33 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 socket.emit("joined", {id: socket.id, username: username});
             }
         });
+
+        socket.on("createRoom", function (roomInfo) {
+            var errors = {};
+            if (whitespacePattern.test(roomInfo["room-name"])) {
+                errors["room-name"] = "Name should not be empty!";
+            }
+
+            if (!whitespacePattern.test(roomInfo["room-password"]) && roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
+                errors["room-password-confirm"] = "Password confirmation should match the password!";
+            }
+
+            if (whitespacePattern.test(roomInfo["room-code"])) {
+                errors["room-code"] = "Code should not be empty!";
+            } else if (roomInfo["room-code"] !== roomInfo["room-code-confirm"]) {
+                errors["room-code-confirm"] = "Code confirmation should match the code!";
+            }
+
+            if (Object.keys(errors).length !== 0) {
+                socket.emit("validErrors", errors);
+            } else {
+                socket.emit('createRoom');
+                socket.broadcast.emit('createRoom', {
+                    roomName: roomInfo["room-name"],
+                    peopleCount: "7", //roomInfo.peopleCount,
+                    id: "i"
+                });
+            }
+        });
     });
 });
