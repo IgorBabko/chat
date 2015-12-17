@@ -83,15 +83,26 @@ header
         cursor: pointer
 
 #delete-room-button,
-#create-room-button
+#create-room-button,
+#invite-people-button
     transition: all 0.1s ease-in-out
-    width: 41.6094px
+    //width: 41.6094px
     background-color: $main-color-darker
+
+    padding: 5px 0 0 0
+    width: 36px
+    height: 36px
     &:hover
         background-color: #299BFD
 
-#delete-room-button
+#delete-room-button,
+#create-room-button
+    padding-top: 6px
+
+#delete-room-button,
+#invite-people-button
     margin: 0 2px
+
 
 #private-mode-button
     margin: 0

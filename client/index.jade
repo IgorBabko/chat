@@ -6,6 +6,8 @@ html(lang='en', ng-app='application')
 
         title zChat
 
+        link(rel='stylesheet', href='components-font-awesome/css/font-awesome.min.css')
+
         link(rel='stylesheet', href='tether/dist/css/tether.min.css')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
@@ -120,8 +122,10 @@ body
     header
         .btn-group
             label.btn.btn-primary#rooms-sidebar-button.active Rooms
-            label.btn.btn-primary#delete-room-button -
-            label.btn.btn-primary#create-room-button +
+            label.btn.btn-primary#delete-room-button
+                i.fa.fa-minus
+            label.btn.btn-primary#create-room-button
+                i.fa.fa-plus
         //.btn-group.switchers(data-toggle='buttons')
         //    label.btn.btn-primary.active#public-messages-button
         //        input(type='radio')
@@ -129,7 +133,11 @@ body
         //    label.btn.btn-primary#private-messages-button
         //        input(type='radio')
         //        | Private msg
-        label.btn.btn-primary.active#people-sidebar-button People
+        .btn-group
+            label.btn.btn-primary#invite-people-button
+               i.fa.fa-user-plus
+            label.btn.btn-primary.active#people-sidebar-button People
+
 
     #rooms-sidebar
         ul.list-group
