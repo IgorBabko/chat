@@ -68,6 +68,10 @@ body
                                 span.asterisk *
                             input#room-code-repeat-input.form-control(type='password')
                 .modal-footer
+                    .checkbox#join-room-checkbox
+                        label
+                            input(type='checkbox', value='')
+                            | Join newely created room
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-success(type='button') Create
 
