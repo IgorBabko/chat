@@ -192,56 +192,56 @@
 
     // create room
 
-    function hideValidationErrors(modalId) {
-        $("#" + modalId + " .has-danger")
+    function addErrorState($input, errorMsg) {
+        $input
+            .addClass("form-control-danger")
+            .siblings(".invalid")
+            .text(errorMsg)
+            .parent()
+            .addClass("has-danger");
+    }
+
+    function removeErrorState($input) {
+        $input.removeClass("form-control-danger")
+            .parent()
             .removeClass("has-danger")
-            .find("input")
-            .removeClass("form-control-danger")
-            .end()
             .find(".invalid")
             .text("");
     }
 
-    function showValidationErrors(errors) {
-        for (var fieldName in errors) {
-            $("#" + fieldName)
-                .siblings(".invalid")
-                .text(errors[fieldName])
-                .end()
-                .addClass("form-control-danger")
-                .parent()
-                .addClass("has-danger");
-        }
+    function updateValidationErrors(modalId, errors) {
+        $("#" + modalId + " .form input").each(function (index, input) {
+            var $input = $(input),
+                inputId = $input.attr("id");
+            if (!$input.hasClass("form-control-danger") && errors.hasOwnProperty(inputId)) {
+                addErrorState($input, errors[inputId]);
+            } else if ($input.hasClass("form-control-danger") && !errors.hasOwnProperty(inputId)) {
+                removeErrorState($input);
+            }
+        });
+    };
+
+    function getInputsData($inputs) {
+        var formData = {};
+        $inputs.each(function (index, input) {
+            var $input = $(input);
+            formData[$input.attr("id")] = $input.val();
+        });
+        return formData;
     }
 
-    $("#create").on("click", function (e) {
-        e.preventDefault();
-
-        hideValidationErrors("create-room-modal");
-
-        var roomInfo = {};
-
-        console.log("create");
-
-        roomInfo["room-name"] = $("#room-name").val();
-        roomInfo["room-password"] = $("#room-password").val();
-        roomInfo["room-password-confirm"] = $("#room-password-confirm").val();
-        roomInfo["room-code"] = $("#room-code").val();
-        roomInfo["room-code-confirm"] = $("#room-code-confirm").val();
-
-        socket.emit("createRoom", roomInfo);
+    $("#create").on("click", function () {
+        socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
     });
 
-    socket.on("createRoom", function (roomInfo) {
-        if (roomInfo) {
-            $("#rooms-sidebar ul").prepend(roomTemplate(roomInfo));
-        } else {
-            $("#create-room-modal").modal("hide");
-        }
+    socket.on("createRoom", function (data) {
+        // data.message notification
+        $("#rooms-sidebar ul").prepend(roomTemplate(data.roomInfo));
+        $("#create-room-modal").modal("hide");
     });
 
-    socket.on("validErrors", function (errors) {
-        showValidationErrors(errors);
+    socket.on("validErrors", function (validationInfo) {
+        updateValidationErrors(validationInfo.modalId, validationInfo.errors);
     });
 
 

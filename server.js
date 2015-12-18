@@ -72,13 +72,31 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
             }
 
             if (Object.keys(errors).length !== 0) {
-                socket.emit("validErrors", errors);
+                socket.emit("validErrors", {modalId: "create-room-modal", errors: errors});
             } else {
-                socket.emit('createRoom');
-                socket.broadcast.emit('createRoom', {
-                    roomName: roomInfo["room-name"],
-                    peopleCount: "7", //roomInfo.peopleCount,
+
+                rooms.insert({
+                    name: roomInfo["room-name"],
+                    peopleCount: 0,
+                    password: roomInfo["room-password"],
+                    code: roomInfo["room-code"]
+                });
+
+                console.log(socket.id);
+
+                roomInfo = {
+                    name: roomInfo["room-name"],
+                    peopleCount: 7,
                     id: "i"
+                }
+
+                socket.emit('createRoom', {
+                    message: "Room '" + roomInfo["room-name"] + "' has been created.",
+                    roomInfo: roomInfo
+                });
+                socket.broadcast.emit('createRoom', {
+                    message: "User " + +"has created room '" + roomInfo["room-name"],
+                    roomInfo: roomInfo
                 });
             }
         });
