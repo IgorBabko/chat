@@ -118,7 +118,7 @@
 
     $("#create-room-button").on("click", function () {
         $("#create-room-modal").modal().on("shown.bs.modal", function () {
-            $("#room-name-input").focus();
+            $("#room-name").focus();
         });
     });
 
@@ -134,7 +134,7 @@
         });
     });
 
-    $("#rooms-sidebar li").on("click", function () {
+    $("#rooms-sidebar li:not(.active)").on("click", function () {
         $("#room-password-modal").modal().on("shown.bs.modal", function () {
             $("#room-pass-input").focus();
         });
@@ -239,6 +239,14 @@
         return formData;
     }
 
+    function clearInputs($inputs) {
+        $inputs.each(function (index, input) {
+            var $input = $(input);
+            removeErrorState($input);
+            $input.val("");
+        });
+    }
+
     $("#create").on("click", function () {
         socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
     });
@@ -247,6 +255,7 @@
         // data.message notification
         $("#rooms-sidebar ul").prepend(roomTemplate(data.roomInfo));
         $("#create-room-modal").modal("hide");
+        clearInputs($("#create-room-modal .form input"));
     });
 
     socket.on("validErrors", function (validationInfo) {

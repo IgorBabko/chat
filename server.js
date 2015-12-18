@@ -66,7 +66,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 errors["room-name"] = "Name should not be empty!";
             }
 
-            if (!whitespacePattern.test(roomInfo["room-password"]) && roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
+            if (roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
                 errors["room-password-confirm"] = "Password confirmation should match the password!";
             }
 
