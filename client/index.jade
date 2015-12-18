@@ -28,12 +28,12 @@ html(lang='en', ng-app='application')
                     | {{text}}
 
         script#room-template(type="text/x-handlebars-template")
-            li.list-group-item(id="{{id}}")
+            li.list-group-item(id="{{roomId}}")
                 span.label.label-success.label-pill.pull-xs-right {{peopleCount}}
                 | {{name}}
 
         script#user-template(type="text/x-handlebars-template")
-            li.list-group-item(id="_{{id}}") {{username}}
+            li.list-group-item(id="_{{userId}}") {{username}}
 
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')

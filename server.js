@@ -1,9 +1,8 @@
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var express = require('express');
-//var uuid = require('node-uuid');
+var sha1 = require('sha1');
 var jade = require('jade');
-//var path = require('path');
 var app = express();
 var server = app.listen(3000);
 var clients = io.listen(server);
@@ -39,6 +38,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         var whitespacePattern = /^\s*$/;
 
+        rooms.find().toArray(function (err, data) {
+            if (err) {
+                throw err;
+            }
+            console.log(data);
+        });
+        //socket.emit("populateChat", {roomsInfo: rooms.find()});
+
         socket.on("message", function (text) {
             if (whitespacePattern.test(text.trim())) {
                 socket.emit("warning", "Message should not be empty!");
@@ -49,14 +56,12 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         socket.on("joined", function (username) {
             if (whitespacePattern.test(username.trim())) {
-                console.log("errors");
                 socket.emit("validErrors", {modalId: "enter-chat-modal", errors: { "username": "Username should not be empty!" }});
             } else {
-                console.log(socket.id);
-                people.insert({"_id": socket.id, name: username, room: "global"});
+                people.insert({_id: socket.id, name: username, room: "global"});
 
-                socket.emit("joined", {id: socket.id, username: username, myself: true});
-                socket.broadcast.emit("joined", {id: socket.id, username: username});
+                socket.emit("joined", {userId: socket.id, username: username, myself: true});
+                socket.broadcast.emit("joined", {userId: socket.id, username: username});
             }
         });
 
@@ -80,19 +85,19 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 socket.emit("validErrors", {modalId: "create-room-modal", errors: errors});
             } else {
 
+                var roomId = "_" + sha1(new Date().toString());
                 rooms.insert({
+                    _id: roomId,
                     name: roomInfo["room-name"],
                     peopleCount: 0,
                     password: roomInfo["room-password"],
                     code: roomInfo["room-code"]
                 });
 
-                console.log(socket.id);
-
                 roomInfo = {
                     name: roomInfo["room-name"],
                     peopleCount: 7,
-                    id: "i"
+                    roomId: roomId
                 }
 
                 socket.emit('createRoom', {
@@ -104,6 +109,11 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     roomInfo: roomInfo
                 });
             }
+        });
+
+        socket.on("left", function () {
+            socket.broadcast.emit("left", {userId: socket.id, message: people.findOne(socket.id).name + " left chat."});
+            people.remove(socket.id);
         });
     });
 });

@@ -262,6 +262,14 @@
         updateValidationErrors(validationInfo.modalId, validationInfo.errors);
     });
 
+    $(window).on("unload", function () {
+        socket.emit("left");
+    });
+
+    socket.on("left", function (data) {
+        //data.message notification
+        $("#_" + data.userId).remove();
+    });
 
 });
 
