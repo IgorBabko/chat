@@ -29,5 +29,5 @@
     "yargs": "^3.6.0"
   },
   "main": "server.js",
-  "author": "Igor Babko",
+  "author": "Igor Babko"
 }

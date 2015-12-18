@@ -6,6 +6,18 @@ $main-color-lightest: lighten($main-color, 50)
 
 // rulse
 
+::-webkit-input-placeholder
+    color: $main-color-lightest
+::-moz-placeholder
+    color: $main-color-lightest
+//::-moz-placeholder
+//    color: $main-color-lightest
+//::-ms-input-placeholder
+//    color: $main-color-lightest
+
+button
+    outline: none !important
+
 html
     display: none
 
@@ -25,9 +37,11 @@ header
         background-color: rgb(2, 104, 191) !important
         margin: 0
         cursor: pointer !important
-
-        &:not(.active):hover
-            background-color: $main-color-darker !important
+        color: $main-color-lightest !important
+        &:hover,
+        &.active
+            background-color: #299bfd !important
+            color: white !important
 
     #rooms-sidebar-button
         margin-left: 20px !important
@@ -40,12 +54,12 @@ header
         background-color: $main-color-darker
         cursor: default
 
-    .switchers
-        .btn
-            //&:not(.active)
+    //.switchers
+        //.btn
+        //    &:not(.active)
             //    cursor: pointer
-            &.active
-                background-color: $main-color-lighter
+            //&.active
+            //    background-color: $main-color-lighter
 
 #messages-header
     text-shadow: none
@@ -57,6 +71,15 @@ header
 
 .list-group
     background-color: white
+
+.modal-header
+    background-color: $main-color
+    color: white
+    button,
+    button:hover
+        opacity: 1
+        color: white
+
 
 .btn-group .btn+.btn
     margin: 0
@@ -71,20 +94,64 @@ header
 
     &.shadowed
         opacity: 0.5
+        cursor: pointer
 
 #delete-room-button,
-#create-room-button
+#create-room-button,
+#invite-people-button,
+#search-button,
+#subscriptions-button
     transition: all 0.1s ease-in-out
     width: 41.6094px
     background-color: $main-color-darker
+    padding: 5px 0 0 0
+    width: 36px
+    height: 36px
+
     &:hover
-        background-color: #299BFD
+        background-color: #299bfd !important
+
+#delete-room-button,
+#create-room-button
+    padding-top: 6px
+
+#delete-room-button,
+#invite-people-button
+    margin: 0 2px
+
+#create-room-button,
+#subscriptions-button
+    margin-right: 2px
+
+#join-room-checkbox
+    float: left
+    input
+        margin-right: 10px
+
 
 #delete-room-button
     margin: 0 2px
 
+.media:first-child
+    margin-top: 20px !important
 
+.media:last-child
+    margin-bottom: 20px !important
 
+#message-input-block
+    z-index: 12
+
+#search-input
+    height: 36px
+    border: none
+    padding: 0 10px
+    outline: none
+    background-color: #0268BF
+    color: white
+
+#search-button
+    float: right
+    
 #private-mode-button
     margin: 0
 
@@ -92,8 +159,16 @@ header
     display: none
 
 .asterisk
-    color: red
+    color: #d9534f
     font-size: 20px
+
+
+.invalid
+    color: #d9534f
+    font-style: italic
+    font-size: 12px
+    float: right
+    margin-top: 15px
 
 //.content-overlay
 //    display: none
@@ -148,7 +223,13 @@ header
             border-color: lighten($main-color, 40)
 
 .typing
+    color: #0275D8
+    font-size: 18px
     padding: 0
+
+.list-group
+    .label
+        margin-top: 3px
 
 .form-control,
 .input-group-addon,
@@ -176,7 +257,7 @@ header
 
 .list-group
     overflow: auto
-    height: calc(100vh - 86px) !important
+    height: calc(100vh - 50px) !important
 
 .list-group-item
     overflow-x: scroll
@@ -191,6 +272,9 @@ header
     background: white
     padding: 10px
     box-shadow: 3px 3px 5px lighten($main-color, 46)
+
+.media-heading
+    margin: 10px 0
 
 .messages
     height: calc(100vh - 86px)
@@ -209,11 +293,8 @@ header
     &:focus
         border-bottom-width: 0
 
-#avatar-upload
-    text-align: center
-    border: 2px dashed $main-color
-    .dz-image
-        border-radius: 0
+time
+    font-weight: 200
 
 
 //.searchRoom,
