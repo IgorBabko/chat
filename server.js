@@ -49,9 +49,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         socket.on("joined", function (username) {
             if (whitespacePattern.test(username.trim())) {
-                socket.emit("warning", "Username should not be empty!");
+                console.log("errors");
+                socket.emit("validErrors", {modalId: "enter-chat-modal", errors: { "username": "Username should not be empty!" }});
             } else {
-                socket.emit("joined", {id: socket.id, username: username});
+                console.log(socket.id);
+                people.insert({"_id": socket.id, name: username, room: "global"});
+
+                socket.emit("joined", {id: socket.id, username: username, myself: true});
+                socket.broadcast.emit("joined", {id: socket.id, username: username});
             }
         });
 

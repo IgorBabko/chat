@@ -32,6 +32,9 @@ html(lang='en', ng-app='application')
                 span.label.label-primary.label-pill.pull-xs-right {{peopleCount}}
                 | {{name}}
 
+        script#user-template(type="text/x-handlebars-template")
+            li.list-group-item(id="_{{id}}") {{username}}
+
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')
@@ -41,9 +44,9 @@ body
                 .modal-body
                     .form
                         .form-group
-                            label.form-control-label(for='username-input') Your name:
-                            input#username-input.form-control(type='text', autofocus)
-                    form#avatar-upload.dropzone(action='/target')
+                            label.form-control-label(for='username') Your name:
+                            span.invalid
+                            input#username.form-control(type='text', autofocus)
                 .modal-footer
                     button#enter-chat-button.btn.btn-success(type='button') Enter
 

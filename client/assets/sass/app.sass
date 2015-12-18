@@ -213,14 +213,15 @@ header
         &.shadowless
             box-shadow: none !important
 
+
 .list-group
     .list-group-item
-        border-color: $main-color-lightest
+        border-color: lighten(#5CB85C, 40)
         &:not(.active)
             cursor: pointer
         &:hover
-            background-color: lighten($main-color, 40)
-            border-color: lighten($main-color, 40)
+            background-color: lighten(#5CB85C, 40)
+            border-color: lighten(#5CB85C, 40)
 
 .typing
     color: #0275D8
@@ -248,9 +249,13 @@ header
         background-color: $main-color-darker
 
 .active
-    background: lighten($main-color, 15) !important
-    border-color: lighten($main-color, 15) !important
+    background: #5CB85C !important
+    border-color: #5CB85C !important
 
+    .label
+        background-color: white
+        color: #5CB85C
+    
 .pull-left
     float: left !important
     padding-right: 10px !important

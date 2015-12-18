@@ -160,6 +160,7 @@
 
     var messageTemplate = window.Handlebars.compile($("#message-template").html());
     var roomTemplate = window.Handlebars.compile($("#room-template").html());
+    var userTemplate = window.Handlebars.compile($("#user-template").html());
 
     socket.on("message", function (data) {
         $("#public-messages").append(messageTemplate(data)).find("time:last-child").timeago();
@@ -168,12 +169,20 @@
     // join
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
-            socket.emit('joined', $("#username-input").val());
+            socket.emit('joined', $("#username").val());
         }
     }
 
     socket.on("joined", function (data) {
-        $("#enter-chat-modal").modal("hide");
+        if (data.hasOwnProperty("myself")) {
+            $("#enter-chat-modal").modal("hide");
+            $("#people-sidebar ul")
+                .prepend(userTemplate(data))
+                .find("li:first-child")
+                .addClass("active");
+        } else {
+            $("#people-sidebar ul").prepend(userTemplate(data));
+        }
     });
 
 
@@ -185,7 +194,7 @@
     $("#enter-chat-button").on('click', function (e) {
         joinedHandler(e);
     });
-    $("#username-input").on('keypress', function (e) {
+    $("#username").on('keypress', function (e) {
         joinedHandler(e);
     });
 
@@ -212,6 +221,7 @@
         $("#" + modalId + " .form input").each(function (index, input) {
             var $input = $(input),
                 inputId = $input.attr("id");
+            console.log(input);
             if (!$input.hasClass("form-control-danger") && errors.hasOwnProperty(inputId)) {
                 addErrorState($input, errors[inputId]);
             } else if ($input.hasClass("form-control-danger") && !errors.hasOwnProperty(inputId)) {
