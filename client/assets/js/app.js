@@ -166,6 +166,18 @@
         $("#public-messages").append(messageTemplate(data)).find("time:last-child").timeago();
     });
 
+    socket.on("populateChat", function (data) {
+        for (var i = 0; i < data.roomsInfo.length; ++i) {
+            $("#rooms-sidebar ul").prepend(roomTemplate(data.roomsInfo[i]));
+        }
+        for (var i = 0; i < data.messagesInfo.length; ++i) {
+            $("#public-messages").append(messageTemplate(data.messagesInfo[i]));
+        }
+        for (var i = 0; i < data.peopleInfo.length; ++i) {
+            $("#people-sidebar ul").prepend(roomTemplate(data.peopleInfo[i]));
+        }
+    })
+
     // join
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
@@ -268,8 +280,13 @@
 
     socket.on("left", function (data) {
         //data.message notification
+
+
         $("#_" + data.userId).remove();
     });
+
+    $.notify('I have a progress bar', { showProgressbar: true });
+
 
 });
 
