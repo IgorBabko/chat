@@ -207,6 +207,7 @@
     }
 
     socket.on("joined", function (data) {
+        console.log(data);
         if (data.hasOwnProperty("myself")) {
             $("#enter-chat-modal").modal("hide");
             $("#people-sidebar ul")
@@ -299,7 +300,7 @@
 
     socket.on("left", function (data) {
         addNotification("User <span class='highlighted'>" + data.username + "</span> has left the chat");
-        $("#_" + data.userId).remove();
+        $("#" + data.userId).remove();
     });
 });
 

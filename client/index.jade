@@ -32,12 +32,12 @@ html(lang='en', ng-app='application')
                     | {{text}}
 
         script#room-template(type="text/x-handlebars-template")
-            li.list-group-item(id="{{roomId}}")
+            li.list-group-item(id="{{_id}}")
                 span.label.label-success.label-pill.pull-xs-right {{peopleCount}}
                 | {{name}}
 
         script#user-template(type="text/x-handlebars-template")
-            li.list-group-item(id="_{{userId}}") {{username}}
+            li.list-group-item(id="{{_id}}") {{username}}
 
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
@@ -154,7 +154,7 @@ body
                 i.fa.fa-search
         .btn-group
             label.btn.btn-primary#invite-people-button
-               i.fa.fa-user-plus
+                i.fa.fa-user-plus
             label.btn.btn-primary.active#people-sidebar-button People
 
     #rooms-sidebar

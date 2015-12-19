@@ -68,10 +68,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
             if (whitespacePattern.test(username.trim())) {
                 socket.emit("validErrors", {modalId: "enter-chat-modal", errors: { "username": "Username should not be empty!" }});
             } else {
-                people.insert({_id: socket.id, name: username, room: "global"});
+                people.insert({_id: "_" + socket.id, name: username, room: "global"});
 
-                socket.emit("joined", {userId: socket.id, username: username, myself: true});
-                socket.broadcast.emit("joined", {userId: socket.id, username: username});
+                socket.emit("joined", {_id: "_" + socket.id, username: username, myself: true});
+                socket.broadcast.emit("joined", {_id: "_" + socket.id, username: username});
             }
         });
 
@@ -117,13 +117,13 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         socket.on("left", function () {
 
-            people.findOne({_id: socket.id}, function (err, userInfo) {
+            people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
                 if (err) {
                     throw err;
                 }
                 if (userInfo != null) {
                     socket.broadcast.emit("left", {userId: userInfo._id, username: userInfo.name});
-                    people.deleteOne({_id: socket.id});
+                    people.deleteOne({_id: userInfo._id});
                 }
             });
         });
