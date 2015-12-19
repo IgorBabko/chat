@@ -50,7 +50,11 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     if (err) {
                         throw err;
                     }
-                    socket.emit("populateChat", {roomsInfo: roomsInfo, messagesInfo: messagesInfo, peopleInfo: peopleInfo});
+                    socket.emit("populateChat", {
+                        roomsInfo: roomsInfo,
+                        messagesInfo: messagesInfo,
+                        peopleInfo: peopleInfo
+                    });
                 });
             });
         });
@@ -66,12 +70,32 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         socket.on("joined", function (username) {
             if (whitespacePattern.test(username.trim())) {
-                socket.emit("validErrors", {modalId: "enter-chat-modal", errors: { "username": "Username should not be empty!" }});
+                socket.emit("validErrors", {
+                    modalId: "enter-chat-modal",
+                    errors: {"username": "Username should not be empty!"}
+                });
             } else {
                 people.insert({_id: "_" + socket.id, name: username, room: "global"});
+                rooms.update({name: "global"}, {$inc: {peopleCount: 1}});
 
-                socket.emit("joined", {_id: "_" + socket.id, username: username, myself: true});
-                socket.broadcast.emit("joined", {_id: "_" + socket.id, username: username});
+                socket.room = "global";
+
+                rooms.findOne({name: "global"}, function (err, roomInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    socket.emit("joined", {
+                        _id: "_" + socket.id,
+                        username: username,
+                        newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount},
+                        myself: true
+                    });
+                    socket.broadcast.emit("joined", {
+                        _id: "_" + socket.id,
+                        username: username,
+                        newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                    });
+                })
             }
         });
 
@@ -121,10 +145,24 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 if (err) {
                     throw err;
                 }
-                if (userInfo != null) {
-                    socket.broadcast.emit("left", {userId: userInfo._id, username: userInfo.name});
-                    people.deleteOne({_id: userInfo._id});
-                }
+
+                rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
+
+
+                rooms.findOne({name: socket.room}, function (err, roomInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    if (userInfo != null) {
+                        console.log(roomInfo);
+                        socket.broadcast.emit("left", {
+                            userId: userInfo._id,
+                            username: userInfo.name,
+                            newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                        });
+                        people.deleteOne({_id: userInfo._id});
+                    }
+                });
             });
         });
     });

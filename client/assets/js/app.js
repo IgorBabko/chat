@@ -185,6 +185,7 @@
         for (var i = 0; i < data.roomsInfo.length; ++i) {
             $("#rooms-sidebar ul").prepend(roomTemplate(data.roomsInfo[i]));
         }
+        $("#rooms-sidebar ul li:first-child").addClass("active");
         for (var i = 0; i < data.messagesInfo.length; ++i) {
             $("#public-messages").append(messageTemplate(data.messagesInfo[i]));
         }
@@ -206,8 +207,17 @@
         }
     }
 
+    function updatePeopleCounters(newRoomInfo, oldRoomInfo) {
+        $("#" + newRoomInfo._id + " span").text(newRoomInfo.peopleCount);
+
+        console.log(newRoomInfo);
+        if (oldRoomInfo) {
+            console.log("old room");
+            $("#" + oldRoomInfo._id + " span").text(oldRoomInfo.peopleCount);
+        }
+    }
+
     socket.on("joined", function (data) {
-        console.log(data);
         if (data.hasOwnProperty("myself")) {
             $("#enter-chat-modal").modal("hide");
             $("#people-sidebar ul")
@@ -218,6 +228,7 @@
             addNotification("<span class='highlighted'>" + data.username + "</span> joined chat");
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
+        updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
     });
 
     $("#enter-chat-button").on('click', function (e) {
@@ -300,6 +311,7 @@
 
     socket.on("left", function (data) {
         addNotification("User <span class='highlighted'>" + data.username + "</span> has left the chat");
+        updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
         $("#" + data.userId).remove();
     });
 });
