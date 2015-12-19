@@ -110,14 +110,8 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     roomId: roomId
                 }
 
-                socket.emit('createRoom', {
-                    message: "Room '" + roomInfo["room-name"] + "' has been created.",
-                    roomInfo: roomInfo
-                });
-                socket.broadcast.emit('createRoom', {
-                    message: "User " + +"has created room '" + roomInfo["room-name"],
-                    roomInfo: roomInfo
-                });
+                socket.emit('createRoom', roomInfo);
+                socket.broadcast.emit('createRoom', roomInfo);
             }
         });
 
@@ -128,7 +122,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     throw err;
                 }
                 if (userInfo != null) {
-                    socket.broadcast.emit("left", {userId: socket.id, message: userInfo.name + " left chat."});
+                    socket.broadcast.emit("left", {userId: userInfo._id, username: userInfo.name});
                     people.deleteOne({_id: socket.id});
                 }
             });

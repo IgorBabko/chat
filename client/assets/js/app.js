@@ -3,12 +3,17 @@
     var socket = io();
     $("time").timeago();
 
+    toastr.options = {
+        "positionClass": "toast-top-right",
+        "timeOut": 3000,
+        "newestOnTop": false
+    };
+
     $("#enter-chat-modal").modal({backdrop: 'static', keyboard: false});
 
+    var isRoomsVisible = true,
+        isPeopleVisible = true;
     var gridManager = {
-
-        isRoomsVisible: true,
-        isPeopleVisible: true,
         contentMarginLeft: 300,
         contentMarginRight: 300,
         isOverlayShown: false,
@@ -22,14 +27,14 @@
             return this;
         },
         defineInitialGrid: function () {
-            if ($(window).width() > 992) {
+            if ($(window).width() >= 992) {
                 $(".content").css({
                     "width": "calc(100% - " + this.contentWidthCrop + "px)",
                     "margin": "0 " + this.contentMarginRight + "px 0 " + this.contentMarginLeft + "px"
                 });
             } else {
-                this.isRoomsVisible = false;
-                this.isPeopleVisible = false;
+                isRoomsVisible = false;
+                isPeopleVisible = false;
                 this.contentMarginLeft = 0;
                 this.contentMarginRight = 0;
                 this.isScreenWide = false;
@@ -37,6 +42,7 @@
                 $("#rooms-sidebar-button, #people-sidebar-button").removeClass("active");
                 $("#rooms-sidebar, #people-sidebar").addClass("hidden");
                 $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
+                //$("#toast-container").css("right", "12px");
                 $(".content").css({"width": "100%", "margin": "0"});
             }
         },
@@ -51,16 +57,22 @@
             $this.toggleClass("active");
             if ($this.attr("id") === "rooms-sidebar-button") {
                 $("#rooms-sidebar").toggleClass("hidden");
-                _this.isRoomsVisible = !_this.isRoomsVisible;
+                isRoomsVisible = !isRoomsVisible;
             } else {
                 $("#people-sidebar").toggleClass("hidden");
-                _this.isPeopleVisible = !_this.isPeopleVisible;
+                isPeopleVisible = !isPeopleVisible;
+
+                if (isPeopleVisible && $(window).width() >= 992) {
+                    $("#toast-container").css("right", "310px");
+                } else {
+                    $("#toast-container").css("right", "10px");
+                }
             }
 
             if ($(window).width() > 992) {
-                _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
-                _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
-                _this.contentMarginRight = _this.isPeopleVisible ? 300 : 0;
+                _this.contentWidthCrop = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
+                _this.contentMarginLeft = isRoomsVisible ? 300 : 0;
+                _this.contentMarginRight = isPeopleVisible ? 300 : 0;
                 $(".content").css({
                     "width": "calc(100% - " + _this.contentWidthCrop + "px)",
                     "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
@@ -73,16 +85,20 @@
         resizingWindowHandler: function () {
             var _this = gridManager;
             if ($(window).width() > 992 && !_this.isScreenWide) {
+                if (isPeopleVisible) {
+                    $("#toast-container").css("right", "310px");
+                }
                 $("#rooms-sidebar ul, #people-sidebar ul").removeClass("shadowless");
                 _this.isScreenWide = true;
-                _this.contentWidthCrop = _this.isRoomsVisible && _this.isPeopleVisible ? 600 : _this.isRoomsVisible || _this.isPeopleVisible ? 300 : 0;
-                _this.contentMarginLeft = _this.isRoomsVisible ? 300 : 0;
-                _this.contentMarginRight = _this.isPeopleVisible ? 300 : 0;
+                _this.contentWidthCrop = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
+                _this.contentMarginLeft = isRoomsVisible ? 300 : 0;
+                _this.contentMarginRight = isPeopleVisible ? 300 : 0;
                 $(".content").removeClass("shadowed").css({
                     "width": "calc(100% - " + _this.contentWidthCrop + "px)",
                     "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else if ($(window).width() <= 992 && _this.isScreenWide) {
+                $("#toast-container").css("right", "10px");
                 $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 _this.isScreenWide = false;
                 _this.toggleOverlay();
@@ -93,18 +109,19 @@
             if ($(window).width() <= 992) {
                 var _this = gridManager;
                 if (_this.isOverlayShown) {
+                    $("#toast-container").css("right", "10px");
                     $("#rooms-sidebar-button, #people-sidebar-button").removeClass("active");
                     $("#rooms-sidebar, #people-sidebar").addClass("hidden");
                     $(".content").removeClass("shadowed");
-                    _this.isRoomsVisible = false;
-                    _this.isPeopleVisible = false;
+                    isRoomsVisible = false;
+                    isPeopleVisible = false;
                     _this.isOverlayShown = false;
                 }
             }
         },
         toggleOverlay: function () {
             var _this = gridManager;
-            if (_this.isRoomsVisible || _this.isPeopleVisible) {
+            if (isRoomsVisible || isPeopleVisible) {
                 $(".content").addClass("shadowed");
                 _this.isOverlayShown = true;
             } else {
@@ -150,8 +167,6 @@
         $("#private-messages").hide();
     });
 
-    var whitespacePattern = /^\s*$/;
-
     $("#send-message-button").on("click", function () {
         socket.emit("message", $("#message-input").val());
     });
@@ -176,12 +191,18 @@
         for (var i = 0; i < data.peopleInfo.length; ++i) {
             $("#people-sidebar ul").prepend(roomTemplate(data.peopleInfo[i]));
         }
-    })
+    });
 
-    // join
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
             socket.emit('joined', $("#username").val());
+        }
+    }
+
+    function addNotification(message) {
+        window.toastr.info(message);
+        if (!isPeopleVisible || isPeopleVisible && $(window).width() < 992) {
+            $("#toast-container").css({"transition": "none", "right": "10px"});
         }
     }
 
@@ -193,14 +214,9 @@
                 .find("li:first-child")
                 .addClass("active");
         } else {
+            addNotification("<span class='highlighted'>" + data.username + "</span> joined chat");
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
-    });
-
-
-    // warning
-    socket.on("warning", function (message) {
-        console.log(data);
     });
 
     $("#enter-chat-button").on('click', function (e) {
@@ -213,6 +229,7 @@
     // create room
 
     function addErrorState($input, errorMsg) {
+        //noinspection JSValidateTypes
         $input
             .addClass("form-control-danger")
             .siblings(".invalid")
@@ -222,6 +239,7 @@
     }
 
     function removeErrorState($input) {
+        //noinspection JSValidateTypes
         $input.removeClass("form-control-danger")
             .parent()
             .removeClass("has-danger")
@@ -264,8 +282,9 @@
     });
 
     socket.on("createRoom", function (data) {
-        // data.message notification
-        $("#rooms-sidebar ul").prepend(roomTemplate(data.roomInfo));
+        window.toastr.info("Room <span class='highlighted'>" + data.name + "</span> has been created");
+
+        $("#rooms-sidebar ul").prepend(roomTemplate(data));
         $("#create-room-modal").modal("hide");
         clearInputs($("#create-room-modal .form input"));
     });
@@ -279,15 +298,9 @@
     });
 
     socket.on("left", function (data) {
-        //data.message notification
-
-
+        addNotification("User <span class='highlighted'>" + data.username + "</span> has left the chat");
         $("#_" + data.userId).remove();
     });
-
-    $.notify('I have a progress bar', { showProgressbar: true });
-
-
 });
 
 
@@ -309,7 +322,7 @@
 //    timeOut = (timeOut !== undefined) ? timeOut : 3000;
 //    if (!type || type === 'info') {
 //        infoSound.play();
-//        toastr.success(message, null, {
+//        toastr.info(message, null, {
 //            closeButton: true,
 //            positionClass: 'toast-bottom-right',
 //            timeOut: timeOut,
@@ -748,7 +761,7 @@
 //
 //    if (data.message) {
 //        notification(data.message, 'info', 15000);
-//        // toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//        // toastr.info(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //
 //        if (data.self) {
 //            elements.closeRemoveRoomModal.click();//dispatchEvent(new MouseEvent('click'));
@@ -823,7 +836,7 @@
 //socket.on('createRoom', function (data) {
 //    if (data.message) {
 //        notification(data.message, 'info', 15000);
-//        // toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//        // toastr.info(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //    } else {
 //        elements.closeNewRoomModal.click();//dispatchEvent(new MouseEvent('click'));
 //        isNewRoomModalOpened = false;
@@ -997,7 +1010,7 @@
 //            personItems[1].addEventListener('click', privateMessageHandler);
 //        }
 //        notification(data.message, 'info', 15000);
-//        // toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//        // toastr.info(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //    }
 //});
 //
@@ -1087,7 +1100,7 @@
 //socket.on('joined', function (data) {
 //if (data.message) {
 //notification(data.message, 'info', 15000);
-// toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+// toastr.info(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 
 //    var personItems = addListItem(elements.peopleLists, data.user);
 //    personItems[0].addEventListener('click', privateMessageHandler);
@@ -1189,7 +1202,7 @@
 //
 //socket.on('notifySubscriber', function (info) {
 //    notification(info, 'info', 60000);
-//    // toastr.success(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 0, preventDuplicates: true, closeHtml: '<button>hello</button>' });
+//    // toastr.info(info, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 0, preventDuplicates: true, closeHtml: '<button>hello</button>' });
 //});
 //
 //socket.on('userIsTyping', function (userId) {
@@ -1260,7 +1273,7 @@
 //    if (data.isPrivate) {
 //        if (data.sender) {
 //            notification(data.sender + ' send you private message: "' + data.message.text + '".', 'info', 0);
-//            // toastr.success(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//            // toastr.info(data.sender + ' send you private message: "' + data.message.text + '".', null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //            addMessage(elements.privateMessageDiv, data.message);
 //        } else {
 //
@@ -1302,7 +1315,7 @@
 //
 //socket.on('disablePrivateConversation', function (message) {
 //    notification(message, 'info', 0);
-//    // toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//    // toastr.info(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //});
 //
 //function privateConversationHandler(e, cancelPrivateConversation) {
@@ -1396,7 +1409,7 @@
 //
 //socket.on('establishPrivateConversation', function (message) {
 //    notification(message, 'info', 0);
-//    // toastr.success(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//    // toastr.info(message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //});
 //
 //socket.on('getUserName', function (userName) {
@@ -1424,7 +1437,7 @@
 //
 //        removeListItem(data.user._id);
 //        notification(data.message, 'info', 15000);
-//        // toastr.success(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
+//        // toastr.info(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
 //    }
 //});
 //

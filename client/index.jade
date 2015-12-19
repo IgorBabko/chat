@@ -10,12 +10,15 @@ html(lang='en', ng-app='application')
 
         link(rel='stylesheet', href='tether/dist/css/tether.min.css')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
+        link(rel='stylesheet', href='animate.css/animate.min.css')
+        link(rel='stylesheet', href='toastr/toastr.min.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
 
         script(src='jquery/dist/jquery.min.js')
         script(src='tether/dist/js/tether.min.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
         script(src='remarkable-bootstrap-notify/bootstrap-notify.js')
+        script(src='toastr/toastr.min.js')
         script(src='handlebars/handlebars.min.js')
         script(src='js/jquery.timeago.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
@@ -154,7 +157,6 @@ body
                i.fa.fa-user-plus
             label.btn.btn-primary.active#people-sidebar-button People
 
-
     #rooms-sidebar
         ul.list-group
 
@@ -167,13 +169,6 @@ body
                             .media-body
                                 h4.media-heading.name #{val.name}
                                     time.posted-date(datetime='#{val.postedDate}') .
-                                | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                .messages#private-messages
-                    each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
-                        .media
-                            .media-body
-                                h4.media-heading.name #{val.name}
-                                    small.posted-date #{val.postedDate}
                                 | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
                 .input-group#message-input-block
                     input#message-input.form-control(type='text', placeholder="Your message:")

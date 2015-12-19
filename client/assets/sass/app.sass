@@ -69,8 +69,18 @@ header
     .list-group-item
         text-align: right
 
+#rooms-sidebar,
+#people-sidebar
+    //z-index: 2000 !important
+
 .list-group
     background-color: white
+
+.highlighted
+    color: #8AFF8A
+
+//.modal
+//    z-index: 3000 !important
 
 .modal-header
     background-color: $main-color
@@ -167,6 +177,26 @@ header
     font-size: 12px
     float: right
     margin-top: 10px
+
+
+#toast-container
+    top: 62px
+    right: 310px
+    z-index: 2
+    height: calc(100vh - 112px)
+    overflow: hidden
+    transition: all 0.3s ease-in-out
+
+    & > div
+        background-color: $main-color
+        width: 275px
+        border-radius: 0
+        box-shadow: none
+
+        &:hover
+            box-shadow: none
+
+
 
 //.content-overlay
 //    display: none
