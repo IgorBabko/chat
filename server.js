@@ -1,9 +1,8 @@
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var express = require('express');
-//var uuid = require('node-uuid');
+var sha1 = require('sha1');
 var jade = require('jade');
-//var path = require('path');
 var app = express();
 var server = app.listen(3000);
 var clients = io.listen(server);
@@ -39,6 +38,28 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         var whitespacePattern = /^\s*$/;
 
+        rooms.find().toArray(function (err, roomsInfo) {
+            if (err) {
+                throw err;
+            }
+            messages.find({room: "global"}).toArray(function (err, messagesInfo) {
+                if (err) {
+                    throw err;
+                }
+                people.find({room: "global"}).toArray(function (err, peopleInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    socket.emit("populateChat", {
+                        roomsInfo: roomsInfo,
+                        messagesInfo: messagesInfo,
+                        peopleInfo: peopleInfo
+                    });
+                });
+            });
+        });
+        //socket.emit("populateChat", {roomsInfo: rooms.find()});
+
         socket.on("message", function (text) {
             if (whitespacePattern.test(text.trim())) {
                 socket.emit("warning", "Message should not be empty!");
@@ -49,9 +70,32 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
         socket.on("joined", function (username) {
             if (whitespacePattern.test(username.trim())) {
-                socket.emit("warning", "Username should not be empty!");
+                socket.emit("validErrors", {
+                    modalId: "enter-chat-modal",
+                    errors: {"username": "Username should not be empty!"}
+                });
             } else {
-                socket.emit("joined", {id: socket.id, username: username});
+                people.insert({_id: "_" + socket.id, name: username, room: "global"});
+                rooms.update({name: "global"}, {$inc: {peopleCount: 1}});
+
+                socket.room = "global";
+
+                rooms.findOne({name: "global"}, function (err, roomInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    socket.emit("joined", {
+                        _id: "_" + socket.id,
+                        username: username,
+                        newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount},
+                        myself: true
+                    });
+                    socket.broadcast.emit("joined", {
+                        _id: "_" + socket.id,
+                        username: username,
+                        newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                    });
+                })
             }
         });
 
@@ -61,7 +105,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 errors["room-name"] = "Name should not be empty!";
             }
 
-            if (!whitespacePattern.test(roomInfo["room-password"]) && roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
+            if (roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
                 errors["room-password-confirm"] = "Password confirmation should match the password!";
             }
 
@@ -75,30 +119,51 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 socket.emit("validErrors", {modalId: "create-room-modal", errors: errors});
             } else {
 
+                var roomId = "_" + sha1(new Date().toString());
                 rooms.insert({
+                    _id: roomId,
                     name: roomInfo["room-name"],
                     peopleCount: 0,
                     password: roomInfo["room-password"],
                     code: roomInfo["room-code"]
                 });
 
-                console.log(socket.id);
-
                 roomInfo = {
                     name: roomInfo["room-name"],
                     peopleCount: 7,
-                    id: "i"
+                    roomId: roomId
                 }
 
-                socket.emit('createRoom', {
-                    message: "Room '" + roomInfo["room-name"] + "' has been created.",
-                    roomInfo: roomInfo
-                });
-                socket.broadcast.emit('createRoom', {
-                    message: "User " + +"has created room '" + roomInfo["room-name"],
-                    roomInfo: roomInfo
-                });
+                socket.emit('createRoom', roomInfo);
+                socket.broadcast.emit('createRoom', roomInfo);
             }
+        });
+
+        socket.on("left", function () {
+
+            people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+                if (err) {
+                    throw err;
+                }
+
+                rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
+
+
+                rooms.findOne({name: socket.room}, function (err, roomInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    if (userInfo != null) {
+                        console.log(roomInfo);
+                        socket.broadcast.emit("left", {
+                            userId: userInfo._id,
+                            username: userInfo.name,
+                            newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                        });
+                        people.deleteOne({_id: userInfo._id});
+                    }
+                });
+            });
         });
     });
 });

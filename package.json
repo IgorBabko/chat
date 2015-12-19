@@ -29,5 +29,8 @@
     "yargs": "^3.6.0"
   },
   "main": "server.js",
-  "author": "Igor Babko"
+  "author": "Igor Babko",
+  "dependencies": {
+    "sha1": "^1.1.1"
+  }
 }

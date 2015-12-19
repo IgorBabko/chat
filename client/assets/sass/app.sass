@@ -69,8 +69,18 @@ header
     .list-group-item
         text-align: right
 
+#rooms-sidebar,
+#people-sidebar
+    //z-index: 2000 !important
+
 .list-group
     background-color: white
+
+.highlighted
+    color: #8AFF8A
+
+//.modal
+//    z-index: 3000 !important
 
 .modal-header
     background-color: $main-color
@@ -96,7 +106,6 @@ header
         opacity: 0.5
         cursor: pointer
 
-#delete-room-button,
 #create-room-button,
 #invite-people-button,
 #search-button,
@@ -111,11 +120,10 @@ header
     &:hover
         background-color: #299bfd !important
 
-#delete-room-button,
 #create-room-button
     padding-top: 6px
 
-#delete-room-button,
+#subscriptions-button,
 #invite-people-button
     margin: 0 2px
 
@@ -168,7 +176,27 @@ header
     font-style: italic
     font-size: 12px
     float: right
-    margin-top: 15px
+    margin-top: 10px
+
+
+#toast-container
+    top: 62px
+    right: 310px
+    z-index: 2
+    height: calc(100vh - 112px)
+    overflow: hidden
+    transition: all 0.3s ease-in-out
+
+    & > div
+        background-color: $main-color
+        width: 275px
+        border-radius: 0
+        box-shadow: none
+
+        &:hover
+            box-shadow: none
+
+
 
 //.content-overlay
 //    display: none
@@ -213,21 +241,24 @@ header
         &.shadowless
             box-shadow: none !important
 
-.list-group
+
+#rooms-sidebar
     .list-group-item
-        border-color: $main-color-lightest
         &:not(.active)
             cursor: pointer
         &:hover
-            background-color: lighten($main-color, 40)
-            border-color: lighten($main-color, 40)
+            background-color: lighten(#5CB85C, 40)
+            border-color: lighten(#5CB85C, 40)
+
+.list-group-item
+    border-color: lighten(#5CB85C, 40)
 
 .typing
-    color: #0275D8
-    font-size: 18px
+    color: #5CB85C
+    font-size: 22px
     padding: 0
 
-.list-group
+#rooms-sidebar
     .label
         margin-top: 3px
 
@@ -248,9 +279,13 @@ header
         background-color: $main-color-darker
 
 .active
-    background: lighten($main-color, 15) !important
-    border-color: lighten($main-color, 15) !important
+    background: #5CB85C !important
+    border-color: #5CB85C !important
 
+    .label
+        background-color: white
+        color: #5CB85C
+    
 .pull-left
     float: left !important
     padding-right: 10px !important
