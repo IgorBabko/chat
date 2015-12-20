@@ -77,22 +77,22 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
             } else {
                 people.insert({_id: "_" + socket.id, name: username, room: "global"});
                 rooms.update({name: "global"}, {$inc: {peopleCount: 1}});
-
-                socket.room = "global";
-
                 rooms.findOne({name: "global"}, function (err, roomInfo) {
                     if (err) {
                         throw err;
                     }
+                    socket.join("global");
+                    socket.room = "global";
                     socket.emit("joined", {
                         _id: "_" + socket.id,
-                        username: username,
-                        newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount},
+                        name: username,
                         myself: true
                     });
                     socket.broadcast.emit("joined", {
                         _id: "_" + socket.id,
-                        username: username,
+                        name: username
+                    });
+                    clients.emit("updatePeopleCounters", {
                         newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
                     });
                 })
@@ -124,14 +124,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     _id: roomId,
                     name: roomInfo["room-name"],
                     peopleCount: 0,
-                    password: roomInfo["room-password"],
+                    password: sha1(roomInfo["room-password"]),
                     code: roomInfo["room-code"]
                 });
 
                 roomInfo = {
                     name: roomInfo["room-name"],
-                    peopleCount: 7,
-                    roomId: roomId
+                    peopleCount: 0,
+                    _id: roomId
                 }
 
                 socket.emit('createRoom', roomInfo);
@@ -145,10 +145,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 if (err) {
                     throw err;
                 }
-
                 rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
-
-
                 rooms.findOne({name: socket.room}, function (err, roomInfo) {
                     if (err) {
                         throw err;
@@ -157,12 +154,80 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                         console.log(roomInfo);
                         socket.broadcast.emit("left", {
                             userId: userInfo._id,
-                            username: userInfo.name,
-                            newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                            name: userInfo.name
                         });
                         people.deleteOne({_id: userInfo._id});
+                        clients.emit("updatePeopleCounters", {
+                            newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                        });
                     }
                 });
+            });
+        });
+
+        socket.on("changeRoom", function (data) {
+
+            rooms.findOne({_id: data.newRoomId}, function (err, newRoomInfo) {
+                if (err) {
+                    throw err;
+                }
+                if (data.password) {
+                    if (newRoomInfo.password !== sha1(data.password)) {
+                        socket.emit("validErrors", {
+                            modalId: "room-password-modal",
+                            errors: {"password": "Password is wrong!"}
+                        });
+                    }
+                } else {
+
+                    console.log("changeRoom");
+                    rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
+                    rooms.update({_id: data.newRoomId}, {$inc: {peopleCount: 1}});
+                    rooms.findOne({name: socket.room}, function (err, oldRoomInfo) {
+                        if (err) {
+                            throw error;
+                        }
+
+                        people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+                            if (err) {
+                                throw err;
+                            }
+                            people.find({room: newRoomInfo.name}).toArray(function (err, peopleFromNewRoom) {
+                                if (err) {
+                                    throw err;
+                                }
+
+                                socket.leave(oldRoomInfo.name);
+                                socket.join(newRoomInfo.name);
+                                socket.room = newRoomInfo.name;
+
+                                socket.emit("changeRoom", {
+                                    peopleFromNewRoom: peopleFromNewRoom,
+                                    newRoomId: newRoomInfo._id,
+                                    userInfo: {
+                                        _id: userInfo._id,
+                                        name: userInfo.name
+                                    }
+                                });
+                                socket.broadcast.to(oldRoomInfo.name).emit("changeRoom", {
+                                    _id: userInfo._id,
+                                    name: userInfo.name,
+                                    status: "left"
+                                });
+                                socket.broadcast.to(newRoomInfo.name).emit("changeRoom", {
+                                    _id: userInfo._id,
+                                    name: userInfo.name,
+                                    status: "joined"
+                                });
+                                clients.emit("updatePeopleCounters", {
+                                    newRoomInfo: {_id: newRoomInfo._id, peopleCount: newRoomInfo.peopleCount + 1},
+                                    oldRoomInfo: {_id: oldRoomInfo._id, peopleCount: oldRoomInfo.peopleCount}
+                                });
+                                people.update({_id: "_" + socket.id}, {$set: {room: newRoomInfo.name}});
+                            });
+                        });
+                    });
+                }
             });
         });
     });
