@@ -207,6 +207,7 @@
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
             socket.emit('joined', $("#username").val());
+            $(this).off("keypress", joinedHandler);
         }
     }
 
@@ -225,18 +226,14 @@
                 .find("li:first-child")
                 .addClass("active");
         } else {
-            addNotification("<span class='highlighted'>" + data.username + "</span> joined chat");
+            addNotification("<span class='highlighted'>" + data.name + "</span> joined chat");
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
         //updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
     });
 
-    $("#enter-chat-button").on('click', function (e) {
-        joinedHandler(e);
-    });
-    $("#username").on('keypress', function (e) {
-        joinedHandler(e);
-    });
+    $("#enter-chat-button").on('click', joinedHandler);
+    $("#username").on('keypress', joinedHandler);
 
     // create room
 
@@ -309,7 +306,7 @@
     });
 
     socket.on("left", function (data) {
-        addNotification("User <span class='highlighted'>" + data.username + "</span> has left the chat");
+        addNotification("User <span class='highlighted'>" + data.name + "</span> has left the chat");
         //updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
         $("#" + data.userId).remove();
     });
