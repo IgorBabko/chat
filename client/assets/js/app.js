@@ -145,27 +145,26 @@
         });
     });
 
-    $("#people-sidebar li").on("click", function () {
-        $("#private-message-modal").modal().on("shown.bs.modal", function () {
-            $("#private-message-textarea").focus();
-        });
+    //$("#people-sidebar li").on("click", function () {
+    //    $("#private-message-modal").modal().on("shown.bs.modal", function () {
+    //        $("#private-message-textarea").focus();
+    //    });
+    //});
+
+    var newRoomId = "";
+    $("#enter-room").on("click", function () {
+        socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#room-pass-input").val()});
     });
 
-    $("#rooms-sidebar li:not(.active)").on("click", function () {
-        $("#room-password-modal").modal().on("shown.bs.modal", function () {
-            $("#room-pass-input").focus();
-        });
-    });
+    //$("#private-messages-button").on("click", function () {
+    //    $("#private-messages").show();
+    //    $("#public-messages").hide();
+    //});
 
-    $("#private-messages-button").on("click", function () {
-        $("#private-messages").show();
-        $("#public-messages").hide();
-    });
-
-    $("#public-messages-button").on("click", function () {
-        $("#public-messages").show();
-        $("#private-messages").hide();
-    });
+    //$("#public-messages-button").on("click", function () {
+    //    $("#public-messages").show();
+    //    $("#private-messages").hide();
+    //});
 
     $("#send-message-button").on("click", function () {
         socket.emit("message", $("#message-input").val());
@@ -181,11 +180,22 @@
         $("#public-messages").append(messageTemplate(data)).find("time:last-child").timeago();
     });
 
+    function changeRoomHandler() {
+        if ($(this).hasClass("private")) {
+            $("#room-password-modal").modal().on("shown.bs.modal", function () {
+                $("#password").focus();
+            });
+        } else {
+            socket.emit("changeRoom", {newRoomId: $(this).attr("id")});
+        }
+    }
+
     socket.on("populateChat", function (data) {
-        for (var i = 0; i < data.roomsInfo.length; ++i) {
+        for (var i = data.roomsInfo.length - 1; 0 <= i; --i) {
             $("#rooms-sidebar ul").prepend(roomTemplate(data.roomsInfo[i]));
         }
         $("#rooms-sidebar ul li:first-child").addClass("active");
+        $("#rooms-sidebar li:not(.active)").on("click", changeRoomHandler);
         for (var i = 0; i < data.messagesInfo.length; ++i) {
             $("#public-messages").append(messageTemplate(data.messagesInfo[i]));
         }
@@ -207,16 +217,6 @@
         }
     }
 
-    function updatePeopleCounters(newRoomInfo, oldRoomInfo) {
-        $("#" + newRoomInfo._id + " span").text(newRoomInfo.peopleCount);
-
-        console.log(newRoomInfo);
-        if (oldRoomInfo) {
-            console.log("old room");
-            $("#" + oldRoomInfo._id + " span").text(oldRoomInfo.peopleCount);
-        }
-    }
-
     socket.on("joined", function (data) {
         if (data.hasOwnProperty("myself")) {
             $("#enter-chat-modal").modal("hide");
@@ -228,7 +228,7 @@
             addNotification("<span class='highlighted'>" + data.username + "</span> joined chat");
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
-        updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
+        //updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
     });
 
     $("#enter-chat-button").on('click', function (e) {
@@ -263,7 +263,6 @@
         $("#" + modalId + " .form input").each(function (index, input) {
             var $input = $(input),
                 inputId = $input.attr("id");
-            console.log(input);
             if (!$input.hasClass("form-control-danger") && errors.hasOwnProperty(inputId)) {
                 addErrorState($input, errors[inputId]);
             } else if ($input.hasClass("form-control-danger") && !errors.hasOwnProperty(inputId)) {
@@ -294,7 +293,7 @@
     });
 
     socket.on("createRoom", function (data) {
-        window.toastr.info("Room <span class='highlighted'>" + data.name + "</span> has been created");
+        addNotification("Room <span class='highlighted'>" + data.name + "</span> has been created");
 
         $("#rooms-sidebar ul").prepend(roomTemplate(data));
         $("#create-room-modal").modal("hide");
@@ -311,8 +310,45 @@
 
     socket.on("left", function (data) {
         addNotification("User <span class='highlighted'>" + data.username + "</span> has left the chat");
-        updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
+        //updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
         $("#" + data.userId).remove();
+    });
+
+    socket.on("changeRoom", function (data) {
+        //console.log("on change room");
+        if (data.peopleFromNewRoom) {
+            //console.log("change room me");
+            $("#people-sidebar ul").text("");
+            for (var i = data.peopleFromNewRoom.length - 1; 0 <= i; --i) {
+                $("#people-sidebar ul").prepend(userTemplate(data.peopleFromNewRoom[i]));
+            }
+            $("#people-sidebar ul")
+                .prepend(userTemplate(data.userInfo))
+                .find("li:first-child")
+                .addClass("active");
+
+            $("#rooms-sidebar ul li.active").removeClass("active").on("click", changeRoomHandler);
+            $("#" + data.newRoomId).addClass("active").off("click", changeRoomHandler);
+
+
+            $("#room-password-modal").modal("hide");
+        } else if (data.status === "left") {
+            $("#" + data._id).remove();
+        } else {
+            $("#people-sidebar ul").prepend(userTemplate(data));
+        }
+        //console.log("new: " + data.roomsData.newRoomInfo.peopleCount);
+        //console.log("old: " + data.roomsData.oldRoomInfo.peopleCount);
+    });
+
+    socket.on("updatePeopleCounters", function (data) {
+        //console.log(newRoomInfo.peopleCount);
+        //console.log(oldRoomInfo.peopleCount);
+        $("#" + data.newRoomInfo._id + " span").text(data.newRoomInfo.peopleCount);
+
+        if (data.oldRoomInfo) {
+            $("#" + data.oldRoomInfo._id + " span").text(data.oldRoomInfo.peopleCount);
+        }
     });
 });
 

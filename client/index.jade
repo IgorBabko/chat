@@ -37,7 +37,7 @@ html(lang='en', ng-app='application')
                 | {{name}}
 
         script#user-template(type="text/x-handlebars-template")
-            li.list-group-item(id="{{_id}}") {{username}}
+            li.list-group-item(id="{{_id}}") {{name}}
 
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
@@ -136,11 +136,12 @@ body
                 .modal-body
                     .form
                         .form-group
-                            label.form-control-label(for='room-pass-input') Password:
-                            input#room-pass-input.form-control(type='password')
+                            label.form-control-label(for='password') Password:
+                            span.invalid
+                            input#password.form-control(type='password')
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-success(type='button') Enter
+                    button.btn.btn-success#enter-room(type='button') Enter
 
     header
         .btn-group
