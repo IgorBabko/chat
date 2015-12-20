@@ -125,7 +125,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     name: roomInfo["room-name"],
                     peopleCount: 0,
                     password: sha1(roomInfo["room-password"]),
-                    code: roomInfo["room-code"]
+                    code: sha1(roomInfo["room-code"])
                 });
 
                 roomInfo = {
@@ -134,8 +134,19 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     _id: roomId
                 }
 
-                socket.emit('createRoom', roomInfo);
-                socket.broadcast.emit('createRoom', roomInfo);
+                people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    socket.emit('createRoom', {
+                        roomInfo: roomInfo,
+                        message: "Room " + roomInfo["room-name"] + " has been created successfully"
+                    });
+                    socket.broadcast.emit('createRoom', {
+                        roomInfo: roomInfo,
+                        message: "User " + userInfo.name + " has created the room " + roomInfo["room-name"]
+                    });
+                });
             }
         });
 
@@ -171,16 +182,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                 if (err) {
                     throw err;
                 }
-                if (data.password) {
-                    if (newRoomInfo.password !== sha1(data.password)) {
-                        socket.emit("validErrors", {
-                            modalId: "room-password-modal",
-                            errors: {"password": "Password is wrong!"}
-                        });
-                    }
+                if (newRoomInfo.password !== sha1(data.password)) {
+                    console.log(sha1("1"));
+                    console.log(sha1(data.password));
+                    socket.emit("validErrors", {
+                        modalId: "room-password-modal",
+                        errors: {"password": "Password is wrong!"}
+                    });
                 } else {
-
-                    console.log("changeRoom");
                     rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
                     rooms.update({_id: data.newRoomId}, {$inc: {peopleCount: 1}});
                     rooms.findOne({name: socket.room}, function (err, oldRoomInfo) {
@@ -207,17 +216,20 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                                     userInfo: {
                                         _id: userInfo._id,
                                         name: userInfo.name
-                                    }
+                                    },
+                                    message: "Room has been changed successfully"
                                 });
                                 socket.broadcast.to(oldRoomInfo.name).emit("changeRoom", {
                                     _id: userInfo._id,
                                     name: userInfo.name,
-                                    status: "left"
+                                    status: "left",
+                                    message: "User " + userInfo.name + " left " + oldRoomInfo.name + " room"
                                 });
                                 socket.broadcast.to(newRoomInfo.name).emit("changeRoom", {
                                     _id: userInfo._id,
                                     name: userInfo.name,
-                                    status: "joined"
+                                    status: "joined",
+                                    message: "User " + userInfo.name + " joined " + newRoomInfo.name + " room"
                                 });
                                 clients.emit("updatePeopleCounters", {
                                     newRoomInfo: {_id: newRoomInfo._id, peopleCount: newRoomInfo.peopleCount + 1},
@@ -228,6 +240,54 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                         });
                     });
                 }
+            });
+
+            socket.on("deleteRoom", function (data) {
+                rooms.findOne({_id: data.roomId}, function (err, roomInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    if (roomInfo.code !== sha1(data.code)) {
+                        socket.emit("validErrors", {
+                            modalId: "room-password-modal",
+                            errors: {"code": "Code is wrong!"}
+                        });
+                    } else {
+                        var peopleCountInDeletedRoom = people.find({room: roomInfo.name}).count();
+                        console.log(peopleCountInDeletedRoom);
+                        rooms.update({name: "global"}, {$inc: {room: peopleCountInDeletedRoom }});
+
+                        rooms.findOne({name: "global"}, function (err, globalRoomInfo) {
+                            if (err) {
+                                throw err;
+                            }
+                            people.find({room: roomInfo.name}).toArray(function (err, peopleFromDeletedRoom) {
+                                if (err) {
+                                    throw err;
+                                }
+                                socket.emit("deleteRoom", {
+                                    message: "Room " + roomInfo.name + " has been deleted successfully",
+                                    roomId: data.roomId,
+                                    people: peopleFromDeletedRoom
+                                });
+
+                                socket.broadcast.to(roomInfo.name).emit("deleteRoom", {
+                                    message: "User niko has deleted room " + roomInfo.name,
+                                    roomId: data.roomId,
+                                    people: peopleFromDeletedRoom
+                                });
+
+                                clients.emit("updatePeopleCounters", {
+                                    newRoomInfo: {_id: globalRoomInfo._id, peopleCount: globalRoomInfo.peopleCount}
+                                });
+                                people.update({room: roomInfo.name}, {$set: {room: "global"}});
+                                rooms.deleteOne({_id: data.roomId});
+
+
+                            });
+                        });
+                    }
+                })
             });
         });
     });

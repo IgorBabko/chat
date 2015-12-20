@@ -153,7 +153,16 @@
 
     var newRoomId = "";
     $("#enter-room").on("click", function () {
-        socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#room-pass-input").val()});
+        socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#password").val()});
+    });
+
+    $("#delete-room").on("click", function () {
+        console.log("delete");
+        socket.emit("deleteRoom", {roomId: newRoomId, code: $("#code").val()});
+    });
+
+    socket.on('disconnect', function () {
+        location.reload();
     });
 
     //$("#private-messages-button").on("click", function () {
@@ -181,13 +190,15 @@
     });
 
     function changeRoomHandler() {
-        if ($(this).hasClass("private")) {
+        console.log("changeRoomHandler");
+        if ($(this).attr("id") === globalRoomId) {
+            socket.emit("changeRoom", {newRoomId: globalRoomId, password: ""});
+        } else {
             $("#room-password-modal").modal().on("shown.bs.modal", function () {
                 $("#password").focus();
             });
-        } else {
-            socket.emit("changeRoom", {newRoomId: $(this).attr("id")});
         }
+        newRoomId = $(this).attr("id");
     }
 
     socket.on("populateChat", function (data) {
@@ -196,6 +207,7 @@
         }
         $("#rooms-sidebar ul li:first-child").addClass("active");
         $("#rooms-sidebar li:not(.active)").on("click", changeRoomHandler);
+        globalRoomId = $("#rooms-sidebar ul li:first-child").attr("id");
         for (var i = 0; i < data.messagesInfo.length; ++i) {
             $("#public-messages").append(messageTemplate(data.messagesInfo[i]));
         }
@@ -207,7 +219,9 @@
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
             socket.emit('joined', $("#username").val());
-            $(this).off("keypress", joinedHandler);
+            if ($("#username").val().trim() !== "") {
+                $(this).off("keypress", joinedHandler);
+            }
         }
     }
 
@@ -225,11 +239,11 @@
                 .prepend(userTemplate(data))
                 .find("li:first-child")
                 .addClass("active");
+            socketId = data._id;
         } else {
             addNotification("<span class='highlighted'>" + data.name + "</span> joined chat");
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
-        //updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
     });
 
     $("#enter-chat-button").on('click', joinedHandler);
@@ -290,9 +304,9 @@
     });
 
     socket.on("createRoom", function (data) {
-        addNotification("Room <span class='highlighted'>" + data.name + "</span> has been created");
-
-        $("#rooms-sidebar ul").prepend(roomTemplate(data));
+        addNotification(data.message);
+        $("#rooms-sidebar ul").append(roomTemplate(data.roomInfo));
+        $("#rooms-sidebar ul li:last-child").on("click", changeRoomHandler);
         $("#create-room-modal").modal("hide");
         clearInputs($("#create-room-modal .form input"));
     });
@@ -313,6 +327,7 @@
 
     socket.on("changeRoom", function (data) {
         //console.log("on change room");
+        addNotification(data.message);
         if (data.peopleFromNewRoom) {
             //console.log("change room me");
             $("#people-sidebar ul").text("");
@@ -329,6 +344,7 @@
 
 
             $("#room-password-modal").modal("hide");
+            clearInputs($("#room-password-modal .form input"));
         } else if (data.status === "left") {
             $("#" + data._id).remove();
         } else {
@@ -346,6 +362,26 @@
         if (data.oldRoomInfo) {
             $("#" + data.oldRoomInfo._id + " span").text(data.oldRoomInfo.peopleCount);
         }
+    });
+
+    var socketId = "";
+    var globalRoomId = "";
+    var currentRoomId = "";
+    socket.on("deleteRoom", function (data) {
+        addNotification(data.message);
+        $("#room-password-modal").modal("hide");
+        clearInputs($("#room-password-modal"));
+
+        $("#" + data.roomId).remove();
+
+        $("#" + currentRoomId).removeClass("active").on("click", changeRoomHandler);
+        $("#" + globalRoomId).addClass("active");
+        currentRoomId = globalRoomId;
+        $("#people-sidebar ul").html("");
+        for (var i = 0; i < data.people.length; ++i) {
+            $("#people-sidebar ul").prepend(roomTemplate(data.people[i]));
+        }
+        $("#" + socketId).addClass("active");
     });
 });
 
