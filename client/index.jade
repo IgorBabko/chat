@@ -27,7 +27,7 @@ html(lang='en', ng-app='application')
         script#message-template(type="text/x-handlebars-template")
             .media
                 .media-body
-                    h4.media-heading.name {{name}}
+                    h4.media-heading.name {{author}}
                         time.posted-date(datetime='{{postedDate}}')
                     | {{text}}
 
@@ -87,10 +87,10 @@ body
                             span.invalid
                             input#room-code-confirm.form-control(type='password')
                 .modal-footer
-                    .checkbox#join-room-checkbox
-                        label
-                            input(type='checkbox', value='')
-                            | Join newely created room
+                    //.checkbox#join-room-checkbox
+                    //    label
+                    //        input(type='checkbox', value='')
+                    //        | Join newely created room
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-success#create(type='button') Create
 
@@ -139,8 +139,14 @@ body
                             label.form-control-label(for='password') Password:
                             span.invalid
                             input#password.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='code') Code:
+                            span.invalid
+                            input#code.form-control(type='password', placeholder="Needed only to delete room")
                 .modal-footer
+                    //button.btn.btn-info#subscribe-room(type='button', style="float: left") Subscribe
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                    button.btn.btn-danger#delete-room(type='button') Delete
                     button.btn.btn-success#enter-room(type='button') Enter
 
     header
@@ -164,16 +170,16 @@ body
     .container-fluid
         .row
             .content
-                .messages#public-messages
-                    each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
-                        .media
-                            .media-body
-                                h4.media-heading.name #{val.name}
-                                    time.posted-date(datetime='#{val.postedDate}') .
-                                | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                #messages
+                    //each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
+                    //    .media
+                    //        .media-body
+                    //            h4.media-heading.name #{val.name}
+                    //                time.posted-date(datetime='#{val.postedDate}') .
+                    //            | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
                 .input-group#message-input-block
                     input#message-input.form-control(type='text', placeholder="Your message:")
-                    span.input-group-addon#send-message-button send
+                    span.input-group-addon#send send
 
 
     #people-sidebar
