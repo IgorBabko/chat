@@ -1,11 +1,14 @@
+var port = Number(process.env.PORT || 3000);
+
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var express = require('express');
 var sha1 = require('sha1');
 var jade = require('jade');
 var app = express();
-var server = app.listen(3000);
+var server = app.listen(port);
 var clients = io.listen(server);
+
 
 app.use(express.static(__dirname + '/build/assets'));
 app.use(express.static(__dirname + '/bower_components'));
