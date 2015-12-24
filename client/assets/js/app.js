@@ -222,7 +222,7 @@
         }
         $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         for (var i = 0; i < data.peopleInfo.length; ++i) {
-            $("#people-sidebar ul").prepend(roomTemplate(data.peopleInfo[i]));
+            $("#people-sidebar ul").prepend(userTemplate(data.peopleInfo[i]));
         }
         $("html").show();
     });
@@ -348,7 +348,7 @@
         if (data.peopleFromNewRoom) {
             //console.log("change room me");
             $("#people-sidebar ul").text("");
-            for (var i = data.peopleFromNewRoom.length - 1; 0 <= i; --i) {
+            for (var i = 0; i < data.peopleFromNewRoom.length; ++i) {
                 $("#people-sidebar ul").prepend(userTemplate(data.peopleFromNewRoom[i]));
             }
             $("#people-sidebar ul")
@@ -412,19 +412,25 @@
             }
         }
 
-        $("#" + globalRoomId).addClass("active");
-        currentRoomId = globalRoomId;
-        $("#people-sidebar ul").html("");
-        for (var i = 0; i < data.peopleFromGlobalRoom.length; ++i) {
-            $("#people-sidebar ul").prepend(userTemplate(data.peopleFromGlobalRoom[i]));
+        if (data.global === true) {
+            console.log(data.peopleFromDeletedRoom);
+            for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
+                $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
+            }
+        } else {
+            $("#" + globalRoomId).addClass("active");
+            currentRoomId = globalRoomId;
+            $("#people-sidebar ul").html("");
+            for (var i = 0; i < data.peopleFromGlobalRoom.length; ++i) {
+                $("#people-sidebar ul").prepend(userTemplate(data.peopleFromGlobalRoom[i]));
+            }
+            $("#messages").text("");
+            for (var i = 0; i < data.messages.length; ++i) {
+                $("#messages").append(messageTemplate(data.messages[i]));
+            }
+            $("#" + socketId).addClass("active");
+            $("#" + globalRoomId).off("click", changeRoomHandler);
         }
-        $("#messages").text("");
-        for (var i = 0; i < data.messages.length; ++i) {
-            $("#messages").append(messageTemplate(data.messages[i]));
-        }
-        $("#" + socketId).addClass("active");
-        $("#" + globalRoomId).off("click", changeRoomHandler);
-
     });
 
     socket.on("notification", function (message) {

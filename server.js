@@ -296,11 +296,14 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                                 if (err) {
                                     throw err;
                                 }
-                                people.update({room: roomInfo.name}, {$set: {room: "global"}});
+                                people.update({room: roomInfo.name}, {$set: {room: "global"}}, { multi: true });
                                 people.find({room: "global"}).toArray(function (err, peopleFromGlobalRoom) {
                                     if (err) {
                                         throw err;
                                     }
+                                    console.log("------");
+                                    console.log(peopleFromGlobalRoom);
+                                    console.log("------");
                                     // if user isn't in the global room don't send people info to the client
                                     messages.find({"room": "global"}).toArray(function (err, messagesFromGlobalRoom) {
                                         if (err) {
@@ -318,7 +321,12 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                                             peopleFromGlobalRoom: peopleFromGlobalRoom,
                                             messages: messagesFromGlobalRoom,
                                         });
-                                        /////
+
+                                        socket.broadcast.to("global").emit("deleteRoom", {
+                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
+                                            global: true
+                                        });
+
                                         var allClients = clients.sockets.connected;
                                         for (var clientId in allClients) {
                                             if (allClients[clientId].room === roomInfo.name) {
