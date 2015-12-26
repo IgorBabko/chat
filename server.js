@@ -1,19 +1,38 @@
-var port = Number(process.env.PORT || 3000);
-
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
-var express = require('express');
 var sha1 = require('sha1');
 var jade = require('jade');
+var express = require('express');
 var app = express();
-var server = app.listen(port);
+
+app.set('port', (process.env.PORT || 5000));
+var server = app.listen(app.get('port'));
 var clients = io.listen(server);
 
 
 app.use(express.static(__dirname + '/build/assets'));
 app.use(express.static(__dirname + '/bower_components'));
 
-mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
+
+app.get('/', function(request, response) {
+    response.end("niko");
+});
+
+
+//var mongo = require('mongodb').MongoClient;
+//var io = require('socket.io');
+//var express = require('express');
+//var sha1 = require('sha1');
+//var jade = require('jade');
+//var app = express();
+//var server = app.listen(port);
+//var clients = io.listen(server);
+//
+//
+//app.use(express.static(__dirname + '/build/assets'));
+//app.use(express.static(__dirname + '/bower_components'));
+
+/*mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
     var rooms = db.collection('rooms');
     var people = db.collection('people');
@@ -368,3 +387,4 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
         });
     });
 });
+*/
