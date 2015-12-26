@@ -46,7 +46,8 @@
   "author": "Igor Babko",
   "license": "ISC",
   "engines": {
-    "node": "5.1.0"
+    "node": "5.1.0",
+    "npm": "3.5.1"
   },
   "bugs": {
     "url": "https://github.com/IgorBabko/chat/issues"
