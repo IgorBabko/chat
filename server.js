@@ -296,7 +296,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                                 if (err) {
                                     throw err;
                                 }
-                                people.update({room: roomInfo.name}, {$set: {room: "global"}}, { multi: true });
+                                people.update({room: roomInfo.name}, {$set: {room: "global"}}, {multi: true});
                                 people.find({room: "global"}).toArray(function (err, peopleFromGlobalRoom) {
                                     if (err) {
                                         throw err;
@@ -341,7 +341,10 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                                         clients.emit("deleteRoomItem", data.roomId);
 
                                         clients.emit("updatePeopleCounters", {
-                                            newRoomInfo: {_id: globalRoomInfo._id, peopleCount: globalRoomInfo.peopleCount}
+                                            newRoomInfo: {
+                                                _id: globalRoomInfo._id,
+                                                peopleCount: globalRoomInfo.peopleCount
+                                            }
                                         });
                                         rooms.deleteOne({_id: data.roomId});
                                         messages.remove({room: roomInfo.name});
@@ -352,6 +355,16 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
                     });
                 }
             });
+        });
+
+        socket.on("startTyping", function (id) {
+            console.log("start");
+            socket.broadcast.to(socket.room).emit("startTyping", id);
+        });
+
+        socket.on("stopTyping", function (id) {
+            console.log("stop");
+            socket.broadcast.to(socket.room).emit("stopTyping", id);
         });
     });
 });

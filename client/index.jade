@@ -39,6 +39,10 @@ html(lang='en', ng-app='application')
         script#user-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}") {{name}}
 
+        script#typing-template(type="text/x-handlebars-template")
+            span.pull-xs-left.typing
+                i.fa.fa-circle-o-notch.fa-spin
+
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')

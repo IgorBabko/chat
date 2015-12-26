@@ -1,7 +1,6 @@
 ;$(function () {
 
     var socket = io();
-    $("time").timeago();
 
     toastr.options = {
         "positionClass": "toast-top-right",
@@ -189,6 +188,7 @@
     var messageTemplate = window.Handlebars.compile($("#message-template").html());
     var roomTemplate = window.Handlebars.compile($("#room-template").html());
     var userTemplate = window.Handlebars.compile($("#user-template").html());
+    var typingTemplate = window.Handlebars.compile($("#typing-template").html());
 
     socket.on("message", function (message) {
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
@@ -224,6 +224,7 @@
         for (var i = 0; i < data.peopleInfo.length; ++i) {
             $("#people-sidebar ul").prepend(userTemplate(data.peopleInfo[i]));
         }
+        $("time").timeago();
         $("html").show();
     });
 
@@ -371,6 +372,7 @@
             }
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
             $("#message-input").focus();
+            $("time").timeago();
         } else if (data.status === "left") {
             $("#" + data._id).remove();
         } else {
@@ -413,7 +415,6 @@
         }
 
         if (data.global === true) {
-            console.log(data.peopleFromDeletedRoom);
             for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
                 $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
             }
@@ -435,6 +436,22 @@
 
     socket.on("notification", function (message) {
         addNotification(message);
+    });
+
+    $("#message-input").on("focus", function () {
+        socket.emit("startTyping", socketId);
+    });
+
+    $("#message-input").on("blur", function () {
+        socket.emit("stopTyping", socketId);
+    });
+
+    socket.on("startTyping", function (id) {
+        $("#" + id).prepend(typingTemplate());
+    });
+
+    socket.on("stopTyping", function (id) {
+        $("#" + id + " span").remove();
     });
 });
 
