@@ -1,12 +1,14 @@
+var port = Number(process.env.PORT || 3000);
+
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var express = require('express');
-var uuid = require('node-uuid');
+var sha1 = require('sha1');
 var jade = require('jade');
-var path = require('path');
 var app = express();
-var server = app.listen(3000);
+var server = app.listen(port);
 var clients = io.listen(server);
+
 
 app.use(express.static(__dirname + '/build/assets'));
 app.use(express.static(__dirname + '/bower_components'));
@@ -27,9 +29,7 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
     });
 
     app.get('/', function (req, res) {
-        // var html = jade.renderFile(__dirname + '/build/index.jade');
-        // res.send(html);
-        res.sendFile('/build/index.html', { root: __dirname });
+        res.sendFile('/build/index.html', {root: __dirname});
     });
 
     function isEmpty(value) {
@@ -39,652 +39,332 @@ mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
 
     clients.on('connection', function (socket) {
 
-        socket.join('global');
+        var whitespacePattern = /^\s*$/;
 
-        socket.on('populateChat', function () {
-            rooms.find().toArray(function (err, roomsData) {
-                if (err) return err;
-
-                people.find({
-                    room: 'global'
-                }).toArray(function (err, peopleData) {
-                    if (err) return err;
-
-                    // for(var i = 0; i < peopleData.length; ++i) {
-                    // 	if (peopleData[i].status === 'doctor') {
-                    // 		peopleData[i].name += '(doctor)';
-                    // 	}
-                    // }
-
-                    messages.find({
-                        room: 'global'
-                    }).toArray(function (err, messagesData) {
-                        if (err) return err;
-
-                        socket.emit('populateChat', roomsData, peopleData, messagesData);
-                    });
-                });
-            });
-        });
-
-        socket.on('joined', function (userData) {
-
-            socket.room = 'global';
-
-            // var whitespacePattern = /^\s*$/;
-            // userData.userName = userData.userName.trim();
-
-            if (isEmpty(userData.userName.trim()) /*whitespacePattern.test(userData.userName)*/) {
-                socket.emit('warning', {
-                    message: 'Name should not be empty!'
-                });
-                return;
+        rooms.find().toArray(function (err, roomsInfo) {
+            if (err) {
+                throw err;
             }
-
-            people.find({
-                name: userData.userName
-            }).toArray(function (err, usersInfo) {
-                if (err) return err;
-
-                if (usersInfo.length !== 0) {
-                    socket.emit('warning', {
-                        message: 'User with name "' + userData.userName + '" already exists!'
-                    });
-                    return;
+            messages.find({room: "global"}).toArray(function (err, messagesInfo) {
+                if (err) {
+                    throw err;
                 }
-
-                var status = 'patient';
-                socket.status = 'patient';
-                if (userData.identificationCode !== '' && userData.identificationCode !== '1') {
-                    socket.emit('warning', {
-                        identificationCode: ' ',
-                        message: 'Identification code is wrong!'
-                    });
-                    return;
-                } else if (userData.identificationCode === '1') {
-                    status = 'doctor';
-                    socket.status = 'doctor';
-                    socket.subscribtions = [];
-                }
-
-                var user = {
-                    _id: '_' + socket.id,
-                    name: userData.userName,
-                    room: 'global',
-                    status: status,
-                    subscribtions: []
-                };
-
-                people.insert(user);
-                rooms.update({
-                    name: 'global'
-                }, {
-                    $inc: {
-                        peopleCount: 1
+                people.find({room: "global"}).toArray(function (err, peopleInfo) {
+                    if (err) {
+                        throw err;
                     }
-                });
-                rooms.find({
-                    name: 'global'
-                }).toArray(function (err, roomsData) {
-                    var room = roomsData[0];
-
-                    // var userName = user.name;
-                    // if (user.status === 'doctor') {
-                    // 	user.name += '(doctor)';
-                    // }
-                    socket.broadcast.in('global').emit('joined', {
-                        user: user,
-                        message: user.name + ' joined chat.'
-                    });
-                    // user.name = userName + '(you)';
-                    socket.emit('joined', {
-                        user: user,
-                        status: status
-                    });
-                    clients.emit('joined', {
-                        room: room
+                    socket.emit("populateChat", {
+                        roomsInfo: roomsInfo,
+                        messagesInfo: messagesInfo,
+                        peopleInfo: peopleInfo
                     });
                 });
             });
         });
+        //socket.emit("populateChat", {roomsInfo: rooms.find()});
 
-        socket.on('left', function () {
-            people.find({
-                _id: '_' + socket.id
-            }).toArray(function (err, users) {
-                if (err) return err;
-
-                var whoLeft = users[0];
-
-                if (!whoLeft) {
-                    return;
-                }
-
-                rooms.update({
-                    name: whoLeft.room
-                }, {
-                    $inc: {
-                        peopleCount: -1
+        socket.on("message", function (text) {
+            if (whitespacePattern.test(text.trim())) {
+                socket.emit("emptyMessage");
+            } else {
+                people.findOne({_id: "_" + socket.id}, function (err, author) {
+                    if (err) {
+                        throw err;
                     }
-                });
-
-                rooms.find({
-                    name: whoLeft.room
-                }).toArray(function (err, roomsData) {
-                    var room = roomsData[0];
-                    clients.in(whoLeft.room).emit('left', {
-                        user: whoLeft,
-                        message: whoLeft.name + ' left chat.'
-                    });
-                    clients.emit('left', {
-                        room: room
-                    });
-                    people.remove({
-                        _id: whoLeft._id
-                    });
-                });
-            });
-        });
-
-        socket.on('subscribe', function (roomName) {
-            socket.subscribtions.push(roomName);
-        });
-
-        socket.on('unsubscribe', function (roomName) {
-            var indexOfRoom = socket.subscribtions.indexOf(roomName);
-            socket.subscribtions.splice(indexOfRoom, 1);
-        });
-
-        socket.on('createRoom', function (data) {
-
-            // var whitespacePattern = /^\s*$/;
-
-
-            if (isEmpty(data.roomName) /*whitespacePattern.test(data.roomName)*/) {
-                socket.emit('warning', {
-                    message: 'Room name should not be empty!'
-                });
-                return;
-            }
-
-            rooms.find({
-                name: data.roomName
-            }).toArray(function (err, roomsInfo) {
-                if (err) return err;
-
-                if (roomsInfo.length !== 0) {
-                    socket.emit('warning', {
-                        message: 'Room with name "' + data.roomName + '" already exists!'
-                    });
-                    return;
-                }
-
-                if (data.roomPassword !== data.roomPasswordRepeat) {
-                    socket.emit('warning', {
-                        roomName: data.roomName,
-                        message: 'Password confirmation doesn\'t match password!'
-                    });
-                    return;
-                }
-
-                if (data.roomCode !== data.roomCodeRepeat) {
-                    socket.emit('warning', {
-                        roomName: data.roomName,
-                        message: 'Room code confirmation doesn\'t match room code!'
-                    });
-                    return;
-                }
-
-                var roomType = 'public';
-                if (data.roomPassword !== '') {
-                    roomType = 'private';
-                }
-
-                people.find({
-                    _id: '_' + socket.id
-                }).toArray(function (err, users) {
-
-                    var user = users[0];
-
-                    var room = {
-                        _id: '_' + uuid.v1(),
-                        name: data.roomName,
-                        password: data.roomPassword,
-                        code: data.roomCode,
-                        creatorId: user._id,
-                        peopleCount: 0
+                    var message = {
+                        author: author.name,
+                        postedDate: new Date().toISOString(),
+                        text: text,
+                        room: socket.room
                     };
-
-                    rooms.insert(room);
-
-                    socket.emit('createRoom', {
-                        room: room
-                    });
-                    socket.broadcast.emit('createRoom', {
-                        room: room,
-                        message: user.name + ' added ' + roomType + ' room "' + data.roomName + '"'
-                    });
+                    messages.insert(message);
+                    socket.broadcast.to(socket.room).emit("message", message);
+                    message.myself = true;
+                    socket.emit("message", message);
                 });
-            });
+            }
         });
 
-        socket.on('changeRoom', function (data) {
-
-            rooms.find({
-                name: data.newRoom
-            }).toArray(function (err, newRoomInfo) {
-                newRoomInfo = newRoomInfo[0];
-                if (newRoomInfo.password !== '' && data.newRoomPassword === undefined) {
-                    socket.emit('openRoomPasswordModal');
-                } else {
-                    if (newRoomInfo.password !== '' && newRoomInfo.password !== data.newRoomPassword) {
-                        socket.emit('warning', {
-                            message: 'Room password is wrong!'
-                        });
-                    } else {
-                        var isRoomPrivate = false;
-                        if (data.newRoomPassword) {
-                            isRoomPrivate = true;
-                        }
-                        people.find({
-                            _id: '_' + socket.id
-                        }).toArray(function (err, users) {
-                            if (err) return err;
-
-                            var user = users[0];
-
-                            socket.broadcast.to(user.room).emit('changeRoom', {
-                                message: user.name + ' left room',
-                                whoLeft: user
-                            });
-                            socket.leave(user.room);
-                            // var userName = user.name;
-                            // if (user.status === 'doctor') {
-                            // 	user.name += '(doctor)';
-                            // }
-                            clients.in(data.newRoom).emit('changeRoom', {
-                                user: user,
-                                message: user.name + ' joined room'
-                            });
-
-                            rooms.update({
-                                name: user.room
-                            }, {
-                                $inc: {
-                                    peopleCount: -1
-                                }
-                            });
-                            rooms.update({
-                                name: data.newRoom
-                            }, {
-                                $inc: {
-                                    peopleCount: 1
-                                }
-                            });
-                            newRoomInfo.peopleCount += 1;
-                            rooms.find({
-                                name: user.room
-                            }).toArray(function (err, oldRoomInfo) {
-
-                                oldRoomInfo = oldRoomInfo[0];
-                                socket.broadcast.emit('changeRoom', {
-                                    forAllClients: true,
-                                    oldRoomInfo: oldRoomInfo,
-                                    newRoomInfo: newRoomInfo
-                                });
-
-                                // user.name = userName + '(you)';
-
-                                people.find({
-                                    room: data.newRoom
-                                }).toArray(function (err, users) {
-                                    if (err) return err;
-
-                                    // for(var i = 0; i < users.length; ++i) {
-                                    // 	if (users[i].status === 'doctor') {
-                                    // 		users[i].name += '(doctor)';
-                                    // 	}
-                                    // }
-
-                                    messages.find({
-                                        room: data.newRoom
-                                    }).toArray(function (err, messages) {
-                                        if (err) return err;
-
-                                        socket.emit('changeRoom', {
-                                            oldRoomInfo: oldRoomInfo,
-                                            newRoomInfo: newRoomInfo,
-                                            isRoomPrivate: isRoomPrivate,
-                                            people: users,
-                                            messages: messages,
-                                            user: user
-                                        });
-                                        socket.room = data.newRoom;
-                                        socket.join(data.newRoom);
-                                        people.update({
-                                            _id: user._id
-                                        }, {
-                                            $set: {
-                                                room: data.newRoom
-                                            }
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    }
-                }
-            });
-        });
-
-        socket.on('removeRoom', function (data) {
-            if (typeof data === 'string') {
-                people.find({
-                    room: data
-                }).count(function (err, peopleInRoom) {
-                    if (err) return err;
-                    socket.emit('removeRoom', {
-                        peopleCount: peopleInRoom - 1
-                    });
-                    return;
+        socket.on("joined", function (username) {
+            if (whitespacePattern.test(username.trim())) {
+                socket.emit("validErrors", {
+                    modalId: "enter-chat-modal",
+                    errors: {"username": "Username should not be empty!"}
                 });
             } else {
-                console.log('removeRoom');
-                rooms.find({
-                    name: data.roomName
-                }).toArray(function (err, roomsInfo) {
-                    var room = roomsInfo[0];
-                    if (!room.code && data.code !== '' || room.code && room.code !== data.code) {
-                        socket.emit('warning', {
-                            message: 'Room code is wrong!'
-                        });
-                        return;
+                people.insert({_id: "_" + socket.id, name: username, room: "global"});
+                rooms.update({name: "global"}, {$inc: {peopleCount: 1}});
+                rooms.findOne({name: "global"}, function (err, globalRoomInfo) {
+                    if (err) {
+                        throw err;
                     }
+                    rooms.findOne({name: "global"}, function (err, roomInfo) {
+                        if (err) {
+                            throw err;
+                        }
+                        socket.join("global");
+                        socket.room = "global";
+                        socket.emit("joined", {
+                            _id: "_" + socket.id,
+                            name: username,
+                            myself: true,
+                            globalRoomId: globalRoomInfo._id
+                        });
+                        socket.broadcast.emit("joined", {
+                            _id: "_" + socket.id,
+                            name: username
+                        });
+                        clients.emit("updatePeopleCounters", {
+                            newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                        });
+                    });
+                });
+            }
+        });
 
-                    people.find({
-                        room: data.roomName
-                    }).toArray(function (err, peopleFromRemovedRoom) {
-                        if (err) return err;
+        socket.on("createRoom", function (roomInfo) {
+            var errors = {};
+            if (whitespacePattern.test(roomInfo["room-name"])) {
+                errors["room-name"] = "Name should not be empty!";
+            }
 
-                        var peopleCountInRemovedRoom = peopleFromRemovedRoom.length;
+            if (roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
+                errors["room-password-confirm"] = "Password confirmation should match the password!";
+            }
 
-                        socket.broadcast.to('global').emit('transferPeopleFromRemovedRoom', peopleFromRemovedRoom);
+            if (whitespacePattern.test(roomInfo["room-code"])) {
+                errors["room-code"] = "Code should not be empty!";
+            } else if (roomInfo["room-code"] !== roomInfo["room-code-confirm"]) {
+                errors["room-code-confirm"] = "Code confirmation should match the code!";
+            }
 
-                        people.find({
-                            _id: '_' + socket.id
-                        }).toArray(function (err, users) {
-                            if (err) return err;
+            if (Object.keys(errors).length !== 0) {
+                socket.emit("validErrors", {modalId: "create-room-modal", errors: errors});
+            } else {
 
-                            var user = users[0];
+                var roomId = "_" + sha1(new Date().toString());
+                rooms.insert({
+                    _id: roomId,
+                    name: roomInfo["room-name"],
+                    peopleCount: 0,
+                    password: sha1(roomInfo["room-password"]),
+                    code: sha1(roomInfo["room-code"])
+                });
 
-                            people.find({
-                                room: 'global'
-                            }).toArray(function (err, peopleFromGlobalRoom) {
-                                if (err) return err;
+                roomInfo = {
+                    name: roomInfo["room-name"],
+                    peopleCount: 0,
+                    _id: roomId
+                }
 
-                                var peopleCountInGlobalRoom = peopleFromGlobalRoom.length;
+                people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    socket.emit('createRoom', {
+                        roomInfo: roomInfo,
+                        message: "Room " + roomInfo["room-name"] + " has been created successfully"
+                    });
+                    socket.broadcast.emit('createRoom', {
+                        roomInfo: roomInfo,
+                        message: "User " + userInfo.name + " has created the room " + roomInfo["room-name"]
+                    });
+                });
+            }
+        });
 
-                                rooms.update({
-                                    name: 'global'
-                                }, {
-                                    $set: {
-                                        peopleCount: peopleCountInRemovedRoom + peopleCountInGlobalRoom
+        socket.on("left", function () {
+
+            people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+                if (err) {
+                    throw err;
+                }
+                rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
+                rooms.findOne({name: socket.room}, function (err, roomInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    if (userInfo != null) {
+                        console.log(roomInfo);
+                        socket.broadcast.emit("left", {
+                            userId: userInfo._id,
+                            name: userInfo.name
+                        });
+                        people.deleteOne({_id: userInfo._id});
+                        clients.emit("updatePeopleCounters", {
+                            newRoomInfo: {_id: roomInfo._id, peopleCount: roomInfo.peopleCount}
+                        });
+                    }
+                });
+            });
+        });
+
+        socket.on("changeRoom", function (data) {
+
+            rooms.findOne({_id: data.newRoomId}, function (err, newRoomInfo) {
+                if (err) {
+                    throw err;
+                }
+                if (newRoomInfo.password !== sha1(data.password)) {
+                    socket.emit("validErrors", {
+                        modalId: "room-password-modal",
+                        errors: {"password": "Password is wrong!"}
+                    });
+                } else {
+                    rooms.update({name: socket.room}, {$inc: {peopleCount: -1}});
+                    rooms.update({_id: data.newRoomId}, {$inc: {peopleCount: 1}});
+                    rooms.findOne({name: socket.room}, function (err, oldRoomInfo) {
+                        if (err) {
+                            throw error;
+                        }
+
+                        people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+                            if (err) {
+                                throw err;
+                            }
+                            people.find({room: newRoomInfo.name}).toArray(function (err, peopleFromNewRoom) {
+                                if (err) {
+                                    throw err;
+                                }
+
+                                messages.find({room: newRoomInfo.name}).toArray(function (err, messagesFromNewRoom) {
+                                    if (err) {
+                                        throw err;
                                     }
+                                    socket.leave(oldRoomInfo.name);
+                                    socket.join(newRoomInfo.name);
+                                    socket.room = newRoomInfo.name;
+
+                                    socket.emit("changeRoom", {
+                                        peopleFromNewRoom: peopleFromNewRoom,
+                                        newRoomId: newRoomInfo._id,
+                                        messages: messagesFromNewRoom,
+                                        userInfo: {
+                                            _id: userInfo._id,
+                                            name: userInfo.name
+                                        },
+                                        message: "Room has been changed successfully"
+                                    });
+                                    socket.broadcast.to(oldRoomInfo.name).emit("changeRoom", {
+                                        _id: userInfo._id,
+                                        name: userInfo.name,
+                                        status: "left",
+                                        message: "User " + userInfo.name + " left " + oldRoomInfo.name + " room"
+                                    });
+                                    socket.broadcast.to(newRoomInfo.name).emit("changeRoom", {
+                                        _id: userInfo._id,
+                                        name: userInfo.name,
+                                        status: "joined",
+                                        message: "User " + userInfo.name + " joined " + newRoomInfo.name + " room"
+                                    });
+                                    clients.emit("updatePeopleCounters", {
+                                        newRoomInfo: {_id: newRoomInfo._id, peopleCount: newRoomInfo.peopleCount + 1},
+                                        oldRoomInfo: {_id: oldRoomInfo._id, peopleCount: oldRoomInfo.peopleCount}
+                                    });
+                                    people.update({_id: "_" + socket.id}, {$set: {room: newRoomInfo.name}});
                                 });
+                            });
+                        });
+                    });
+                }
+            });
+        });
 
-                                messages.find({
-                                    room: 'global'
-                                }).toArray(function (err, messagesFromGlobalRoom) {
-                                    if (err) return err;
 
-                                    rooms.find({
-                                        name: 'global'
-                                    }).toArray(function (err, roomsInfo) {
-                                        if (err) return err;
+        socket.on("deleteRoom", function (data) {
+            rooms.findOne({_id: data.roomId}, function (err, roomInfo) {
+                if (err) {
+                    throw err;
+                }
+                if (roomInfo.code !== sha1(data.code)) {
+                    socket.emit("validErrors", {
+                        modalId: "room-password-modal",
+                        errors: {"code": "Code is wrong!"}
+                    });
+                } else {
+                    people.find({room: roomInfo.name}).count(function (err, peopleCountInDeletedRoom) {
+                        if (err) {
+                            throw err;
+                        }
+                        rooms.update({name: "global"}, {$inc: {peopleCount: peopleCountInDeletedRoom}});
 
-                                        var globalRoomInfo = roomsInfo[0];
-
-                                        socket.broadcast.emit('removeRoom', {
-                                            roomId: room._id,
-                                            message: user.name + ' has removed "' + data.roomName + '" room.'
-                                        });
-
-                                        // user.name += '(you)';
-
-                                        socket.emit('removeRoom', {
-                                            self: true,
-                                            roomId: room._id,
-                                            user: user,
-                                            peopleFromRemovedRoom: peopleFromRemovedRoom,
+                        rooms.findOne({name: "global"}, function (err, globalRoomInfo) {
+                            if (err) {
+                                throw err;
+                            }
+                            people.find({room: roomInfo.name}).toArray(function (err, peopleFromDeletedRoom) {
+                                if (err) {
+                                    throw err;
+                                }
+                                people.update({room: roomInfo.name}, {$set: {room: "global"}}, {multi: true});
+                                people.find({room: "global"}).toArray(function (err, peopleFromGlobalRoom) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                    console.log("------");
+                                    console.log(peopleFromGlobalRoom);
+                                    console.log("------");
+                                    // if user isn't in the global room don't send people info to the client
+                                    messages.find({"room": "global"}).toArray(function (err, messagesFromGlobalRoom) {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                        socket.emit("deleteRoom", {
+                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
                                             peopleFromGlobalRoom: peopleFromGlobalRoom,
                                             messages: messagesFromGlobalRoom,
-                                            message: 'Room "' + data.roomName + '" has been removed successfully. You have been transferred to global room'
+                                            myself: true
+                                        });
+
+                                        socket.broadcast.to(roomInfo.name).emit("deleteRoom", {
+                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
+                                            peopleFromGlobalRoom: peopleFromGlobalRoom,
+                                            messages: messagesFromGlobalRoom,
+                                        });
+
+                                        socket.broadcast.to("global").emit("deleteRoom", {
+                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
+                                            global: true
                                         });
 
                                         var allClients = clients.sockets.connected;
-
-                                        var name = '';
                                         for (var clientId in allClients) {
-                                            if (clientId !== socket.id && allClients[clientId].room === data.roomName) {
-                                                var len = peopleFromRemovedRoom.length;
-                                                for (var i = 0; i < len; ++i) {
-                                                    if (peopleFromRemovedRoom[i]._id === '_' + clientId) {
-                                                        user = peopleFromRemovedRoom[i];
-                                                        name = user.name;
-                                                        // user.name += '(you)';
-                                                    }
-                                                }
-                                                allClients[clientId].emit('removeRoom', {
-                                                    user: user,
-                                                    peopleFromRemovedRoom: peopleFromRemovedRoom,
-                                                    peopleFromGlobalRoom: peopleFromGlobalRoom,
-                                                    messages: messagesFromGlobalRoom,
-                                                    message: 'You have been transferred to global room.'
-                                                });
-
-                                                user.name = name;
+                                            if (allClients[clientId].room === roomInfo.name) {
+                                                allClients[clientId].leave(roomInfo.name);
+                                                allClients[clientId].join("global");
+                                                allClients[clientId].room = "global";
                                             }
                                         }
-                                        people.update({
-                                            room: data.roomName
-                                        }, {
-                                            $set: {
-                                                room: 'global'
+                                        ////
+                                        socket.emit("notification", "Room " + roomInfo.name + " has deleted.");
+                                        socket.broadcast.emit("notification", "Room " + roomInfo.name + " has deleted.");
+                                        clients.emit("deleteRoomItem", data.roomId);
+
+                                        clients.emit("updatePeopleCounters", {
+                                            newRoomInfo: {
+                                                _id: globalRoomInfo._id,
+                                                peopleCount: globalRoomInfo.peopleCount
                                             }
-                                        }, {
-                                            multi: true
                                         });
-                                        rooms.remove({
-                                            name: data.roomName
-                                        });
-                                        messages.remove({
-                                            room: data.roomName
-                                        });
-                                        clients.emit('removeRoom', {
-                                            globalRoomInfo: globalRoomInfo
-                                        });
+                                        rooms.deleteOne({_id: data.roomId});
+                                        messages.remove({room: roomInfo.name});
                                     });
                                 });
                             });
                         });
                     });
-                });
-            }
-        });
-
-        socket.on('userIsTyping', function (room) {
-            socket.broadcast.to(room).emit('userIsTyping', '_' + socket.id);
-        });
-
-        socket.on('userStopTyping', function (room) {
-            socket.broadcast.to(room).emit('userStopTyping', '_' + socket.id);
-        });
-
-        socket.on('getUserName', function (userId) {
-            people.find({
-                _id: userId
-            }).toArray(function (err, users) {
-                if (err) return err;
-                var user = users[0];
-                socket.emit('getUserName', user.name);
-            });
-        });
-
-        socket.on('establishPrivateConversation', function (userIdForPrivateConversation) {
-            people.find({
-                _id: '_' + socket.id
-            }).toArray(function (err, users) {
-                if (err) return err;
-
-                var user = users[0];
-
-                var client = clients.sockets.connected[userIdForPrivateConversation.slice(1)];
-                client.emit('establishPrivateConversation', user.name + ' established private conversation with you');
-            });
-        });
-
-        socket.on('disablePrivateConversation', function (userIdForPrivateConversation) {
-            people.find({
-                _id: '_' + socket.id
-            }).toArray(function (err, users) {
-                if (err) return err;
-
-                var user = users[0];
-
-                var client = clients.sockets.connected[userIdForPrivateConversation.slice(1)];
-                client.emit('disablePrivateConversation', user.name + ' disabled private conversatin with you');
-            });
-        });
-
-        socket.on('rename', function (newUserName) {
-            if (isEmpty(newUserName)) {
-                socket.emit('warning', {
-                    message: 'User name should not be empty!'
-                });
-            } else {
-                people.find({
-                    name: newUserName
-                }).toArray(function (err, users) {
-                    if (err) return err;
-
-                    if (users.length !== 0 && users[0]._id === '_' + socket.id) {
-                        socket.emit('warning', {
-                            message: 'You\'re already named "' + newUserName + '"!'
-                        });
-                    } else if (users.length !== 0) {
-                        socket.emit('warning', {
-                            message: 'User "' + newUserName + '" already exists!'
-                        });
-                    } else {
-                        people.find({
-                            _id: '_' + socket.id
-                        }).toArray(function (err, users) {
-                            if (err) return err;
-
-                            var currentUser = users[0];
-
-                            people.update({
-                                _id: '_' + socket.id
-                            }, {
-                                $set: {
-                                    name: newUserName
-                                }
-                            });
-                            socket.broadcast.to(socket.room).emit('rename', {
-                                userId: currentUser._id,
-                                newUserName: newUserName,
-                                message: 'User "' + currentUser.name + '" changed name on "' + newUserName + '"'
-                            });
-                            socket.emit('rename', {
-                                self: true,
-                                newUserName: newUserName
-                            });
-                        });
-                    }
-                });
-            }
-        });
-
-        socket.on('message', function (data) {
-            // var whitespacePattern = /^\s*$/;
-
-
-            if (isEmpty(data.message) /*whitespacePattern.test(data.message)*/) {
-                socket.emit('warning', {
-                    message: 'Message should not be empty!'
-                });
-                return;
-            }
-
-            people.find({
-                _id: '_' + socket.id
-            }).toArray(function (err, users) {
-                if (err) return err;
-
-                var user = users[0];
-
-                var message = {
-                    _id: '_' + uuid.v1(),
-                    author: user.name,
-                    text: data.message,
-                    isPrivate: false,
-                    date: new Date().getTime() //new Date().toISOString().replace(/T|(\..)/g, ' ')//new Date().toLocaleString().replace(/[PMA,]/g, '')
-                };
-
-                if (data.whoToSend) {
-                    message.isPrivate = true;
-                    message.addresseeId = data.whoToSend;
-                } else {
-                    message.room = user.room;
-                }
-
-
-                messages.insert(message);
-
-                var allClients = clients.sockets.connected;
-
-                if (data.whoToSend) {
-                    people.find({
-                        _id: message.addresseeId
-                    }).toArray(function (err, users) {
-
-                        if (err) return err;
-
-                        var sender = users[0];
-                        message.addresseeName = sender.name;
-
-                        allClients[data.whoToSend.slice(1)].emit('message', {
-                            isPrivate: true,
-                            sender: user.name,
-                            message: message
-                        });
-                        message.self = true;
-                        socket.emit('message', {
-                            isPrivate: true,
-                            message: message
-                        });
-                    });
-                } else {
-                    socket.emit('message', {
-                        self: true,
-                        message: message
-                    });
-                    socket.broadcast.in(user.room).emit('message', {
-                        message: message
-                    });
-
-                    if (user.status === 'patient') {
-                        for (var clientId in allClients) {
-                            if (clientId !== socket.id &&
-                                allClients[clientId].room !== user.room &&
-                                allClients[clientId].status === 'doctor' &&
-                                allClients[clientId].subscribtions.indexOf(user.room) !== -1) {
-                                allClients[clientId].emit('notifySubscriber', user.name + " from '" + user.room + "' room wrote: '" + data.message + "'.");
-                            }
-                        }
-                    }
                 }
             });
+        });
+
+        socket.on("startTyping", function (id) {
+            console.log("start");
+            socket.broadcast.to(socket.room).emit("startTyping", id);
+        });
+
+        socket.on("stopTyping", function (id) {
+            console.log("stop");
+            socket.broadcast.to(socket.room).emit("stopTyping", id);
         });
     });
 });

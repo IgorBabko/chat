@@ -1,9 +1,13 @@
 {
   "name": "chat",
-  "description": "Simple chat on Express and Socket.IO",
   "version": "1.0.0",
-  "scripts": {
-    "start": "gulp"
+  "description": "Simple real-time chat",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.3",
+    "gulp-sass": "^2.1.1",
+    "mongodb": "^2.1.0",
+    "socket.io": "^1.3.7"
   },
   "devDependencies": {
     "express": "latest",
@@ -28,11 +32,24 @@
     "socket.io": "latest",
     "yargs": "^3.6.0"
   },
-  "private": true,
-  "main": "server.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgorBabko/chat.git"
+  },
   "keywords": [
     "chat"
   ],
   "author": "Igor Babko",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "5.1.0"
+  },
+  "bugs": {
+    "url": "https://github.com/IgorBabko/chat/issues"
+  },
+  "homepage": "https://github.com/IgorBabko/chat#readme"
 }

@@ -1,31 +1,13 @@
 {
-  "name": "foundation-apps-template",
-  "version": "1.1.0",
-  "authors": [
-    "ZURB"
-  ],
-  "description": "Template project for Foundation for Apps by ZURB.",
-  "main": "gulpfile.js",
-  "keywords": [
-    "framework",
-    "angular",
-    "web",
-    "apps"
-  ],
-  "license": "MIT",
-  "homepage": "http://foundation.zurb.com",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "name": "chat",
+  "version": "1.0.0",
+  "author": "Igor Babko",
   "dependencies": {
-    "foundation-apps": "~1.1.0"
-  },
-  "devDependencies": {
-    "normalize.css": "~3.0.3"
+    "tether": "~1.1.1",
+    "handlebars": "~4.0.5",
+    "components-font-awesome": "~4.5.0",
+    "remarkable-bootstrap-notify": "~3.1.3",
+    "animate.css": "~3.5.0",
+    "toastr": "~2.1.2"
   }
 }

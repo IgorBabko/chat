@@ -4,37 +4,192 @@ html(lang='en', ng-app='application')
         meta(charset='utf-8')
         meta(name='viewport', content='width=device-width, initial-scale=1.0')
 
-        title= zChat
+        title zChat
+
+        link(rel='stylesheet', href='components-font-awesome/css/font-awesome.min.css')
 
         link(rel='stylesheet', href='tether/dist/css/tether.min.css')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
-        link(href='css/style.css', rel='stylesheet', type='text/css')
+        link(rel='stylesheet', href='animate.css/animate.min.css')
+        link(rel='stylesheet', href='toastr/toastr.min.css')
+        link(href='css/app.css', rel='stylesheet', type='text/css')
 
         script(src='jquery/dist/jquery.min.js')
         script(src='tether/dist/js/tether.min.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
+        script(src='remarkable-bootstrap-notify/bootstrap-notify.js')
+        script(src='toastr/toastr.min.js')
+        script(src='handlebars/handlebars.min.js')
+        script(src='js/jquery.timeago.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
 
+        // templates
+        script#message-template(type="text/x-handlebars-template")
+            .media
+                .media-body
+                    h4.media-heading.name {{author}}
+                        time.posted-date(datetime='{{postedDate}}')
+                    | {{text}}
+
+        script#room-template(type="text/x-handlebars-template")
+            li.list-group-item(id="{{_id}}")
+                span.label.label-success.label-pill.pull-xs-right {{peopleCount}}
+                | {{name}}
+
+        script#user-template(type="text/x-handlebars-template")
+            li.list-group-item(id="{{_id}}") {{name}}
+
+        script#typing-template(type="text/x-handlebars-template")
+            span.pull-xs-left.typing
+                i.fa.fa-circle-o-notch.fa-spin
+
 body
-    #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='false')
+    #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h4#welcome.modal-title Welcome!
+                .modal-body
+                    .form
+                        .form-group
+                            label.form-control-label(for='username') Your name:
+                            span.invalid
+                            input#username.form-control(type='text', autofocus)
+                .modal-footer
+                    button#enter-chat-button.btn.btn-success(type='button') Enter
+
+    #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
                 .modal-header
                     button.close(type='button', data-dismiss='modal', aria-label='Close')
                         span(aria-hidden='true') ×
-                    h4#myModalLabel.modal-title Modal title
+                    h4#createRoom.modal-title Create room
                 .modal-body
-                    | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut luctus quis massa vitae accumsan. Integer viverra justo nec ligula gravida tempor. Curabitur nec nunc eu dolor dapibus tincidunt. Aenean vitae eleifend nisi, at cursus ante. Vivamus consequat cursus sem, non aliquam sapien pharetra ut. Aenean nec posuere velit. Nunc vitae ipsum euismod, gravida turpis a, sagittis enim. Duis malesuada egestas tortor eget porta. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet hendrerit enim. Sed quis purus ante. Donec vestibulum id leo nec venenatis. Integer sapien sapien, ultricies ut maximus sed, ornare at nisi.
-                    | Aliquam at vehicula felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent id tincidunt risus. Aliquam erat volutpat. In id ipsum leo. Sed faucibus tellus dui, a euismod enim hendrerit eu. Etiam facilisis urna nec metus faucibus consequat. Nunc vulputate ante venenatis, porta ante sed, ultricies sem.
-                    | In semper justo feugiat posuere dignissim. Maecenas ut mattis elit. Donec sollicitudin, augue quis tempor maximus, dui sem semper nunc, vitae convallis lorem nisl sit amet eros. Nulla est lacus, finibus lacinia lorem non, finibus tincidunt orci. Sed eu vehicula felis. Nam vitae blandit ex. Curabitur viverra ex id mollis pulvinar. Pellentesque quam sem, ultrices et odio vel, vulputate aliquam neque. Donec a ipsum sapien. Donec sed pharetra tortor, vitae fringilla sem. Ut id ipsum ac lorem feugiat auctor. In auctor molestie diam at aliquet. Aenean tempus mollis tellus, pulvinar tempus nisi dignissim ut. Phasellus finibus venenatis nisi, a congue orci aliquam in. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-                    | Maecenas quam lacus, condimentum quis lectus sit amet, aliquet imperdiet ligula. Donec odio augue, porta commodo felis a, interdum condimentum ligula. Sed auctor euismod ante et tincidunt. Sed vehicula nisl non massa varius pharetra. Maecenas consectetur turpis at massa suscipit porttitor. Maecenas scelerisque enim ut lorem aliquet, non imperdiet nisi lacinia. Sed lorem ex, vulputate vel magna efficitur, finibus viverra libero. Donec vel ultrices est, eu molestie dolor. Vestibulum id gravida risus. Vivamus et elit vel turpis laoreet pellentesque in a purus. Nullam molestie placerat neque quis tempus. Vestibulum elementum interdum dapibus. Vivamus tincidunt, sem malesuada porta viverra, lectus purus euismod diam, ac varius nunc elit ac tortor. Morbi efficitur iaculis interdum. Sed sit amet aliquam mauris.
-                    | Maecenas non ligula at ante cursus ultricies. Quisque in tortor semper, rhoncus ex ac, sagittis augue. Suspendisse ut felis eget risus dignissim volutpat at ut quam. Fusce sed urna eget tellus tristique facilisis. Nam elit ipsum, finibus vitae est eget, porta sagittis neque. Integer non est id mi rhoncus viverra. Vivamus massa dolor, ornare a congue porta, fermentum quis augue. Praesent feugiat convallis odio et tempor. Suspendisse rhoncus est in fermentum sagittis. Sed non pharetra sapien. Vivamus egestas, lectus nec viverra convallis, purus sem blandit mi, a convallis arcu nulla nec magna.
+                    .form
+                        .form-group
+                            label.form-control-label(for='room-name') Name:&nbsp;
+                                span.asterisk *
+                            span.invalid
+                            input#room-name.form-control(type='text')
+                        .form-group
+                            label.form-control-label(for='room-password') Password:
+                            span.invalid
+                            input#room-password.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='room-password-confirm') Password again:
+                            span.invalid
+                            input#room-password-confirm.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='room-code') Code:&nbsp;
+                                span.asterisk *
+                            span.invalid
+                            input#room-code.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='room-code-confirm') Code again:&nbsp;
+                                span.asterisk *
+                            span.invalid
+                            input#room-code-confirm.form-control(type='password')
+                .modal-footer
+                    //.checkbox#join-room-checkbox
+                    //    label
+                    //        input(type='checkbox', value='')
+                    //        | Join newely created room
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                    button.btn.btn-success#create(type='button') Create
+
+    #delete-room-modal.modal.fade(role='dialog', aria-labelledby='deleteRoom', aria-hidden='false')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4#deleteRoom.modal-title Delete room
+                .modal-body
+                    .form-group
+                        label.form-control-label(for='room-c-input') Code:
+                        input#room-c-input.form-control(type='password')
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-primary(type='button') Save changes
+                    button.btn.btn-danger(type='button') Delete
 
-    button.btn.btn-primary.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
-        | Launch demo modal
+    //#private-message-modal.modal.fade(role='dialog', aria-labelledby='privateMessage', aria-hidden='false')
+    //    .modal-dialog(role='document')
+    //        .modal-content
+    //            .modal-header
+    //                button.close(type='button', data-dismiss='modal', aria-label='Close')
+    //                    span(aria-hidden='true') ×
+    //                h4#privateMessage.modal-title Private message
+    //            .modal-body
+    //                .form
+    //                    .form-group
+    //                        label.form-control-label(for='private-message-textarea') Text:
+    //                        textarea#private-message-textarea.form-control
+    //            .modal-footer
+    //                button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+    //                button.btn.btn-primary(type='button') Send
+    //                button#private-mode-button.btn.btn-success.pull-xs-left(type='button') Private mode
+
+    #room-password-modal.modal.fade(role='dialog', aria-labelledby='roomPassword', aria-hidden='false')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4#roomPassword.modal-title Enter room
+                .modal-body
+                    .form
+                        .form-group
+                            label.form-control-label(for='password') Password:
+                            span.invalid
+                            input#password.form-control(type='password')
+                        .form-group
+                            label.form-control-label(for='code') Code:
+                            span.invalid
+                            input#code.form-control(type='password', placeholder="Needed only to delete room")
+                .modal-footer
+                    //button.btn.btn-info#subscribe-room(type='button', style="float: left") Subscribe
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                    button.btn.btn-danger#delete-room(type='button') Delete
+                    button.btn.btn-success#enter-room(type='button') Enter
+
+    header
+        .btn-group
+            label.btn.btn-primary#rooms-sidebar-button.active Rooms
+            //label.btn.btn-primary#subscriptions-button
+                i.fa.fa-star
+            label.btn.btn-primary#create-room-button
+                i.fa.fa-plus-circle
+            //input#search-input(type='text', placeholder='search for rooms:')
+            //label.btn.btn-primary#search-button
+                i.fa.fa-search
+        .btn-group
+            //label.btn.btn-primary#invite-people-button
+                i.fa.fa-user-plus
+            label.btn.btn-primary.active#people-sidebar-button People
+
+    #rooms-sidebar
+        ul.list-group
+
+    .container-fluid
+        .row
+            .content
+                #messages
+                    //each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
+                    //    .media
+                    //        .media-body
+                    //            h4.media-heading.name #{val.name}
+                    //                time.posted-date(datetime='#{val.postedDate}') .
+                    //            | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                .input-group#message-input-block
+                    input#message-input.form-control(type='text', placeholder="Your message:")
+                    span.input-group-addon#send send
+
+
+    #people-sidebar
+        ul.list-group
+
+    script(src='js/app.js')
 
 
 
@@ -57,7 +212,7 @@ body
     //    a(zf-close='', id='closeRoomPasswordModal', class='close-button') ×
     //    input(type='password', id='passwordInput', autocomplete='off', placeholder='Password:')
     //    a(id="sendPassword", href="#", class="button info") Go
-
+    //
     //div(zf-modal='', id='newRoomModal', overlay-close='false')
     //    a(zf-close='', id='closeNewRoomModal', class='close-button') ×
     //    input(type='text', id='roomName', autocomplete='off', placeholder='Room name:')
@@ -71,7 +226,9 @@ body
     //    a(zf-close='', id='closeRemoveRoomModal', class='close-button') ×
     //    input(type='password', id='code', autocomplete='off', placeholder='Room code:')
     //    a(id="sendRoomCode", href="#", class="button info") Go
-    //
+
+
+
     //div(class='grid-frame')
     //    div(zf-panel='', class='small-6 roomsSidebarSmall', id="rooms")
     //        section(class='block-list roomsSidebar')
@@ -81,43 +238,44 @@ body
     //                img(src='images/rooms1.gif', class='roomsIcon', alt='rooms')
     //                | rooms
     //                i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
+    //ul
+    //    div(zf-panel='', class='small-6 peopleSidebarSmall', id="people", position='right')
+    //        section(class='block-list peopleSidebar')
+    //            a(class='close-button', id="closePeopleSidebarSmallButton") ×
+    //            div
+    //                | people
+    //                img(src='images/people.aspx', class='peopleIcon', alt='people')
     //            ul
-        div(zf-panel='', class='small-6 peopleSidebarSmall', id="people", position='right')
-            section(class='block-list peopleSidebar')
-                a(class='close-button', id="closePeopleSidebarSmallButton") ×
-                div
-                    | people
-                    img(src='images/people.aspx', class='peopleIcon', alt='people')
-                ul
-        div(class='grid-content left show-for-medium medium-3 roomsSidebar')
-            section(class='block-list')
-                div
-                    i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
-                    img(src='images/rooms1.gif', class='roomsIcon', alt='rooms')
-                    | rooms
-                    i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
-                ul
-                    //- li(class='buttons')
-                    //- 	a(zf-open='newRoomModal', class='showNewRoomModal success button') add
-                    //- 	a(zf-open='removeRoomModal', class='showRemoveRoomModal alert button') remove
-        div(class='grid-block')
-            div(class='grid-block small-12 vertical')
-                div(class='hide-for-medium header')
-                    img(zf-toggle='rooms', src='images/rooms1.gif', class='roomsIcon', alt='rooms')
-                    | ! Be In Touch !
-                    img(zf-toggle='people', src='images/people.aspx', class='peopleIcon', alt='people')
-                div(id="changeMessagesLinks")
-                    a(id="roomMessagesLink") room messages
-                    a(class="unactiveMessagesLink", id="privateMessagesLink") private messages
-                div(class='grid-content', id="messages")
-                div(class='grid-content', id="privateMessages")
-                    // img(src='http://placehold.it/30x30')
-                div(class='message-input grid-content collapse shrink')
-                    input(type='text', placeholder='Message:')
-                    a(href="#", class="button info", id="sendMessage") Send
-        div(class='grid-content medium-3 right show-for-medium peopleSidebar')
-            section(class='block-list')
-                div
-                    | people
-                    img(src='images/people.aspx', class='peopleIcon', alt='people')
-                ul
+    //    div(class='grid-content left show-for-medium medium-3 roomsSidebar')
+    //        section(class='block-list')
+    //            div
+    //                i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
+    //                img(src='images/rooms1.gif', class='roomsIcon', alt='rooms')
+    //                | rooms
+    //                i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
+    //            ul
+    //                //- li(class='buttons')
+    //                //- 	a(zf-open='newRoomModal', class='showNewRoomModal success button') add
+    //                //- 	a(zf-open='removeRoomModal', class='showRemoveRoomModal alert button') remove
+    //    div(class='grid-block')
+    //        div(class='grid-block small-12 vertical')
+    //            div(class='hide-for-medium header')
+    //                img(zf-toggle='rooms', src='images/rooms1.gif', class='roomsIcon', alt='rooms')
+    //                | ! Be In Touch !
+    //                img(zf-toggle='people', src='images/people.aspx', class='peopleIcon', alt='people')
+    //            div(id="changeMessagesLinks")
+    //                a(id="roomMessagesLink") room messages
+    //                a(class="unactiveMessagesLink", id="privateMessagesLink") private messages
+    //            div(class='grid-content', id="messages")
+    //            div(class='grid-content', id="privateMessages")
+    //                // img(src='http://placehold.it/30x30')
+    //            div(class='message-input grid-content collapse shrink')
+    //                input(type='text', placeholder='Message:')
+    //                a(href="#", class="button info", id="sendMessage") Send
+    //    div(class='grid-content medium-3 right show-for-medium peopleSidebar')
+    //        section(class='block-list')
+    //            div
+    //                | people
+    //                img(src='images/people.aspx', class='peopleIcon', alt='people')
+    //            ul
+    //
