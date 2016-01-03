@@ -1,6 +1,6 @@
 ;$(function () {
 
-    var socket = io();
+    var socket = io('http://' + window.location.hostname + ':8000');
 
     toastr.options = {
         "positionClass": "toast-top-right",

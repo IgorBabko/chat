@@ -5,34 +5,28 @@ var jade = require('jade');
 var express = require('express');
 var app = express();
 
-app.set('port', (process.env.PORT || 5000));
-var server = app.listen(app.get('port'));
+var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port = process.env.OPENSHIFT_NODEJS_PORT || '8000';
+
+var server = app.listen(port, ip);
 var clients = io.listen(server);
 
 
 app.use(express.static(__dirname + '/build/assets'));
 app.use(express.static(__dirname + '/bower_components'));
 
+// default to a 'localhost' configuration:
+var connection_string = '127.0.0.1:27017/chat';
+// if OPENSHIFT env variables are present, use the available connection info:
+if(process.env.OPENSHIFT_MONGODB_DB_PASSWORD){
+    connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+        process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+        process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+        process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+        process.env.OPENSHIFT_APP_NAME;
+}
 
-app.get('/', function(request, response) {
-    response.end("niko");
-});
-
-
-//var mongo = require('mongodb').MongoClient;
-//var io = require('socket.io');
-//var express = require('express');
-//var sha1 = require('sha1');
-//var jade = require('jade');
-//var app = express();
-//var server = app.listen(port);
-//var clients = io.listen(server);
-//
-//
-//app.use(express.static(__dirname + '/build/assets'));
-//app.use(express.static(__dirname + '/bower_components'));
-
-/*mongo.connect('mongodb://127.0.0.1:27017/chat', function (err, db) {
+mongo.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
     var people = db.collection('people');
@@ -48,7 +42,7 @@ app.get('/', function(request, response) {
     });
 
     app.get('/', function (req, res) {
-        res.sendFile('/build/index.html', {root: __dirname});
+        res.sendFile(__dirname + '/build/index.html');
     });
 
     function isEmpty(value) {
@@ -387,4 +381,3 @@ app.get('/', function(request, response) {
         });
     });
 });
-*/
