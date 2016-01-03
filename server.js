@@ -349,8 +349,8 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                             }
                                         }
                                         ////
-                                        socket.emit("notification", "Room " + roomInfo.name + " has deleted.");
-                                        socket.broadcast.emit("notification", "Room " + roomInfo.name + " has deleted.");
+                                        socket.emit("notification", "Room " + roomInfo.name + " has been deleted.");
+                                        socket.broadcast.emit("notification", "Room " + roomInfo.name + " has been deleted.");
                                         clients.emit("deleteRoomItem", data.roomId);
 
                                         clients.emit("updatePeopleCounters", {
