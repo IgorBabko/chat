@@ -1,51 +1,48 @@
 {
-  "name": "chat",
+  "name": "HandyChat",
   "version": "1.0.0",
-  "description": "Simple real-time chat",
-  "main": "server.js",
-  "dependencies": {
-    "express": "latest",
-    "front-router": "^1.0.0",
-    "gulp": "^3.8.10",
-    "gulp-autoprefixer": "^1.0.1",
-    "gulp-concat": "^2.4.2",
-    "gulp-if": "^1.2.5",
-    "gulp-jade": "^1.1.0",
-    "gulp-livereload": "^3.8.1",
-    "gulp-load-plugins": "^0.8.0",
-    "gulp-ng-html2js": "^0.2.0",
-    "gulp-ruby-sass": "^0.7.1",
-    "gulp-sass": "^2.1.0",
-    "gulp-uglify": "^1.0.2",
-    "gulp-util": "^3.0.1",
-    "gulp-webserver": "^0.9.0",
-    "mongodb": "latest",
-    "node-sass": "^2.0.1",
-    "rimraf": "^2.2.8",
-    "run-sequence": "^1.0.2",
-    "sha1": "^1.1.1",
-    "socket.io": "latest",
-    "yargs": "^3.6.0"
+  "description": "Simple Real-Time Chat",
+  "keywords": [
+    "OpenShift",
+    "Node.js",
+    "application",
+    "openshift"
+  ],
+  "author": {
+    "name": "Igor Babko",
+    "email": "i.ibabko@gmail.com",
+    "url": "http://www.openshift.com"
   },
-  "scripts": {
-    "test": "mocha",
-    "start": "node server.js"
-  },
+  "homepage": "http://www.openshift.com/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IgorBabko/chat.git"
+    "url": "https://github.com/openshift/origin-server"
   },
-  "keywords": [
-    "chat"
-  ],
-  "author": "Igor Babko",
-  "license": "ISC",
   "engines": {
-    "node": "5.1.0",
-    "npm": "3.5.1"
+    "node": ">= 0.6.0",
+    "npm": ">= 1.0.0"
   },
-  "bugs": {
-    "url": "https://github.com/IgorBabko/chat/issues"
+  "dependencies": {
+    "bower": "^1.4.1",
+    "express": "latest",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^1.0.1",
+    "gulp-concat": "^2.4.2",
+    "gulp-jade": "^1.1.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-sass": "^2.1.1",
+    "mongodb": "latest",
+    "node-sass": "^2.0.1",
+    "run-sequence": "^1.1.5",
+    "sha1": "^1.1.1",
+    "socket.io": "latest"
   },
-  "homepage": "https://github.com/IgorBabko/chat#readme"
+  "devDependencies": {},
+  "bundleDependencies": [],
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "postinstall": "HOME=$OPENSHIFT_REPO_DIR bower install || bower install"
+  }
 }

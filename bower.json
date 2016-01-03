@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "author": "Igor Babko",
   "dependencies": {
+    "bootstrap": "4.0",
     "tether": "~1.1.1",
     "handlebars": "~4.0.5",
     "components-font-awesome": "~4.5.0",
