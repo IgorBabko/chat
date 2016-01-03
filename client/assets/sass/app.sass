@@ -122,14 +122,15 @@ header
 
 #create-room-button
     padding-top: 6px
+    margin-left: 2px
 
-#subscriptions-button,
-#invite-people-button
-    margin: 0 2px
+// #subscriptions-button,
+// #invite-people-button
+//     margin: 0 2px
 
-#create-room-button,
-#subscriptions-button
-    margin-right: 2px
+// #create-room-button,
+// #subscriptions-button
+//     margin-right: 2px
 
 #join-room-checkbox
     float: left
@@ -159,7 +160,7 @@ header
 
 #search-button
     float: right
-    
+
 #private-mode-button
     margin: 0
 
@@ -247,19 +248,23 @@ header
         &:not(.active)
             cursor: pointer
         &:hover
-            background-color: lighten(#5CB85C, 40)
-            border-color: lighten(#5CB85C, 40)
+            background-color: $main-color-lightest
+            border-color: $main-color-lightest
 
 .list-group-item
-    border-color: lighten(#5CB85C, 40)
+    border-color: $main-color-lightest
 
 .typing
-    color: #5CB85C
+    color: $main-color
     padding: 0
 
 #rooms-sidebar
     .label
         margin-top: 3px
+        background-color: $main-color-lighter
+    li.active
+        .label
+            background-color: white
 
 .form-control,
 .input-group-addon,
@@ -278,13 +283,13 @@ header
         background-color: $main-color-darker
 
 .active
-    background: #5CB85C !important
-    border-color: #5CB85C !important
+    background: $main-color-lighter !important
+    border-color: $main-color-lighter !important
 
     .label
         background-color: white
-        color: #5CB85C
-    
+        color: $main-color-lighter
+
 .pull-left
     float: left !important
     padding-right: 10px !important
@@ -305,7 +310,7 @@ header
     margin: 40px 20px !important
     background: white
     padding: 10px
-    box-shadow: 3px 3px 5px lighten($main-color, 46)
+    box-shadow: 3px 3px 3px lighten($main-color, 44)
 
 .media-heading
     margin: 10px 0

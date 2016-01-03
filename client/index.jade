@@ -33,7 +33,7 @@ html(lang='en', ng-app='application')
 
         script#room-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}")
-                span.label.label-success.label-pill.pull-xs-right {{peopleCount}}
+                span.label.label-primary.label-pill.pull-xs-right {{peopleCount}}
                 | {{name}}
 
         script#user-template(type="text/x-handlebars-template")
@@ -41,8 +41,7 @@ html(lang='en', ng-app='application')
 
         script#typing-template(type="text/x-handlebars-template")
             span.pull-xs-left.typing
-                i.fa.fa-circle-o-notch.fa-spin
-
+                img(src="images/typing.gif", style="width: 25px")
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')

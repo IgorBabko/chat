@@ -89,15 +89,8 @@ header {
     background-color: #299bfd !important; }
 
 #create-room-button {
-  padding-top: 6px; }
-
-#subscriptions-button,
-#invite-people-button {
-  margin: 0 2px; }
-
-#create-room-button,
-#subscriptions-button {
-  margin-right: 2px; }
+  padding-top: 6px;
+  margin-left: 2px; }
 
 #join-room-checkbox {
   float: left; }
@@ -195,18 +188,22 @@ header {
   cursor: pointer; }
 
 #rooms-sidebar .list-group-item:hover {
-  background-color: #eaf6ea;
-  border-color: #eaf6ea; }
+  background-color: #daeeff;
+  border-color: #daeeff; }
 
 .list-group-item {
-  border-color: #eaf6ea; }
+  border-color: #daeeff; }
 
 .typing {
-  color: #5CB85C;
+  color: #0275d8;
   padding: 0; }
 
 #rooms-sidebar .label {
-  margin-top: 3px; }
+  margin-top: 3px;
+  background-color: #5cb3fd; }
+
+#rooms-sidebar li.active .label {
+  background-color: white; }
 
 .form-control,
 .input-group-addon,
@@ -225,11 +222,11 @@ header {
     background-color: #025aa5; }
 
 .active {
-  background: #5CB85C !important;
-  border-color: #5CB85C !important; }
+  background: #5cb3fd !important;
+  border-color: #5cb3fd !important; }
   .active .label {
     background-color: white;
-    color: #5CB85C; }
+    color: #5cb3fd; }
 
 .pull-left {
   float: left !important;
@@ -251,7 +248,7 @@ header {
   margin: 40px 20px !important;
   background: white;
   padding: 10px;
-  box-shadow: 3px 3px 5px #c6e4fe; }
+  box-shadow: 3px 3px 3px #bce0fe; }
 
 .media-heading {
   margin: 10px 0; }
