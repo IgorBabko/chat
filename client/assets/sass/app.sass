@@ -129,19 +129,33 @@ header
 
 .all-people
     height: 300px
+    li
+        .invited
+            background-color: $main-color-lighter
 
 #invite-people-modal
     .form-group
         position: relative
-        #search-people-button
+        #search-people-button,
+        #unlock-invite-button
+            transition: all 0.2s ease-in-out
             position: absolute
             top: 0
             right: 0
             width: 38px
             height: 38px
             margin: 0
-            padding: 5px 0 0 0
+            padding: 7px 0 0 0
+            background-color: $main-color-lighter
+            border: none
+            &:hover
+                background-color: $main-color
 
+.invite-info
+    display: none
+
+.invite-section
+    visibility: hidden
 // #subscriptions-button,
 // #invite-people-button
 //     margin: 0 2px

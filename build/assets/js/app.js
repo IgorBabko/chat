@@ -137,8 +137,10 @@
         });
     });
 
+    var roomCode = "";
     $("#invite-people-button").on("click", function () {
         $("#invite-people-modal").modal().on("shown.bs.modal", function () {
+            //socket.emit();
             $("#person-name").focus();
         });
     });
@@ -441,6 +443,10 @@
 
     socket.on("stopTyping", function (id) {
         $("#" + id + " span").remove();
+    });
+
+    $(".all-people li").on(function () {
+        $(this).addClass("invited");
     });
 });
 

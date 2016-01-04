@@ -96,17 +96,32 @@ header {
 
 .all-people {
   height: 300px; }
+  .all-people li .invited {
+    background-color: #5cb3fd; }
 
 #invite-people-modal .form-group {
   position: relative; }
-  #invite-people-modal .form-group #search-people-button {
+  #invite-people-modal .form-group #search-people-button,
+  #invite-people-modal .form-group #unlock-invite-button {
+    transition: all 0.2s ease-in-out;
     position: absolute;
     top: 0;
     right: 0;
     width: 38px;
     height: 38px;
     margin: 0;
-    padding: 5px 0 0 0; }
+    padding: 7px 0 0 0;
+    background-color: #5cb3fd;
+    border: none; }
+    #invite-people-modal .form-group #search-people-button:hover,
+    #invite-people-modal .form-group #unlock-invite-button:hover {
+      background-color: #0275d8; }
+
+.invite-info {
+  display: none; }
+
+.invite-section {
+  visibility: hidden; }
 
 #join-room-checkbox {
   float: left; }

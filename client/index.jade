@@ -144,17 +144,33 @@ body
                         span(aria-hidden='true') ×
                     h4#invitePeople.modal-title Invite people
                 .modal-body
-                    .form-group
-                        //label.form-control-label(for='person-name') Person name:
-                        input#person-name.form-control(type='text', autocomplete="off", placeholder="Person name:")
-                        label.btn.btn-primary#search-people-button
-                            i.fa.fa-search
-                    ul.list-group.all-people
-                        li.list-group-item Cras justo odio
-                        li.list-group-item Dapibus ac facilisis in
-                        li.list-group-item Morbi leo risus
-                        li.list-group-item Porta ac consectetur ac
-                        li.list-group-item Vestibulum at eros
+
+                    .form-group.unlock-block
+                        p.invite-info To invite somebody just click on person's name
+                        input#room-code-to-invite.form-control(type='password', autocomplete="off", placeholder="Room code:")
+                        label.btn.btn-primary#unlock-invite-button
+                            i.fa.fa-unlock-alt
+                    .invite-section
+                        .form-group
+                            input#person-name.form-control(type='text', autocomplete="off", placeholder="Person name:")
+                            label.btn.btn-primary#search-people-button
+                                i.fa.fa-search
+                        ul.list-group.all-people
+                            li.list-group-item Cras justo odio
+                            li.list-group-item Dapibus ac facilisis in
+                            li.list-group-item Morbi leo risus
+                            li.list-group-item Porta ac consectetur ac
+                            li.list-group-item Vestibulum at eros
+                            li.list-group-item Cras justo odio
+                            li.list-group-item Dapibus ac facilisis in
+                            li.list-group-item Morbi leo risus
+                            li.list-group-item Porta ac consectetur ac
+                            li.list-group-item Vestibulum at eros
+                            li.list-group-item Cras justo odio
+                            li.list-group-item Dapibus ac facilisis in
+                            li.list-group-item Morbi leo risus
+                            li.list-group-item Porta ac consectetur ac
+                            li.list-group-item Vestibulum at eros
                 //.modal-footer
                 //    button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                 //    button.btn.btn-success(type='button') Invite
