@@ -333,6 +333,7 @@
         updateValidationErrors(validationInfo.modalId, validationInfo.errors);
     });
 
+    console.log("kkokok");
     $(window).on("unload", function () {
         socket.emit("left");
     });

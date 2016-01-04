@@ -198,7 +198,6 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                         throw err;
                     }
                     if (userInfo != null) {
-                        console.log(roomInfo);
                         socket.broadcast.emit("left", {
                             userId: userInfo._id,
                             name: userInfo.name
@@ -314,9 +313,6 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                     if (err) {
                                         throw err;
                                     }
-                                    console.log("------");
-                                    console.log(peopleFromGlobalRoom);
-                                    console.log("------");
                                     // if user isn't in the global room don't send people info to the client
                                     messages.find({"room": "global"}).toArray(function (err, messagesFromGlobalRoom) {
                                         if (err) {
@@ -371,13 +367,28 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
         });
 
         socket.on("startTyping", function (id) {
-            console.log("start");
             socket.broadcast.to(socket.room).emit("startTyping", id);
         });
 
         socket.on("stopTyping", function (id) {
-            console.log("stop");
             socket.broadcast.to(socket.room).emit("stopTyping", id);
         });
+
+        socket.on('disconnect', function() {
+            people.findOne({_id: "_" + socket.id}, function (err, leftUser) {
+                
+                if (err) {
+                    throw err;
+                }
+
+                socket.broadcast.emit("left", {
+                    userId: leftUser._id,
+                    name: leftUser.name
+                });
+                        
+                people.deleteOne({_id: leftUser._id});
+
+            });
+       });
     });
 });
