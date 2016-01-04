@@ -137,6 +137,12 @@
         });
     });
 
+    $("#invite-people-button").on("click", function () {
+        $("#invite-people-modal").modal().on("shown.bs.modal", function () {
+            $("#person-name").focus();
+        });
+    });
+
     $("#delete-room-button").on("click", function () {
         $("#delete-room-modal").modal().on("shown.bs.modal", function () {
             $("#room-c-input").focus();

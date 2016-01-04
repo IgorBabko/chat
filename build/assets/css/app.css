@@ -89,8 +89,24 @@ header {
     background-color: #5cb3fd !important; }
 
 #create-room-button {
-  padding-top: 6px;
   margin-left: 2px; }
+
+#invite-people-button {
+  margin-right: 2px; }
+
+.all-people {
+  height: 300px; }
+
+#invite-people-modal .form-group {
+  position: relative; }
+  #invite-people-modal .form-group #search-people-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    padding: 5px 0 0 0; }
 
 #join-room-checkbox {
   float: left; }
@@ -130,10 +146,13 @@ header {
   color: #d9534f;
   font-size: 20px; }
 
-.input-group-addon {
+.input-group-addon,
+#search-people-button {
   background-color: #5cb3fd !important;
+  border: none;
   transition: all 0.2s ease-in-out; }
-  .input-group-addon:hover {
+  .input-group-addon:hover,
+  #search-people-button:hover {
     background-color: #0275d8 !important; }
 
 .invalid {
@@ -190,10 +209,12 @@ header {
 #people-sidebar ul.shadowless {
   box-shadow: none !important; }
 
-#rooms-sidebar .list-group-item:not(.active) {
+#rooms-sidebar .list-group-item:not(.active),
+.all-people .list-group-item:not(.active) {
   cursor: pointer; }
 
-#rooms-sidebar .list-group-item:hover {
+#rooms-sidebar .list-group-item:hover,
+.all-people .list-group-item:hover {
   background-color: #daeeff;
   border-color: #daeeff; }
 
@@ -239,11 +260,10 @@ header {
   padding-right: 10px !important; }
 
 .list-group {
-  overflow: auto;
-  height: calc(100vh - 50px) !important; }
+  overflow: auto; }
 
 .list-group-item {
-  overflow-x: scroll; }
+  overflow-x: auto; }
 
 .posted-date {
   float: right;

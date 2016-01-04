@@ -136,6 +136,28 @@ body
                     button.btn.btn-danger#delete-room(type='button') Delete
                     button.btn.btn-success#enter-room(type='button') Enter
 
+    #invite-people-modal.modal.fade(role='dialog', aria-labelledby='invitePeople', aria-hidden='false')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4#invitePeople.modal-title Invite people
+                .modal-body
+                    .form-group
+                        //label.form-control-label(for='person-name') Person name:
+                        input#person-name.form-control(type='text', autocomplete="off", placeholder="Person name:")
+                        label.btn.btn-primary#search-people-button
+                            i.fa.fa-search
+                    ul.list-group.all-people
+                        li.list-group-item Cras justo odio
+                        li.list-group-item Dapibus ac facilisis in
+                        li.list-group-item Morbi leo risus
+                        li.list-group-item Porta ac consectetur ac
+                        li.list-group-item Vestibulum at eros
+                //.modal-footer
+                //    button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                //    button.btn.btn-success(type='button') Invite
 
     header
         .btn-group
@@ -148,7 +170,7 @@ body
             //label.btn.btn-primary#search-button
                 i.fa.fa-search
         .btn-group
-            //label.btn.btn-primary#invite-people-button
+            label.btn.btn-primary#invite-people-button
                 i.fa.fa-user-plus
             label.btn.btn-primary.active#people-sidebar-button People
 

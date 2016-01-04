@@ -121,8 +121,26 @@ header
         background-color: $main-color-lighter !important
 
 #create-room-button
-    padding-top: 6px
+    //padding-top: 6px
     margin-left: 2px
+
+#invite-people-button
+    margin-right: 2px
+
+.all-people
+    height: 300px
+
+#invite-people-modal
+    .form-group
+        position: relative
+        #search-people-button
+            position: absolute
+            top: 0
+            right: 0
+            width: 38px
+            height: 38px
+            margin: 0
+            padding: 5px 0 0 0
 
 // #subscriptions-button,
 // #invite-people-button
@@ -171,14 +189,13 @@ header
     color: #d9534f
     font-size: 20px
 
-.input-group-addon
+.input-group-addon,
+#search-people-button
     background-color: $main-color-lighter !important
+    border: none
     transition: all 0.2s ease-in-out
-
     &:hover
         background-color: $main-color !important
-
-
 
 .invalid
     color: #d9534f
@@ -251,13 +268,14 @@ header
             box-shadow: none !important
 
 
-#rooms-sidebar
-    .list-group-item
+#rooms-sidebar .list-group-item,
+.all-people .list-group-item
         &:not(.active)
             cursor: pointer
         &:hover
             background-color: $main-color-lightest
             border-color: $main-color-lightest
+
 
 .list-group-item
     border-color: $main-color-lightest
@@ -304,10 +322,10 @@ header
 
 .list-group
     overflow: auto
-    height: calc(100vh - 50px) !important
+    //height: calc(100vh - 50px) !important
 
 .list-group-item
-    overflow-x: scroll
+    overflow-x: auto
 
 .posted-date
     float: right
