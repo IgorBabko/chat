@@ -1,5 +1,5 @@
 doctype html
-html(lang='en', ng-app='application')
+html(lang='en')
     head
         meta(charset='utf-8')
         meta(name='viewport', content='width=device-width, initial-scale=1.0')
@@ -33,7 +33,7 @@ html(lang='en', ng-app='application')
 
         script#room-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}")
-                span.label.label-success.label-pill.pull-xs-right {{peopleCount}}
+                span.label.label-primary.label-pill.pull-xs-right {{peopleCount}}
                 | {{name}}
 
         script#user-template(type="text/x-handlebars-template")
@@ -41,7 +41,7 @@ html(lang='en', ng-app='application')
 
         script#typing-template(type="text/x-handlebars-template")
             span.pull-xs-left.typing
-                i.fa.fa-circle-o-notch.fa-spin
+                img(src="images/typing.gif", style="width: 25px")
 
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
@@ -54,7 +54,7 @@ body
                         .form-group
                             label.form-control-label(for='username') Your name:
                             span.invalid
-                            input#username.form-control(type='text', autofocus)
+                            input#username.form-control(type='text', autofocus, autocomplete="off", placeholder="guest")
                 .modal-footer
                     button#enter-chat-button.btn.btn-success(type='button') Enter
 
@@ -113,23 +113,6 @@ body
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-danger(type='button') Delete
 
-    //#private-message-modal.modal.fade(role='dialog', aria-labelledby='privateMessage', aria-hidden='false')
-    //    .modal-dialog(role='document')
-    //        .modal-content
-    //            .modal-header
-    //                button.close(type='button', data-dismiss='modal', aria-label='Close')
-    //                    span(aria-hidden='true') ×
-    //                h4#privateMessage.modal-title Private message
-    //            .modal-body
-    //                .form
-    //                    .form-group
-    //                        label.form-control-label(for='private-message-textarea') Text:
-    //                        textarea#private-message-textarea.form-control
-    //            .modal-footer
-    //                button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-    //                button.btn.btn-primary(type='button') Send
-    //                button#private-mode-button.btn.btn-success.pull-xs-left(type='button') Private mode
-
     #room-password-modal.modal.fade(role='dialog', aria-labelledby='roomPassword', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
@@ -153,6 +136,7 @@ body
                     button.btn.btn-danger#delete-room(type='button') Delete
                     button.btn.btn-success#enter-room(type='button') Enter
 
+
     header
         .btn-group
             label.btn.btn-primary#rooms-sidebar-button.active Rooms
@@ -175,12 +159,6 @@ body
         .row
             .content
                 #messages
-                    //each val in [{ name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }, { name: "john", postedDate: new Date().toISOString() }]
-                    //    .media
-                    //        .media-body
-                    //            h4.media-heading.name #{val.name}
-                    //                time.posted-date(datetime='#{val.postedDate}') .
-                    //            | Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
                 .input-group#message-input-block
                     input#message-input.form-control(type='text', placeholder="Your message:")
                     span.input-group-addon#send send
@@ -190,92 +168,3 @@ body
         ul.list-group
 
     script(src='js/app.js')
-
-
-
-    //a(zf-open='inputNameModal', id='showInputNameModal')
-    //div(zf-modal='', id='inputNameModal', overlay-close='false')
-        a(zf-close='', id='closeInputNameModal', class='close-button') ×
-        input(type='text', id='name', autocomplete='off', placeholder='Your name:')
-        input(type='password', id='identificationCode', autocomplete='off', placeholder='Identification code (only for doctors): [optional]')
-        a(id="enterChat", href="#", class="button info") Go
-
-    //a(zf-open='privateMessageModal', id='showPrivateMessageModal')
-    //div(zf-modal='', id='privateMessageModal', overlay-close='false')
-    //    a(zf-close='', id='closePrivateMessageModal', class='close-button') ×
-    //    textarea(id='privateMessage', autocomplete='off', placeholder='Your message goes here:')
-    //    a(id="privateConversationLink", href="#") Private conversation
-    //    a(id="sendPrivateMessage", href="#", class="button info") Send
-    //
-    //a(zf-open='roomPasswordModal', id='showRoomPasswordModal')
-    //div(zf-modal='', id='roomPasswordModal', overlay-close='false')
-    //    a(zf-close='', id='closeRoomPasswordModal', class='close-button') ×
-    //    input(type='password', id='passwordInput', autocomplete='off', placeholder='Password:')
-    //    a(id="sendPassword", href="#", class="button info") Go
-    //
-    //div(zf-modal='', id='newRoomModal', overlay-close='false')
-    //    a(zf-close='', id='closeNewRoomModal', class='close-button') ×
-    //    input(type='text', id='roomName', autocomplete='off', placeholder='Room name:')
-    //    input(type='password', id='roomPassword', autocomplete='off', placeholder='Password: [optional]')
-    //    input(type='password', id='roomPasswordRepeat' autocomplete='off', placeholder='Password confirmation:')
-    //    input(type='password', id='roomCode', autocomplete='off', placeholder='Room code (used when removing room): [optional]')
-    //    input(type='password', id='roomCodeRepeat', autocomplete='off', placeholder='Room code confirmation:')
-    //    a(id="createRoom", href="#", class="button info") Create
-    //
-    //div(zf-modal='', id='removeRoomModal', overlay-close='false')
-    //    a(zf-close='', id='closeRemoveRoomModal', class='close-button') ×
-    //    input(type='password', id='code', autocomplete='off', placeholder='Room code:')
-    //    a(id="sendRoomCode", href="#", class="button info") Go
-
-
-
-    //div(class='grid-frame')
-    //    div(zf-panel='', class='small-6 roomsSidebarSmall', id="rooms")
-    //        section(class='block-list roomsSidebar')
-    //            a(class='close-button', id="closeRoomsSidebarSmallButton") ×
-    //            div
-    //                i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
-    //                img(src='images/rooms1.gif', class='roomsIcon', alt='rooms')
-    //                | rooms
-    //                i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
-    //ul
-    //    div(zf-panel='', class='small-6 peopleSidebarSmall', id="people", position='right')
-    //        section(class='block-list peopleSidebar')
-    //            a(class='close-button', id="closePeopleSidebarSmallButton") ×
-    //            div
-    //                | people
-    //                img(src='images/people.aspx', class='peopleIcon', alt='people')
-    //            ul
-    //    div(class='grid-content left show-for-medium medium-3 roomsSidebar')
-    //        section(class='block-list')
-    //            div
-    //                i(class="fi-plus showNewRoomModal", zf-open='newRoomModal')
-    //                img(src='images/rooms1.gif', class='roomsIcon', alt='rooms')
-    //                | rooms
-    //                i(class="fi-minus showRemoveRoomModal", zf-open='removeRoomModal')
-    //            ul
-    //                //- li(class='buttons')
-    //                //- 	a(zf-open='newRoomModal', class='showNewRoomModal success button') add
-    //                //- 	a(zf-open='removeRoomModal', class='showRemoveRoomModal alert button') remove
-    //    div(class='grid-block')
-    //        div(class='grid-block small-12 vertical')
-    //            div(class='hide-for-medium header')
-    //                img(zf-toggle='rooms', src='images/rooms1.gif', class='roomsIcon', alt='rooms')
-    //                | ! Be In Touch !
-    //                img(zf-toggle='people', src='images/people.aspx', class='peopleIcon', alt='people')
-    //            div(id="changeMessagesLinks")
-    //                a(id="roomMessagesLink") room messages
-    //                a(class="unactiveMessagesLink", id="privateMessagesLink") private messages
-    //            div(class='grid-content', id="messages")
-    //            div(class='grid-content', id="privateMessages")
-    //                // img(src='http://placehold.it/30x30')
-    //            div(class='message-input grid-content collapse shrink')
-    //                input(type='text', placeholder='Message:')
-    //                a(href="#", class="button info", id="sendMessage") Send
-    //    div(class='grid-content medium-3 right show-for-medium peopleSidebar')
-    //        section(class='block-list')
-    //            div
-    //                | people
-    //                img(src='images/people.aspx', class='peopleIcon', alt='people')
-    //            ul
-    //
