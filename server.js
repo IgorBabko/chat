@@ -381,12 +381,17 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                     throw err;
                 }
 
-                socket.broadcast.emit("left", {
-                    userId: leftUser._id,
-                    name: leftUser.name
-                });
-                        
-                people.deleteOne({_id: leftUser._id});
+
+                // if user did not enter the chat
+                if (leftUser != null) {
+
+                    socket.broadcast.emit("left", {
+                        userId: leftUser._id,
+                        name: leftUser.name
+                    });
+                            
+                    people.deleteOne({_id: leftUser._id});
+                }
 
             });
        });

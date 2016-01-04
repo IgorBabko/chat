@@ -22,12 +22,12 @@ header {
   background-color: #0275d8; }
   header label {
     transition: all 0.1s ease-in-out;
-    background-color: #0268bf !important;
+    background-color: #025aa5 !important;
     margin: 0;
     cursor: pointer !important;
     color: #daeeff !important; }
     header label:hover, header label.active {
-      background-color: #299bfd !important;
+      background-color: #5cb3fd !important;
       color: white !important; }
   header #rooms-sidebar-button {
     margin-left: 20px !important; }
@@ -86,7 +86,7 @@ header {
   #invite-people-button:hover,
   #search-button:hover,
   #subscriptions-button:hover {
-    background-color: #299bfd !important; }
+    background-color: #5cb3fd !important; }
 
 #create-room-button {
   padding-top: 6px;
@@ -129,6 +129,12 @@ header {
 .asterisk {
   color: #d9534f;
   font-size: 20px; }
+
+.input-group-addon {
+  background-color: #5cb3fd !important;
+  transition: all 0.2s ease-in-out; }
+  .input-group-addon:hover {
+    background-color: #0275d8 !important; }
 
 .invalid {
   color: #d9534f;

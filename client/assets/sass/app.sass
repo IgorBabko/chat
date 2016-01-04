@@ -34,13 +34,13 @@ header
     background-color: $main-color
     label
         transition: all 0.1s ease-in-out
-        background-color: rgb(2, 104, 191) !important
+        background-color: $main-color-darker !important
         margin: 0
         cursor: pointer !important
         color: $main-color-lightest !important
         &:hover,
         &.active
-            background-color: #299bfd !important
+            background-color: $main-color-lighter !important
             color: white !important
 
     #rooms-sidebar-button
@@ -118,7 +118,7 @@ header
     height: 36px
 
     &:hover
-        background-color: #299bfd !important
+        background-color: $main-color-lighter !important
 
 #create-room-button
     padding-top: 6px
@@ -170,6 +170,14 @@ header
 .asterisk
     color: #d9534f
     font-size: 20px
+
+.input-group-addon
+    background-color: $main-color-lighter !important
+    transition: all 0.2s ease-in-out
+
+    &:hover
+        background-color: $main-color !important
+
 
 
 .invalid
