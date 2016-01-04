@@ -155,7 +155,6 @@
     });
 
     $("#delete-room").on("click", function () {
-        console.log("deletemmmmm");
         socket.emit("deleteRoom", {roomId: newRoomId, code: $("#code").val()});
     });
 
@@ -199,7 +198,6 @@
     });
 
     function changeRoomHandler() {
-        console.log("changeRoomHandler");
         if ($(this).attr("id") === globalRoomId) {
             socket.emit("changeRoom", {newRoomId: globalRoomId, password: ""});
         } else {
@@ -255,7 +253,6 @@
             globalRoomId = currentRoomId = data.globalRoomId;
             $("#message-input").focus();
         } else {
-            addNotification("<span class='highlighted'>" + data.name + "</span> joined chat");
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
     });
@@ -318,37 +315,26 @@
     });
 
     socket.on("createRoom", function (data) {
-        addNotification(data.message);
         $("#rooms-sidebar ul").append(roomTemplate(data.roomInfo));
         $("#rooms-sidebar ul li:last-child").on("click", changeRoomHandler);
         $("#create-room-modal").modal("hide");
         clearInputs($("#create-room-modal .form input"));
     });
 
-    socket.on("emptyMessage", function () {
-        addNotification("Message should not be emty!");
-    });
-
     socket.on("validErrors", function (validationInfo) {
         updateValidationErrors(validationInfo.modalId, validationInfo.errors);
     });
 
-    console.log("kkokok");
     $(window).on("unload", function () {
-        socket.emit("left");
+        socket.emit("disconnect");
     });
 
     socket.on("left", function (data) {
-        addNotification("User <span class='highlighted'>" + data.name + "</span> has left the chat");
-        //updatePeopleCounters(data.newRoomInfo, data.oldRoomInfo);
         $("#" + data.userId).remove();
     });
 
     socket.on("changeRoom", function (data) {
-        //console.log("on change room");
-        addNotification(data.message);
         if (data.peopleFromNewRoom) {
-            //console.log("change room me");
             $("#people-sidebar ul").text("");
             for (var i = 0; i < data.peopleFromNewRoom.length; ++i) {
                 $("#people-sidebar ul").prepend(userTemplate(data.peopleFromNewRoom[i]));
@@ -379,8 +365,6 @@
         } else {
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
-        //console.log("new: " + data.roomsData.newRoomInfo.peopleCount);
-        //console.log("old: " + data.roomsData.oldRoomInfo.peopleCount);
     });
 
     socket.on("deleteRoomItem", function (roomId) {
@@ -388,8 +372,6 @@
     });
 
     socket.on("updatePeopleCounters", function (data) {
-        //console.log(newRoomInfo.peopleCount);
-        //console.log(oldRoomInfo.peopleCount);
         $("#" + data.newRoomInfo._id + " span").text(data.newRoomInfo.peopleCount);
 
         if (data.oldRoomInfo) {
