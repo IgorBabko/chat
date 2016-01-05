@@ -82,7 +82,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
 
         socket.on("message", function (text) {
             if (whitespacePattern.test(text.trim())) {
-                socket.emit("notification", "Message should not be empty");
+                socket.emit("notification", {message: "Message should not be empty", type: "validErrors"});
             } else {
                 people.findOne({
                     _id: "_" + socket.id
@@ -149,13 +149,13 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                             globalRoomId: globalRoomInfo._id
                         });
 
-                        socket.emit("notification", "Welcome, <span class='highlighted'>" + username + "</span>!");
+                        socket.emit("notification", { message: "Welcome, <span class='highlighted'>" + username + "</span>!", type: "actionPerformed"});
 
                         socket.broadcast.to("global").emit("joined", {
                             _id: "_" + socket.id,
                             name: username
                         });
-                        socket.broadcast.emit("notification", "User <span class='highlighted'>" + username + "</span> has joined the chat");
+                        socket.broadcast.emit("notification", { message: "User <span class='highlighted'>" + username + "</span> has joined the chat", type: "general"});
                         clients.emit("updatePeopleCounters", {
                             newRoomInfo: {
                                 _id: roomInfo._id,
@@ -222,11 +222,11 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                         socket.emit('createRoom', {
                             roomInfo: roomInfo
                         });
-                        socket.emit("notification", "Room <span class='highlighted'>" + roomInfo.name + "</span> has been created successfully");
+                        socket.emit("notification", {message: "Room <span class='highlighted'>" + roomInfo.name + "</span> has been created successfully", type: "actionPerformed"});
                         socket.broadcast.emit('createRoom', {
                             roomInfo: roomInfo
                         });
-                        socket.broadcast.emit("notification", "User <span class='highlighted'>" + userInfo.name + "</span> has created the room <span class='highlighted'>" + roomInfo.name + "</span>");
+                        socket.broadcast.emit("notification", {message: "User <span class='highlighted'>" + userInfo.name + "</span> has created the room <span class='highlighted'>" + roomInfo.name + "</span>", type: "general"});
 
                     });
                 }
@@ -266,7 +266,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                 peopleCount: roomInfo.peopleCount
                             }
                         });
-                        clients.emit("notification", "User <span class='highlighted'>" + userInfo.name + "</span> has left the chat");
+                        clients.emit("notification", {message: "User <span class='highlighted'>" + userInfo.name + "</span> has left the chat", type: "general"});
                     }
                 });
             });
@@ -345,7 +345,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                             name: userInfo.name
                                         }
                                     });
-                                    socket.emit("notification", "Room has been changed successfully");
+                                    socket.emit("notification", {message: "Room has been changed successfully", type: "general"});
                                     socket.broadcast.to(oldRoomInfo.name).emit("changeRoom", {
                                         _id: userInfo._id,
                                         name: userInfo.name,
@@ -357,7 +357,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                         name: userInfo.name,
                                         status: "joined"
                                     });
-                                    socket.broadcast.emit("notification", "User <span class='highlighted'>" + userInfo.name + "</span> joined <span class='highlighted'>" + newRoomInfo.name + "</span> room");
+                                    socket.broadcast.emit("notification", {message: "User <span class='highlighted'>" + userInfo.name + "</span> joined <span class='highlighted'>" + newRoomInfo.name + "</span> room", type: "general"});
 
                                     clients.emit("updatePeopleCounters", {
                                         newRoomInfo: {
@@ -448,49 +448,57 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                         if (err) {
                                             throw err;
                                         }
-                                        socket.emit("deleteRoom", {
-                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
-                                            peopleFromGlobalRoom: peopleFromGlobalRoom,
-                                            messages: messagesFromGlobalRoom,
-                                            myself: true
-                                        });
 
-                                        socket.broadcast.to(roomInfo.name).emit("deleteRoom", {
-                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
-                                            peopleFromGlobalRoom: peopleFromGlobalRoom,
-                                            messages: messagesFromGlobalRoom,
-                                        });
-
-                                        socket.broadcast.to(roomInfo.name).emit("notification", "You have been transferred to the <span class'highlighted'>global</span> room");
-
-                                        socket.broadcast.to("global").emit("deleteRoom", {
-                                            peopleFromDeletedRoom: peopleFromDeletedRoom,
-                                            global: true
-                                        });
-
-                                        var allClients = clients.sockets.connected;
-                                        for (var clientId in allClients) {
-                                            if (allClients[clientId].room === roomInfo.name) {
-                                                allClients[clientId].leave(roomInfo.name);
-                                                allClients[clientId].join("global");
-                                                allClients[clientId].room = "global";
+                                        people.findOne({"_id": "_" + socket.id}, function (err, user) {
+                                            if (err) {
+                                                throw err;
                                             }
-                                        }
 
-                                        clients.emit("notification", "Room <span class='highlighted'>" + roomInfo.name + "</span> has been successfully deleted");
-                                        clients.emit("deleteRoomItem", data.roomId);
+                                            socket.emit("deleteRoom", {
+                                                peopleFromDeletedRoom: peopleFromDeletedRoom,
+                                                peopleFromGlobalRoom: peopleFromGlobalRoom,
+                                                messages: messagesFromGlobalRoom,
+                                                myself: true
+                                            });
 
-                                        clients.emit("updatePeopleCounters", {
-                                            newRoomInfo: {
-                                                _id: globalRoomInfo._id,
-                                                peopleCount: globalRoomInfo.peopleCount
+                                            socket.broadcast.to(roomInfo.name).emit("deleteRoom", {
+                                                peopleFromDeletedRoom: peopleFromDeletedRoom,
+                                                peopleFromGlobalRoom: peopleFromGlobalRoom,
+                                                messages: messagesFromGlobalRoom,
+                                            });
+
+                                            socket.broadcast.to(roomInfo.name).emit("notification", {message: "You have been transferred to the <span class'highlighted'>global</span> room", type: "general"});
+
+                                            socket.broadcast.to("global").emit("deleteRoom", {
+                                                peopleFromDeletedRoom: peopleFromDeletedRoom,
+                                                global: true
+                                            });
+
+                                            var allClients = clients.sockets.connected;
+                                            for (var clientId in allClients) {
+                                                if (allClients[clientId].room === roomInfo.name) {
+                                                    allClients[clientId].leave(roomInfo.name);
+                                                    allClients[clientId].join("global");
+                                                    allClients[clientId].room = "global";
+                                                }
                                             }
-                                        });
-                                        rooms.deleteOne({
-                                            _id: data.roomId
-                                        });
-                                        messages.remove({
-                                            room: roomInfo.name
+
+                                            socket.emit("notification", {message: "Room <span class='highlighted'>" + roomInfo.name + "</span> has been successfully deleted", type: "actionPerformed"});
+                                            socket.broadcast.emit("notification", {message: "User <span class='highlighted'>" + user.name + "</span> has deleted <span class='highlighted'>" + roomInfo.name + "</span> room", type: "general"});
+                                            clients.emit("deleteRoomItem", data.roomId);
+
+                                            clients.emit("updatePeopleCounters", {
+                                                newRoomInfo: {
+                                                    _id: globalRoomInfo._id,
+                                                    peopleCount: globalRoomInfo.peopleCount
+                                                }
+                                            });
+                                            rooms.deleteOne({
+                                                _id: data.roomId
+                                            });
+                                            messages.remove({
+                                                room: roomInfo.name
+                                            });
                                         });
                                     });
                                 });

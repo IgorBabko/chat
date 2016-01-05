@@ -168,7 +168,6 @@ header {
   overflow: hidden;
   transition: all 0.3s ease-in-out; }
   #toast-container > div {
-    background-color: #0275d8;
     width: 275px;
     border-radius: 0;
     box-shadow: none; }
