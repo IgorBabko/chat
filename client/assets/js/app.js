@@ -197,6 +197,7 @@
     var typingTemplate = window.Handlebars.compile($("#typing-template").html());
 
     socket.on("message", function (message) {
+        message.myMessage = message.myself ? "my-message" : "";
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
         if (message.myself) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
