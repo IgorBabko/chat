@@ -284,6 +284,7 @@
             socketId = data._id;
             globalRoomId = currentRoomId = data.globalRoomId;
             $("#message-input").focus();
+            $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         } else {
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
