@@ -2,12 +2,13 @@
 $main-color: rgb(2, 117, 216)
 $main-color-darker: darken($main-color, 10)
 $main-color-lighter: lighten($main-color, 25)
-$main-color-lightest: lighten($main-color, 50)
+$main-color-lightest: lighten($main-color, 47)
 
 // rulse
 
 ::-webkit-input-placeholder
     color: $main-color-lightest
+
 ::-moz-placeholder
     color: $main-color-lightest
 //::-moz-placeholder
@@ -27,11 +28,30 @@ body
 
 // header
 header
+    z-index: 1000
     display: flex
     justify-content: space-between
     align-items: center
     height: 50px
-    background-color: $main-color
+    //background-color: $main-color
+    //background: #5baaef
+    //background: -moz-linear-gradient(top, #5baaef 0%, #3881f7 49%, #206aea 100%)
+    //background: -webkit-linear-gradient(top, #5baaef 0%,#3881f7 49%,#206aea 100%)
+    //background: linear-gradient(to bottom, #5baaef 0%,#3881f7 49%,#206aea 100%)
+
+    background: #6db3f2
+    background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%)
+    background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%)
+    background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%)
+
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+
+    -moz-box-shadow: 0 1px 3px $main-color-darker
+    -webkit-box-shadow: 0 1px 3px $main-color-darker
+    box-shadow: 0 1px 3px $main-color-darker
     label
         transition: all 0.1s ease-in-out
         background-color: $main-color-darker !important
@@ -44,7 +64,13 @@ header
             color: white !important
 
     #rooms-sidebar-button
+        transition: all 0.2s ease-in-out
         margin-left: 20px !important
+        //border: 2px solid $main-color
+        //box-shadow: 0 0 2px $main-color
+
+        //&:hover
+            box-shadow: 0 0 2px white
 
     #people-sidebar-button
         margin-right: 20px
@@ -53,13 +79,16 @@ header
         border: none
         background-color: $main-color-darker
         cursor: default
+        &.active,
+        &:hover
+            box-shadow: 0 0 5px #2270E1
 
-    //.switchers
-        //.btn
-        //    &:not(.active)
-            //    cursor: pointer
-            //&.active
-            //    background-color: $main-color-lighter
+//.switchers
+    //.btn
+    //    &:not(.active)
+        //    cursor: pointer
+        //&.active
+        //    background-color: $main-color-lighter
 
 #messages-header
     text-shadow: none
@@ -71,7 +100,7 @@ header
 
 #rooms-sidebar,
 #people-sidebar
-    //z-index: 2000 !important
+//z-index: 2000 !important
 
 .list-group
     background-color: white
@@ -83,15 +112,17 @@ header
 //    z-index: 3000 !important
 
 .modal-header
-    background-color: $main-color
+    background: #6db3f2
+    background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%)
+    background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%)
+    background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%)
     color: white
     button,
     button:hover
         opacity: 1
         color: white
 
-
-.btn-group .btn+.btn
+.btn-group .btn + .btn
     margin: 0
 
 .content
@@ -137,7 +168,6 @@ header
     input
         margin-right: 10px
 
-
 #delete-room-button
     margin: 0 2px
 
@@ -172,13 +202,11 @@ header
     font-size: 20px
 
 .input-group-addon
-    background-color: $main-color-lighter !important
+    background-color: #60ABF0 !important
     transition: all 0.2s ease-in-out
 
     &:hover
-        background-color: $main-color !important
-
-
+        background-color: #2777E4 !important
 
 .invalid
     color: #d9534f
@@ -186,7 +214,6 @@ header
     font-size: 12px
     float: right
     margin-top: 10px
-
 
 #toast-container
     top: 62px
@@ -204,8 +231,6 @@ header
 
         &:hover
             box-shadow: none
-
-
 
 //.content-overlay
 //    display: none
@@ -250,7 +275,6 @@ header
         &.shadowless
             box-shadow: none !important
 
-
 #rooms-sidebar
     .list-group-item
         &:not(.active)
@@ -269,7 +293,7 @@ header
 #rooms-sidebar
     .label
         margin-top: 3px
-        background-color: $main-color-lighter
+        background-color: #5BA7EF
     li.active
         .label
             background-color: white
@@ -290,9 +314,12 @@ header
     &:hover
         background-color: $main-color-darker
 
-.active
-    background: $main-color-lighter !important
-    border-color: $main-color-lighter !important
+.list-group-item.active
+    border: none
+    background: #7abcff
+    background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%)
+    background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%)
+    background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%)
 
     .label
         background-color: white
@@ -318,7 +345,7 @@ header
     margin: 40px 20px !important
     background: white
     padding: 10px
-    box-shadow: 3px 3px 3px lighten($main-color, 44)
+    box-shadow: 3px 3px 3px #AFCFEC
 
 .media-heading
     margin: 10px 0
@@ -326,7 +353,6 @@ header
 #messages
     height: calc(100vh - 86px)
     overflow-y: scroll
-
 
 //input
 //    background-color: rgb(247, 247, 247) !important
@@ -342,7 +368,6 @@ header
 
 time
     font-weight: 200
-
 
 //.searchRoom,
 //.searchPeople

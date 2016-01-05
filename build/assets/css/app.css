@@ -1,8 +1,8 @@
 ::-webkit-input-placeholder {
-  color: #daeeff; }
+  color: #cbe7ff; }
 
 ::-moz-placeholder {
-  color: #daeeff; }
+  color: #cbe7ff; }
 
 button {
   outline: none !important; }
@@ -15,21 +15,33 @@ body {
   background: black; }
 
 header {
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 50px;
-  background-color: #0275d8; }
+  background: #6db3f2;
+  background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  -moz-box-shadow: 0 1px 3px #025aa5;
+  -webkit-box-shadow: 0 1px 3px #025aa5;
+  box-shadow: 0 1px 3px #025aa5; }
   header label {
     transition: all 0.1s ease-in-out;
     background-color: #025aa5 !important;
     margin: 0;
     cursor: pointer !important;
-    color: #daeeff !important; }
+    color: #cbe7ff !important; }
     header label:hover, header label.active {
       background-color: #5cb3fd !important;
       color: white !important; }
   header #rooms-sidebar-button {
+    transition: all 0.2s ease-in-out;
     margin-left: 20px !important; }
   header #people-sidebar-button {
     margin-right: 20px; }
@@ -37,6 +49,8 @@ header {
     border: none;
     background-color: #025aa5;
     cursor: default; }
+    header .btn.active, header .btn:hover {
+      box-shadow: 0 0 5px #2270E1; }
 
 #messages-header {
   text-shadow: none;
@@ -52,7 +66,10 @@ header {
   color: #8AFF8A; }
 
 .modal-header {
-  background-color: #0275d8;
+  background: #6db3f2;
+  background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
   color: white; }
   .modal-header button,
   .modal-header button:hover {
@@ -64,7 +81,7 @@ header {
 
 .content {
   transition: all 0.3s ease-in-out;
-  background: #daeeff;
+  background: #cbe7ff;
   opacity: 1; }
   .content .input-group {
     padding: 0; }
@@ -131,10 +148,10 @@ header {
   font-size: 20px; }
 
 .input-group-addon {
-  background-color: #5cb3fd !important;
+  background-color: #60ABF0 !important;
   transition: all 0.2s ease-in-out; }
   .input-group-addon:hover {
-    background-color: #0275d8 !important; }
+    background-color: #2777E4 !important; }
 
 .invalid {
   color: #d9534f;
@@ -194,11 +211,11 @@ header {
   cursor: pointer; }
 
 #rooms-sidebar .list-group-item:hover {
-  background-color: #daeeff;
-  border-color: #daeeff; }
+  background-color: #cbe7ff;
+  border-color: #cbe7ff; }
 
 .list-group-item {
-  border-color: #daeeff; }
+  border-color: #cbe7ff; }
 
 .typing {
   color: #0275d8;
@@ -206,7 +223,7 @@ header {
 
 #rooms-sidebar .label {
   margin-top: 3px;
-  background-color: #5cb3fd; }
+  background-color: #5BA7EF; }
 
 #rooms-sidebar li.active .label {
   background-color: white; }
@@ -227,10 +244,13 @@ header {
   .input-group-addon:hover {
     background-color: #025aa5; }
 
-.active {
-  background: #5cb3fd !important;
-  border-color: #5cb3fd !important; }
-  .active .label {
+.list-group-item.active {
+  border: none;
+  background: #7abcff;
+  background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%);
+  background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%);
+  background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%); }
+  .list-group-item.active .label {
     background-color: white;
     color: #5cb3fd; }
 
@@ -254,7 +274,7 @@ header {
   margin: 40px 20px !important;
   background: white;
   padding: 10px;
-  box-shadow: 3px 3px 3px #bce0fe; }
+  box-shadow: 3px 3px 3px #AFCFEC; }
 
 .media-heading {
   margin: 10px 0; }

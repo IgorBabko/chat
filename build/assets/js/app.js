@@ -28,7 +28,7 @@
             if ($(window).width() >= 992) {
                 $(".content").css({
                     "width": "calc(100% - " + this.contentWidthCrop + "px)",
-                    "margin": "0 " + this.contentMarginRight + "px 0 " + this.contentMarginLeft + "px"
+                    "margin": "50px " + this.contentMarginRight + "px 0 " + this.contentMarginLeft + "px"
                 });
             } else {
                 isRoomsVisible = false;
@@ -41,7 +41,7 @@
                 $("#rooms-sidebar, #people-sidebar").addClass("hidden");
                 $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 //$("#toast-container").css("right", "12px");
-                $(".content").css({"width": "100%", "margin": "0"});
+                $(".content").css({"width": "100%", "margin": "50px 0 0 0"});
             }
         },
         setupHandlers: function () {
@@ -73,11 +73,11 @@
                 _this.contentMarginRight = isPeopleVisible ? 300 : 0;
                 $(".content").css({
                     "width": "calc(100% - " + _this.contentWidthCrop + "px)",
-                    "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
+                    "margin": "50px " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else {
                 _this.toggleOverlay();
-                $(".content").css({"width": "100%", "margin": "0"});
+                $(".content").css({"width": "100%", "margin": "50px 0 0 0"});
             }
         },
         resizingWindowHandler: function () {
@@ -93,14 +93,14 @@
                 _this.contentMarginRight = isPeopleVisible ? 300 : 0;
                 $(".content").removeClass("shadowed").css({
                     "width": "calc(100% - " + _this.contentWidthCrop + "px)",
-                    "margin": "0 " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
+                    "margin": "50px " + _this.contentMarginRight + "px 0 " + _this.contentMarginLeft + "px"
                 });
             } else if ($(window).width() <= 992 && _this.isScreenWide) {
                 $("#toast-container").css("right", "10px");
                 $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 _this.isScreenWide = false;
                 _this.toggleOverlay();
-                $(".content").css({"width": "100%", "margin": "0"});
+                $(".content").css({"width": "100%", "margin": "50px 0 0 0"});
             }
         },
         clickOverlayHandler: function () {
