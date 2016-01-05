@@ -232,8 +232,10 @@
             $("#people-sidebar ul").prepend(userTemplate(data.peopleInfo[i]));
         }
         $("time").timeago();
-        $("html").show();
     });
+
+    $("html").show();
+
 
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
@@ -276,6 +278,11 @@
 
     socket.on("joined", function (data) {
         if (data.hasOwnProperty("myself")) {
+
+            socket.on("notification", function (notificationInfo) {
+                addNotification(notificationInfo.message, notificationInfo.type);
+            });
+
             $("#enter-chat-modal").modal("hide");
             $("#people-sidebar ul")
                 .prepend(userTemplate(data))
@@ -449,10 +456,6 @@
             $("#" + socketId).addClass("active");
             $("#" + globalRoomId).off("click", changeRoomHandler);
         }
-    });
-
-    socket.on("notification", function (notificationInfo) {
-        addNotification(notificationInfo.message, notificationInfo.type);
     });
 
     $("#message-input").on("focus", function () {

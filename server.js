@@ -45,39 +45,13 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
         res.sendFile(__dirname + '/build/index.html');
     });
 
+    var whitespacePattern = /^\s*$/;
+
     function isEmpty(value) {
-        var whitespacePattern = /^\s*$/;
         return whitespacePattern.test(value);
     }
 
     clients.on('connection', function (socket) {
-
-        var whitespacePattern = /^\s*$/;
-
-        rooms.find().toArray(function (err, roomsInfo) {
-            if (err) {
-                throw err;
-            }
-            messages.find({
-                room: "global"
-            }).toArray(function (err, messagesInfo) {
-                if (err) {
-                    throw err;
-                }
-                people.find({
-                    room: "global"
-                }).toArray(function (err, peopleInfo) {
-                    if (err) {
-                        throw err;
-                    }
-                    socket.emit("populateChat", {
-                        roomsInfo: roomsInfo,
-                        messagesInfo: messagesInfo,
-                        peopleInfo: peopleInfo
-                    });
-                });
-            });
-        });
         //socket.emit("populateChat", {roomsInfo: rooms.find()});
 
         socket.on("message", function (text) {
@@ -105,6 +79,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
         });
 
         socket.on("joined", function (username) {
+
             if (username !== "" && whitespacePattern.test(username.trim())) {
                 socket.emit("validErrors", {
                     modalId: "enter-chat-modal",
@@ -113,6 +88,35 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                     }
                 });
             } else {
+
+                // populate chat
+                rooms.find().toArray(function (err, roomsInfo) {
+                    if (err) {
+                        throw err;
+                    }
+                    messages.find({
+                        room: "global"
+                    }).toArray(function (err, messagesInfo) {
+                        if (err) {
+                            throw err;
+                        }
+                        people.find({
+                            room: "global", _id: { $ne: "_" + socket.id }
+                        }).toArray(function (err, peopleInfo) {
+                            if (err) {
+                                throw err;
+                            }
+                            roomsInfo[0].peopleCount++;
+                            socket.emit("populateChat", {
+                                roomsInfo: roomsInfo,
+                                messagesInfo: messagesInfo,
+                                peopleInfo: peopleInfo
+                            });
+                        });
+                    });
+                });
+
+                username = username.trim();
                 if (username === "") {
                     username = "guest";
                 }
