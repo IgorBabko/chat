@@ -2,6 +2,13 @@
 
     var socket = io('http://' + window.location.hostname + ':8000');
 
+    var validErrorsSound = new Audio('/music/valid_errors.mp3');
+    var messageSound = new Audio('/music/message.mp3');
+    var invitationSound = new Audio('/music/invitation.mp3');
+    var actionPerformedSound = new Audio('/music/action_performed.mp3');
+    var privateMessageSound = new Audio('/music/private_message.mp3');
+    var generalSound = new Audio('/music/enter_left.mp3');
+
     toastr.options = {
         "positionClass": "toast-top-right",
         "timeOut": 3000,
@@ -194,6 +201,8 @@
         if (message.myself) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
             $("#message-input").val("");
+        } else {
+            messageSound.play();
         }
     });
 
@@ -235,8 +244,31 @@
         }
     }
 
-    function addNotification(message) {
-        window.toastr.info(message);
+    function addNotification(message, type) {
+
+        switch (type) {
+            case "privateMessage":
+                window.toastr.success(message);
+                privateMessageSound.play();
+                break;
+            case "invitation":
+                window.toastr.info(message);
+                invitationSound.play();
+                break;
+            case "actionPerformed":
+                window.toastr.success(message);
+                actionPerformedSound.play();
+                break;
+            case "general":
+                window.toastr.info(message);
+                generalSound.play();
+                break;
+            case "validErrors":
+                window.toastr.error(message);
+                validErrorsSound.play();
+        }
+
+        // TODO
         if (!isPeopleVisible || isPeopleVisible && $(window).width() < 992) {
             $("#toast-container").css({"transition": "none", "right": "10px"});
         }
@@ -322,6 +354,7 @@
     });
 
     socket.on("validErrors", function (validationInfo) {
+        validErrorsSound.play();
         updateValidationErrors(validationInfo.modalId, validationInfo.errors);
     });
 
@@ -417,8 +450,8 @@
         }
     });
 
-    socket.on("notification", function (message) {
-        addNotification(message);
+    socket.on("notification", function (notificationInfo) {
+        addNotification(notificationInfo.message, notificationInfo.type);
     });
 
     $("#message-input").on("focus", function () {
