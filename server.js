@@ -83,7 +83,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                 socket.emit("notification", {message: "Message should not be empty", type: "validErrors"});
             } else {
                 people.findOne({
-                    _id: "_" + socket.id
+                    _id: "_" + socket.id.slice(2)
                 }, function (err, author) {
                     if (err) {
                         throw err;
@@ -143,7 +143,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                             throw err;
                         }
                         people.find({
-                            room: "global", _id: { $ne: "_" + socket.id }
+                            room: "global", _id: { $ne: "_" + socket.id.slice(2) }
                         }).toArray(function (err, peopleInfo) {
                             if (err) {
                                 throw err;
@@ -156,7 +156,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                             });
 
                             people.insert({
-                                _id: "_" + socket.id,
+                                _id: "_" + socket.id.slice(2),
                                 name: username,
                                 room: "global"
                             });
@@ -182,7 +182,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                     socket.join("global");
                                     socket.room = "global";
                                     socket.emit("joined", {
-                                        _id: "_" + socket.id,
+                                        _id: "_" + socket.id.slice(2),
                                         name: username,
                                         myself: true,
                                         globalRoomId: globalRoomInfo._id
@@ -191,7 +191,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                     socket.emit("notification", { message: "Welcome, <span class='highlighted'>" + username + "</span>!", type: "actionPerformed"});
 
                                     socket.broadcast.to("global").emit("joined", {
-                                        _id: "_" + socket.id,
+                                        _id: "_" + socket.id.slice(2),
                                         name: username
                                     });
                                     socket.broadcast.emit("notification", { message: "User <span class='highlighted'>" + username + "</span> has joined the chat", type: "general"});
@@ -256,7 +256,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                     }
 
                     people.findOne({
-                        _id: "_" + socket.id
+                        _id: "_" + socket.id.slice(2)
                     }, function (err, userInfo) {
                         if (err) {
                             throw err;
@@ -277,7 +277,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
 
         function userLeftHandler() {
 
-            people.findOne({_id: "_" + socket.id}, function (err, userInfo) {
+            people.findOne({_id: "_" + socket.id.slice(2)}, function (err, userInfo) {
 
                 if (err) {
                     throw err;
@@ -356,7 +356,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                         }
 
                         people.findOne({
-                            _id: "_" + socket.id
+                            _id: "_" + socket.id.slice(2)
                         }, function (err, userInfo) {
                             if (err) {
                                 throw err;
@@ -412,7 +412,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                         }
                                     });
                                     people.update({
-                                        _id: "_" + socket.id
+                                        _id: "_" + socket.id.slice(2)
                                     }, {
                                         $set: {
                                             room: newRoomInfo.name
@@ -491,7 +491,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                             throw err;
                                         }
 
-                                        people.findOne({"_id": "_" + socket.id}, function (err, user) {
+                                        people.findOne({"_id": "_" + socket.id.slice(2)}, function (err, user) {
                                             if (err) {
                                                 throw err;
                                             }
