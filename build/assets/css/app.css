@@ -12,7 +12,8 @@ html {
 
 body {
   overflow: hidden;
-  background: black; }
+  background: black;
+  font-family: 'Open Sans', sans-serif; }
 
 a {
   color: #5BA7EF; }
@@ -221,9 +222,6 @@ header {
   background-color: #cbe7ff;
   border-color: #cbe7ff; }
 
-.list-group-item {
-  border-color: #cbe7ff; }
-
 .typing {
   color: #0275d8;
   padding: 0; }
@@ -270,6 +268,9 @@ header {
   height: calc(100vh - 50px) !important; }
 
 .list-group-item {
+  border: 1px solid #cbe7ff;
+  border-left: none;
+  border-right: none;
   overflow-x: auto; }
 
 .posted-date {
@@ -284,7 +285,10 @@ header {
   box-shadow: 3px 3px 3px #AFCFEC; }
 
 .media-heading {
-  margin: 10px 0; }
+  margin: 10px 0;
+  font-weight: bold;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
+  padding-bottom: 5px; }
 
 #messages {
   height: calc(100vh - 86px);

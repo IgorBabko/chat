@@ -25,6 +25,7 @@ html
 body
     overflow: hidden
     background: black
+    font-family: 'Open Sans', sans-serif
 
 a
     color: #5BA7EF
@@ -295,9 +296,6 @@ header
             background-color: $main-color-lightest
             border-color: $main-color-lightest
 
-.list-group-item
-    border-color: $main-color-lightest
-
 .typing
     color: $main-color
     padding: 0
@@ -346,6 +344,9 @@ header
     height: calc(100vh - 50px) !important
 
 .list-group-item
+    border: 1px solid $main-color-lightest
+    border-left: none
+    border-right: none
     overflow-x: auto
 
 .posted-date
@@ -361,6 +362,9 @@ header
 
 .media-heading
     margin: 10px 0
+    font-weight: bold
+    border-bottom: 1px dashed rgba(0,0,0,0.3)
+    padding-bottom: 5px
 
 #messages
     height: calc(100vh - 86px)
