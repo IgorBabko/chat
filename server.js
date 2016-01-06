@@ -154,55 +154,55 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                                 messagesInfo: messagesInfo,
                                 peopleInfo: peopleInfo
                             });
-                        });
-                    });
-                });
 
-                people.insert({
-                    _id: "_" + socket.id,
-                    name: username,
-                    room: "global"
-                });
-                rooms.update({
-                    name: "global"
-                }, {
-                    $inc: {
-                        peopleCount: 1
-                    }
-                });
-                rooms.findOne({
-                    name: "global"
-                }, function (err, globalRoomInfo) {
-                    if (err) {
-                        throw err;
-                    }
-                    rooms.findOne({
-                        name: "global"
-                    }, function (err, roomInfo) {
-                        if (err) {
-                            throw err;
-                        }
-                        socket.join("global");
-                        socket.room = "global";
-                        socket.emit("joined", {
-                            _id: "_" + socket.id,
-                            name: username,
-                            myself: true,
-                            globalRoomId: globalRoomInfo._id
-                        });
+                            people.insert({
+                                _id: "_" + socket.id,
+                                name: username,
+                                room: "global"
+                            });
+                            rooms.update({
+                                name: "global"
+                            }, {
+                                $inc: {
+                                    peopleCount: 1
+                                }
+                            });
+                            rooms.findOne({
+                                name: "global"
+                            }, function (err, globalRoomInfo) {
+                                if (err) {
+                                    throw err;
+                                }
+                                rooms.findOne({
+                                    name: "global"
+                                }, function (err, roomInfo) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                    socket.join("global");
+                                    socket.room = "global";
+                                    socket.emit("joined", {
+                                        _id: "_" + socket.id,
+                                        name: username,
+                                        myself: true,
+                                        globalRoomId: globalRoomInfo._id
+                                    });
 
-                        socket.emit("notification", { message: "Welcome, <span class='highlighted'>" + username + "</span>!", type: "actionPerformed"});
+                                    socket.emit("notification", { message: "Welcome, <span class='highlighted'>" + username + "</span>!", type: "actionPerformed"});
 
-                        socket.broadcast.to("global").emit("joined", {
-                            _id: "_" + socket.id,
-                            name: username
-                        });
-                        socket.broadcast.emit("notification", { message: "User <span class='highlighted'>" + username + "</span> has joined the chat", type: "general"});
-                        clients.emit("updatePeopleCounters", {
-                            newRoomInfo: {
-                                _id: roomInfo._id,
-                                peopleCount: roomInfo.peopleCount
-                            }
+                                    socket.broadcast.to("global").emit("joined", {
+                                        _id: "_" + socket.id,
+                                        name: username
+                                    });
+                                    socket.broadcast.emit("notification", { message: "User <span class='highlighted'>" + username + "</span> has joined the chat", type: "general"});
+                                    clients.emit("updatePeopleCounters", {
+                                        newRoomInfo: {
+                                            _id: roomInfo._id,
+                                            peopleCount: roomInfo.peopleCount
+                                        }
+                                    });
+                                });
+                            });
                         });
                     });
                 });
@@ -293,13 +293,13 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
 
                     if (userInfo != null) {
 
-                        socket.broadcast.emit("left", {
-                            userId: userInfo._id,
-                            name: userInfo.name
-                        });
-
                         people.deleteOne({
                             _id: userInfo._id
+                        });
+
+                        clients.emit("left", {
+                            userId: userInfo._id,
+                            name: userInfo.name
                         });
 
                         clients.emit("updatePeopleCounters", {
