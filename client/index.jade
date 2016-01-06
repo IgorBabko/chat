@@ -29,7 +29,7 @@ html(lang='en')
                 .media-body
                     h4.media-heading.name {{author}}
                         time.posted-date(datetime='{{postedDate}}')
-                    | {{text}}
+                    | {{{text}}}
 
         script#room-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}")

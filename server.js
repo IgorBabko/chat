@@ -26,6 +26,30 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
         process.env.OPENSHIFT_APP_NAME;
 }
 
+// regexp for URLs and E-mails
+if(!String.linkify) {
+    String.prototype.linkify = function() {
+
+        // allow url's without www. or http://
+        var generalUrlPattern = /(?:https?:\/\/)?(?:[\w]+\.)([a-zA-Z\.]{2,6})([\/\w\.-]*)*\/?/gim;
+
+        // http://, https://, ftp://
+        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+        // www. sans http:// or https://
+        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
+        // Email addresses
+        var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+
+        return this
+            .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
+            .replace(generalUrlPattern, '<a href="http://$&" target="_blank">$&</a>')
+            .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
+            .replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+    };
+}
+
 mongo.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
@@ -64,10 +88,11 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                     if (err) {
                         throw err;
                     }
+
                     var message = {
                         author: author.name,
                         postedDate: new Date().toISOString(),
-                        text: text,
+                        text: text.linkify(),
                         room: socket.room
                     };
                     messages.insert(message);
