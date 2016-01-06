@@ -161,8 +161,20 @@
         socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#password").val()});
     });
 
+    $("#password").on("keypress", function (e) {
+        if (e.keyCode == 13) {
+            socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#password").val()});
+        }
+    });
+
     $("#delete-room").on("click", function () {
         socket.emit("deleteRoom", {roomId: newRoomId, code: $("#code").val()});
+    });
+
+    $("#code").on("keypress", function (e) {
+        if (e.keyCode == 13) {
+            socket.emit("deleteRoom", {roomId: newRoomId, code: $("#code").val()});
+        }
     });
 
     socket.on('disconnect', function () {
@@ -241,9 +253,6 @@
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
             socket.emit('joined', $("#username").val());
-            if ($("#username").val().trim() !== "") {
-                $(this).off("keypress", joinedHandler);
-            }
         }
     }
 
@@ -353,6 +362,12 @@
 
     $("#create").on("click", function () {
         socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
+    });
+
+    $("#room-name, #room-password, #room-password-confirm, #room-code, #room-code-confirm").on("keypress", function (e) {
+        if (e.keyCode == 13) {
+            socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
+        }
     });
 
     socket.on("createRoom", function (data) {
