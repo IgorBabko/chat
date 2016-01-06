@@ -80,14 +80,31 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
 
         socket.on("joined", function (username) {
 
-            if (username !== "" && whitespacePattern.test(username.trim())) {
-                socket.emit("validErrors", {
-                    modalId: "enter-chat-modal",
-                    errors: {
-                        "username": "Username should not be empty!"
-                    }
-                });
-            } else {
+            username = username.trim();
+
+            people.findOne({ name: username }, function (err, userWithSameName) {
+                if (err) {
+                    throw err;
+                }
+
+                var errors = {};
+
+                if (userWithSameName != null) {
+                    errors.username = "Username already exists!";
+                    console.log("1");
+                } else if (whitespacePattern.test(username)) {
+                    errors.username = "Username should not be empty!";
+                    console.log("2");
+                }
+
+                if ((Object.keys(errors).length !== 0)) {
+                    console.log(Object.keys(errors).length);
+                    socket.emit("validErrors", {
+                        modalId: "enter-chat-modal",
+                        errors: errors
+                    });
+                    return;
+                }
 
                 // populate chat
                 rooms.find().toArray(function (err, roomsInfo) {
@@ -116,10 +133,6 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                     });
                 });
 
-                username = username.trim();
-                if (username === "") {
-                    username = "guest";
-                }
                 people.insert({
                     _id: "_" + socket.id,
                     name: username,
@@ -168,7 +181,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                         });
                     });
                 });
-            }
+            });
         });
 
         socket.on("createRoom", function (roomInfo) {

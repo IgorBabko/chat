@@ -53,7 +53,7 @@ header {
     background-color: #025aa5;
     cursor: default; }
     header .btn.active, header .btn:hover {
-      box-shadow: 0 0 5px #2270E1; }
+      box-shadow: 0 0 1px #2270E1; }
 
 #messages-header {
   text-shadow: none;
