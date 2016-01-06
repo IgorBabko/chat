@@ -29,17 +29,13 @@ header {
   justify-content: space-between;
   align-items: center;
   height: 50px;
-  background: #6db3f2;
-  background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
-  background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
-  background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  -moz-box-shadow: 0 1px 3px #025aa5;
-  -webkit-box-shadow: 0 1px 3px #025aa5;
-  box-shadow: 0 1px 3px #025aa5; }
+  -moz-box-shadow: 0 1px 1px #025aa5;
+  -webkit-box-shadow: 0 1px 1px #025aa5;
+  box-shadow: 0 1px 1px #025aa5; }
   header label {
     transition: all 0.1s ease-in-out;
     background-color: #025aa5 !important;
@@ -57,9 +53,15 @@ header {
   header .btn {
     border: none;
     background-color: #025aa5;
-    cursor: default; }
+    cursor: default;
+    text-shadow: 0 0 1px black; }
     header .btn.active, header .btn:hover {
       box-shadow: 0 0 1px #2270E1; }
+
+header, .modal-header, #send {
+  background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
+  background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%); }
 
 #messages-header {
   text-shadow: none;
@@ -75,15 +77,13 @@ header {
   color: #8AFF8A; }
 
 .modal-header {
-  background: #6db3f2;
-  background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
-  background: -webkit-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
-  background: linear-gradient(to bottom, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%);
   color: white; }
   .modal-header button,
   .modal-header button:hover {
     opacity: 1;
     color: white; }
+  .modal-header .modal-title {
+    font-weight: bold; }
 
 .btn-group .btn + .btn {
   margin: 0; }
@@ -274,7 +274,9 @@ header {
   overflow-x: auto; }
 
 .posted-date {
-  float: right;
+  position: absolute;
+  top: 0;
+  right: 0;
   color: darkgray;
   font-size: 50% !important; }
 
@@ -288,7 +290,9 @@ header {
   margin: 10px 0;
   font-weight: bold;
   border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
-  padding-bottom: 5px; }
+  padding-bottom: 5px;
+  position: relative;
+  padding-top: 7px; }
 
 #messages {
   height: calc(100vh - 86px);
