@@ -30,9 +30,6 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
 if(!String.linkify) {
     String.prototype.linkify = function() {
 
-        // allow url's without www. or http://
-        var generalUrlPattern = /(?:https?:\/\/)?(?:[\w]+\.)([a-zA-Z\.]{2,6})([\/\w\.-]*)*\/?/gim;
-
         // http://, https://, ftp://
         var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
@@ -44,7 +41,6 @@ if(!String.linkify) {
 
         return this
             .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
-            .replace(generalUrlPattern, '<a href="http://$&" target="_blank">$&</a>')
             .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
             .replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
     };
