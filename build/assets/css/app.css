@@ -67,6 +67,12 @@ header, .modal-header, #send {
 #people-sidebar .list-group-item {
   text-align: right; }
 
+.list-group,
+.media {
+  background: -moz-linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important;
+  background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important;
+  background: linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important; }
+
 .list-group {
   background-color: white; }
 
@@ -200,18 +206,20 @@ header, .modal-header, #send {
     height: calc(100vh - 50px);
     box-shadow: -2px 0 8px -3px #5cb3fd; }
     #people-sidebar ul .list-group-item {
-      text-align: right; }
+      text-align: right;
+      background: none; }
 
 #rooms-sidebar ul.shadowless,
 #people-sidebar ul.shadowless {
   box-shadow: none !important; }
 
-#rooms-sidebar .list-group-item:not(.active) {
-  cursor: pointer; }
-
-#rooms-sidebar .list-group-item:hover {
-  background-color: #cbe7ff;
-  border-color: #cbe7ff; }
+#rooms-sidebar .list-group-item {
+  background: none; }
+  #rooms-sidebar .list-group-item:not(.active) {
+    cursor: pointer; }
+  #rooms-sidebar .list-group-item:hover {
+    background-color: #cbe7ff;
+    border-color: #cbe7ff; }
 
 .typing {
   color: #0275d8;
@@ -240,13 +248,15 @@ header, .modal-header, #send {
   .input-group-addon:hover {
     background-color: #025aa5; }
 
-.list-group-item.active,
-.my-message {
+.list-group-item.active {
   background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important;
   background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important;
   background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important; }
 
 .my-message {
+  background: -moz-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important;
+  background: -webkit-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important;
+  background: linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important;
   color: black; }
   .my-message a {
     color: white; }
@@ -277,7 +287,7 @@ header, .modal-header, #send {
 
 .posted-date {
   position: absolute;
-  top: 0;
+  top: -10px;
   right: 0;
   color: #025aa5;
   font-size: 50% !important;

@@ -213,7 +213,7 @@
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
 
         // TODO (avoid magic number)
-        if ($("#messages")[0].scrollTop + 544 == $("#messages")[0].scrollHeight) {
+        if ($("#messages")[0].scrollTop + 544 === $("#messages")[0].scrollHeight) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         }
 

@@ -102,9 +102,12 @@ header, .modal-header, #send
     .list-group-item
         text-align: right
 
-#rooms-sidebar,
-#people-sidebar
-//z-index: 2000 !important
+.list-group,
+.media
+    background: -moz-linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important
+    background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important
+    background: linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important
+
 
 .list-group
     background-color: white
@@ -262,6 +265,7 @@ header, .modal-header, #send
         box-shadow: -2px 0 8px -3px $main-color-lighter
         .list-group-item
             text-align: right
+            background: none
 
 #rooms-sidebar,
 #people-sidebar
@@ -271,6 +275,7 @@ header, .modal-header, #send
 
 #rooms-sidebar
     .list-group-item
+        background: none
         &:not(.active)
             cursor: pointer
         &:hover
@@ -306,12 +311,14 @@ header, .modal-header, #send
         background-color: $main-color-darker
 
 .list-group-item.active,
-.my-message
     background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
     background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
     background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
 
 .my-message
+    background: -moz-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
+    background: -webkit-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
+    background: linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
     a
         color: white
     .media-heading
@@ -343,7 +350,7 @@ header, .modal-header, #send
 
 .posted-date
     position: absolute
-    top: 0
+    top: -10px
     right: 0
     color: $main-color-darker
     font-size: 50% !important
