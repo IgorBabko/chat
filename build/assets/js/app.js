@@ -211,8 +211,13 @@
     socket.on("message", function (message) {
         message.myMessage = message.myself ? "my-message" : "";
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
-        if (message.myself) {
+
+        // TODO (avoid magic number)
+        if ($("#messages")[0].scrollTop + 544 == $("#messages")[0].scrollHeight) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
+        }
+
+        if (message.myself) {
             $("#message-input").val("");
         } else {
             messageSound.play();
