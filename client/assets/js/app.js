@@ -209,11 +209,13 @@
     var typingTemplate = window.Handlebars.compile($("#typing-template").html());
 
     socket.on("message", function (message) {
-        message.myMessage = message.myself ? "my-message" : "";
+        // message.myMessage = message.myself ? "my-message" : "";
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
+        console.log($("#messages")[0].scrollTop + 243);
+        console.log($("#messages")[0].scrollHeight - $("#messages")[0].clientHeight);
 
         // TODO (avoid magic number)
-        if ($("#messages")[0].scrollTop + 544 === $("#messages")[0].scrollHeight) {
+        if ($("#messages")[0].scrollTop === $("#messages")[0].scrollHeight - $("#messages")[0].clientHeight) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         }
 

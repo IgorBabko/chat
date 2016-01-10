@@ -26,7 +26,7 @@ html(lang='en')
 
         // templates
         script#message-template(type="text/x-handlebars-template")
-            div(class="media {{myMessage}}")
+            .media
                 .media-body
                     h4.media-heading.name {{author}}
                         time.posted-date(datetime='{{postedDate}}')
