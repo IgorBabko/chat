@@ -210,12 +210,14 @@
 
     socket.on("message", function (message) {
         // message.myMessage = message.myself ? "my-message" : "";
+        var shouldScroll = true;
+        if ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight !== $("#messages")[0].scrollHeight) {
+            shouldScroll = false;
+        }
+        
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
-        console.log($("#messages")[0].scrollTop + 243);
-        console.log($("#messages")[0].scrollHeight - $("#messages")[0].clientHeight);
 
-        // TODO (avoid magic number)
-        if ($("#messages")[0].scrollTop === $("#messages")[0].scrollHeight - $("#messages")[0].clientHeight) {
+        if (shouldScroll) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         }
 
@@ -224,6 +226,12 @@
         } else {
             messageSound.play();
         }
+    });
+
+    $(window).on("resize", function () {
+        console.log("scrollTop: " + $("#messages")[0].scrollTop);
+        console.log("scrollHeight: " + $("#messages")[0].scrollHeight);
+        console.log("scrollTop + clientHeight: " + ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight));
     });
 
     function changeRoomHandler() {
