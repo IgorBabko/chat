@@ -226,7 +226,16 @@
         } else {
             messageSound.play();
         }
+
+        scaleMessage();
     });
+
+    function scaleMessage() {
+        $("#messages .media:last-child").addClass("scaledDown");
+        setTimeout(function() {
+            $("#messages .media:last-child").removeClass("scaledDown").addClass("scaledUp");
+        }, 1);
+    }
 
     $(window).on("resize", function () {
         console.log("scrollTop: " + $("#messages")[0].scrollTop);
