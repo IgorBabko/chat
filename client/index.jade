@@ -51,11 +51,54 @@ body
                 .modal-header
                     h4#welcome.modal-title Welcome!
                 .modal-body
+                    ul.nav.nav-tabs
+                        li.nav-item.login-item
+                            a.nav-link.active(href='#') Log In
+                        li.nav-item.signup-item
+                            a.nav-link(href='#') Sign Up
+                        li.nav-item.incognito-item
+                            a.nav-link(href='#') Incognito
                     .form
-                        .form-group
-                            label.form-control-label(for='username') Your name:
-                            span.invalid
-                            input#username.form-control(type='text', autofocus, autocomplete="off")
+                        .login
+                            .form-group
+                                label.form-control-label(for='username') Username:
+                                //- span.invalid
+                                input#username.form-control(type='text', autofocus, autocomplete="off")
+                            .form-group
+                                label.form-control-label(for='password') Password:
+                                //- span.invalid
+                                input#password.form-control(type='password', autocomplete="off")
+
+                        .signup
+                            .form-group
+                                label.form-control-label(for='username') Username:
+                                //- span.invalid
+                                input#username.form-control(type='text', autofocus, autocomplete="off")
+                            .form-group
+                                label.form-control-label(for='password') Password:
+                                //- span.invalid
+                                input#password.form-control(type='password', autocomplete="off")
+                            .form-group
+                                label.form-control-label(for='confirm-password') Confirm password:
+                                //- span.invalid
+                                input#confirm-password.form-control(type='password', autocomplete="off")
+                            .avatar-block
+                                form#avatar.dropzone(action='#')
+                                .btn-group.gender(data-toggle='buttons')
+                                    label.btn.btn-primary.male
+                                        input#option1(type='radio', name='gender', autocomplete='off')
+                                        | Male
+                                    label.btn.btn-primary.female
+                                        input#option2(type='radio', name='gender', autocomplete='off')
+                                        | Female
+
+
+                        .incognito
+                            .form-group
+                                label.form-control-label(for='username') Username:
+                                //- span.invalid
+                                input#username.form-control(type='text', autofocus, autocomplete="off")
+
                 .modal-footer
                     button#enter-chat-button.btn.btn-success(type='button') Enter
 

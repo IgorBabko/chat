@@ -2,8 +2,29 @@ var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var sha1 = require('sha1');
 var jade = require('gulp-jade');
+var logger = require('morgan');
+var favicon = require('serve-favicon');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var express = require('express');
 var app = express();
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var port = process.env.OPENSHIFT_NODEJS_PORT || '8000';
@@ -26,6 +47,12 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
         process.env.OPENSHIFT_APP_NAME;
 }
 
+// passport config
+var Account = require('./models/account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
 // regexp for URLs and E-mails
 if(!String.linkify) {
     String.prototype.linkify = function() {
@@ -46,7 +73,7 @@ if(!String.linkify) {
     };
 }
 
-mongo.connect('mongodb://' + connection_string, function (err, db) {
+mongoose.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
     var people = db.collection('people');
