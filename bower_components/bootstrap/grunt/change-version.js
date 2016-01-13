@@ -95,7 +95,7 @@ function main(args) {
     '.js',
     '.json',
     '.md',
-    '.sass',
+    '.scss',
     '.txt',
     '.yml'
   ]);

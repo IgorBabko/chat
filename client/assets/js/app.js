@@ -7,10 +7,12 @@ $(function() {
     var actionPerformedSound = new Audio('/music/action_performed.mp3');
     var privateMessageSound = new Audio('/music/private_message.mp3');
     var generalSound = new Audio('/music/enter_left.mp3');
-    // dropzone config
-    Dropzone.options.avatar = {
-        dictDefaultMessage: "Avatar"
-    };
+
+    $('img#avatar').imgAreaSelect({
+        handles: true,
+        parent: $('#enter-chat-modal .modal-content')
+    });
+
     toastr.options = {
         "positionClass": "toast-top-right",
         "timeOut": 3000,

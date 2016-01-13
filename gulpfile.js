@@ -39,7 +39,7 @@ gulp.task('jade', function () {
 gulp.task('concatJS', function () {
     return gulp.src('client/assets/js/*')
         //.pipe(uglify)
-        .pipe($.concat('app.js'))
+        //.pipe($.concat('app.js'))
         .pipe(gulp.dest('build/assets/js'));
 });
 

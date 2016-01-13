@@ -239,10 +239,10 @@ module.exports = function (grunt) {
     scsslint: {
       options: {
         bundleExec: true,
-        config: 'sass/.sass-lint.yml',
+        config: 'scss/.scss-lint.yml',
         reporterOutput: null
       },
-      src: ['sass/*.sass', '!sass/_normalize.sass']
+      src: ['scss/*.scss', '!scss/_normalize.scss']
     },
 
     postcss: {
@@ -305,7 +305,7 @@ module.exports = function (grunt) {
 
     csscomb: {
       options: {
-        config: 'sass/.csscomb.json'
+        config: 'scss/.csscomb.json'
       },
       dist: {
         expand: true,
@@ -379,11 +379,11 @@ module.exports = function (grunt) {
         tasks: ['babel:dev']
       },
       sass: {
-        files: 'sass/**/*.sass',
+        files: 'scss/**/*.scss',
         tasks: ['dist-css', 'docs']
       },
       docs: {
-        files: 'docs/assets/sass/**/*.sass',
+        files: 'docs/assets/scss/**/*.scss',
         tasks: ['dist-css', 'docs']
       }
     },
@@ -466,7 +466,7 @@ module.exports = function (grunt) {
   if (runSubset('core') &&
     // Skip core tests if this is a Savage build
     process.env.TRAVIS_REPO_SLUG !== 'twbs-savage/bootstrap') {
-    testSubtasks = testSubtasks.concat(['dist-css', 'dist-js', 'test-sass', 'test-js', 'docs']);
+    testSubtasks = testSubtasks.concat(['dist-css', 'dist-js', 'test-scss', 'test-js', 'docs']);
   }
   // Skip HTML validation if running a different subset of the test suite
   if (runSubset('validate-html') &&
@@ -491,7 +491,7 @@ module.exports = function (grunt) {
   // JS distribution task.
   grunt.registerTask('dist-js', ['babel:dev', 'concat', 'lineremover', 'babel:dist', 'stamp', 'uglify:core', 'commonjs']);
 
-  grunt.registerTask('test-sass', ['scsslint']);
+  grunt.registerTask('test-scss', ['scsslint']);
 
   // CSS distribution task.
   // Supported Compilers: sass (Ruby) and libsass.

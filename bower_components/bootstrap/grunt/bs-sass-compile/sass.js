@@ -3,7 +3,7 @@
 // [2]: https://github.com/gruntjs/grunt-contrib-sass
 module.exports = function configureRubySass(grunt) {
   var options = {
-    loadPath: ['sass'],
+    loadPath: ['scss'],
     precision: 6,
     sourcemap: 'auto',
     style: 'expanded',
@@ -15,21 +15,21 @@ module.exports = function configureRubySass(grunt) {
       core: {
         options: options,
         files: {
-          'dist/css/<%= pkg.name %>.css': 'sass/<%= pkg.name %>.sass'
+          'dist/css/<%= pkg.name %>.css': 'scss/<%= pkg.name %>.scss'
         }
       },
       extras: {
         options: options,
         files: {
-          'dist/css/<%= pkg.name %>-flex.css': 'sass/<%= pkg.name %>-flex.sass',
-          'dist/css/<%= pkg.name %>-grid.css': 'sass/<%= pkg.name %>-grid.sass',
-          'dist/css/<%= pkg.name %>-reboot.css': 'sass/<%= pkg.name %>-reboot.sass'
+          'dist/css/<%= pkg.name %>-flex.css': 'scss/<%= pkg.name %>-flex.scss',
+          'dist/css/<%= pkg.name %>-grid.css': 'scss/<%= pkg.name %>-grid.scss',
+          'dist/css/<%= pkg.name %>-reboot.css': 'scss/<%= pkg.name %>-reboot.scss'
         }
       },
       docs: {
         options: options,
         files: {
-          'docs/assets/css/docs.min.css': 'docs/assets/sass/docs.sass'
+          'docs/assets/css/docs.min.css': 'docs/assets/scss/docs.scss'
         }
       }
     }

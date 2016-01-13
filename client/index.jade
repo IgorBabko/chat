@@ -14,6 +14,7 @@ html(lang='en')
         link(rel='stylesheet', href='animate.css/animate.min.css')
         link(rel='stylesheet', href='toastr/toastr.min.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
+        link(href='css/imgareaselect-default.css', rel='stylesheet', type='text/css')
 
         script(src='jquery/dist/jquery.min.js')
         script(src='tether/dist/js/tether.min.js')
@@ -22,6 +23,7 @@ html(lang='en')
         script(src='toastr/toastr.min.js')
         script(src='handlebars/handlebars.min.js')
         script(src='js/jquery.timeago.js', type='text/javascript')
+        script(src='js/jquery.imgareaselect.pack.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
 
         // templates
@@ -47,7 +49,7 @@ html(lang='en')
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')
-            .modal-content
+            .modal-content.niko
                 .modal-header
                     h4#welcome.modal-title Welcome!
                 .modal-body
@@ -82,15 +84,16 @@ body
                                 label.form-control-label(for='confirm-password') Confirm password:
                                 //- span.invalid
                                 input#confirm-password.form-control(type='password', autocomplete="off")
-                            .avatar-block
-                                form#avatar.dropzone(action='#')
-                                .btn-group.gender(data-toggle='buttons')
-                                    label.btn.btn-primary.male
-                                        input#option1(type='radio', name='gender', autocomplete='off')
-                                        | Male
-                                    label.btn.btn-primary.female
-                                        input#option2(type='radio', name='gender', autocomplete='off')
-                                        | Female
+                            //- .avatar-block
+                            //- form#avatar.dropzone(action='#')
+                            img#avatar(src="https://pbs.twimg.com/profile_images/587571943513137152/amdnGVqf_400x400.jpg", alt="Your avatar")
+                            //- .btn-group.gender(data-toggle='buttons')
+                            //-     label.btn.btn-primary.male
+                            //-         input#option1(type='radio', name='gender', autocomplete='off')
+                            //-         | Male
+                            //-     label.btn.btn-primary.female
+                            //-         input#option2(type='radio', name='gender', autocomplete='off')
+                            //-         | Female
 
 
                         .incognito
@@ -100,7 +103,7 @@ body
                                 input#username.form-control(type='text', autofocus, autocomplete="off")
 
                 .modal-footer
-                    button#enter-chat-button.btn.btn-success(type='button') Enter
+                    button#enter-chat-button.btn(type='button') Enter
 
     #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')
