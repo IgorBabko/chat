@@ -91,20 +91,22 @@ body
                                 label.form-control-label(for='confirm-password') Confirm password:
                                 //- span.invalid
                                 input#confirm-password.form-control(type='password', autocomplete="off")
-                            //- .avatar-block
-                            //- form#avatar.dropzone(action='#')
-                            
 
-                            label.c-input.c-radio
-                                input#radio1(name='radio', type='radio')
-                                span.c-indicator
-                                | Male
-                            label.c-input.c-radio
-                                input#radio2(name='radio', type='radio')
-                                span.c-indicator
-                                | Female
-                            button.btn#upload-avatar(type='button') Upload avatar
-                            #avatar-block
+                            .gender
+                                label.c-input.c-radio
+                                    input#radio1(name='radio', type='radio')
+                                    span.c-indicator
+                                    | Male
+                                label.c-input.c-radio
+                                    input#radio2(name='radio', type='radio')
+                                    span.c-indicator
+                                    | Female
+
+                            .avatar-block
+                                span.btn.btn-default.btn-file
+                                    | Upload avatar 
+                                    input(type='file')
+                                #avatar-block
 
 
                                 //- input#resizer(type='range', min='0', max='100', value='1')

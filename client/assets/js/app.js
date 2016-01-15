@@ -488,15 +488,24 @@ $(function() {
             avatar.croppie('bind', {
                 url: 'images/female-avatar.jpg'
             });
-
-            // setTimeout(function () {
-            //     $('.cr-slider').val(0);
-            // }, 500);
-            //on button click
             avatar.croppie('result', 'html');
         }
     });
 
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                console.log(e.target.result);
+                $('#blah').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#upload-avatar input").on("change", function() {
+        console.log("niko");
+        // readURL(this);
+    });
     $(".incognito-item").on("click", function() {
         $("#enter-chat-modal .form > div").hide();
         $(".incognito").show();
