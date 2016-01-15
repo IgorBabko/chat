@@ -13,10 +13,12 @@ html(lang='en')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
         link(rel='stylesheet', href='animate.css/animate.min.css')
         link(rel='stylesheet', href='toastr/toastr.min.css')
+        link(rel='stylesheet', href='css/croppie.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
         link(href='css/imgareaselect-default.css', rel='stylesheet', type='text/css')
 
         script(src='jquery/dist/jquery.min.js')
+        script(src='js/croppie.js')
         script(src='tether/dist/js/tether.min.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
         script(src='remarkable-bootstrap-notify/bootstrap-notify.js')
@@ -70,6 +72,11 @@ body
                                 label.form-control-label(for='password') Password:
                                 //- span.invalid
                                 input#password.form-control(type='password', autocomplete="off")
+                            label.c-input.c-checkbox
+                                input(type='checkbox')
+                                span.c-indicator
+                                | Remember me
+
 
                         .signup
                             .form-group
@@ -86,7 +93,24 @@ body
                                 input#confirm-password.form-control(type='password', autocomplete="off")
                             //- .avatar-block
                             //- form#avatar.dropzone(action='#')
-                            img#avatar(src="https://pbs.twimg.com/profile_images/587571943513137152/amdnGVqf_400x400.jpg", alt="Your avatar")
+                            
+
+                            label.c-input.c-radio
+                                input#radio1(name='radio', type='radio')
+                                span.c-indicator
+                                | Male
+                            label.c-input.c-radio
+                                input#radio2(name='radio', type='radio')
+                                span.c-indicator
+                                | Female
+                            button.btn#upload-avatar(type='button') Upload avatar
+                            #avatar-block
+
+
+                                //- input#resizer(type='range', min='0', max='100', value='1')
+                                //- div
+                                //-     img#avatar(src="https://pbs.twimg.com/profile_images/587571943513137152/amdnGVqf_400x400.jpg", alt="Your avatar")
+
                             //- .btn-group.gender(data-toggle='buttons')
                             //-     label.btn.btn-primary.male
                             //-         input#option1(type='radio', name='gender', autocomplete='off')

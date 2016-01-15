@@ -7,12 +7,10 @@ $(function() {
     var actionPerformedSound = new Audio('/music/action_performed.mp3');
     var privateMessageSound = new Audio('/music/private_message.mp3');
     var generalSound = new Audio('/music/enter_left.mp3');
-
     $('img#avatar').imgAreaSelect({
         handles: true,
         parent: $('#enter-chat-modal .modal-content')
     });
-
     toastr.options = {
         "positionClass": "toast-top-right",
         "timeOut": 3000,
@@ -473,12 +471,32 @@ $(function() {
     socket.on("stopTyping", function(id) {
         $("#" + id + " span").remove();
     });
+    var avatar = null;
     $(".signup-item").on("click", function() {
         $("#enter-chat-modal .form > div").hide();
         $(".signup").show();
         $(".nav-item a").removeClass("active");
         $(".signup-item a").addClass("active");
+        if (!avatar) {
+            avatar = $('#avatar-block').croppie({
+                viewport: {
+                    width: 300,
+                    height: 300,
+                    type: "circle"
+                }
+            });
+            avatar.croppie('bind', {
+                url: 'images/female-avatar.jpg'
+            });
+
+            // setTimeout(function () {
+            //     $('.cr-slider').val(0);
+            // }, 500);
+            //on button click
+            avatar.croppie('result', 'html');
+        }
     });
+
     $(".incognito-item").on("click", function() {
         $("#enter-chat-modal .form > div").hide();
         $(".incognito").show();
@@ -491,6 +509,84 @@ $(function() {
         $(".nav-item a").removeClass("active");
         $(".login-item a").addClass("active");
     });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#imgInp").change(function() {
+        readURL(this);
+    });
+    // drop avatar
+    // function allowDrop(event) {
+    //     event.preventDefault();
+    //     console.log("allowDrop");
+    //     $("img#avatar").css("cursor", "pointer");
+    // }
+    // function drop(event) {
+    //     event.preventDefault();
+    //     console.log("drop");
+    //     event.dataTransfer = event.originalEvent.dataTransfer;
+    //     if (event.dataTransfer.getData('text/html') != "") {
+    //         var imgUrl = event.dataTransfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1];
+    //         $("img#avatar").attr("src", imgUrl);
+    //     } else {
+    //         var file = event.dataTransfer.files[0];
+    //         var reader = new FileReader();
+    //         reader.readAsDataURL(file);
+    //         reader.onload = loaded;
+    //     }
+    // }
+    // function loaded(evt) {
+    //     $("img#avatar").attr("src", evt.target.result);
+    // }
+    // $('#avatar-block').croppie({}).bind("http://static.giantbomb.com/uploads/original/3/39162/1542766-gta4_preview_niko.jpg");
+    // $uploadCrop = $('#avatar-block').croppie({
+    //     viewport: {
+    //         width: 400,
+    //         height: 400,
+    //         type: 'circle'
+    //     },
+    //     boundary: {
+    //         width: 300,
+    //         height: 300
+    //     }
+    // });
+    // var basic = $('#avatar-block').croppie({
+    //     viewport: {
+    //         width: 150,
+    //         height: 200
+    //     }
+    // });
+    // basic.croppie('bind', {
+    //     url: 'http://img10.deviantart.net/8f66/i/2009/324/7/3/niko_bellic_by_deimos_remus.jpg',
+    //     points: [77,469,280,739]
+    // });
+    //on button click
+    // basic.croppie('result', 'html');
+    // $("img#avatar").on("drop", drop);
+    // $("img#avatar").on("dragover dragenter", allowDrop);
+    // $("img#avatar").on("mouseenter", function () {
+    //     $(this).data('hover',1);
+    //     console.log("hover");
+    // }).on("mouseleave", function () {
+    //     $(this).data('hover',0);
+    //     console.log("out");
+    // });
+    // $("body").on("scroll", function (e) {
+    //     if ($("img#avatar").data("hover")) {
+    //         e.preventDefault();
+    //         $("img#avatar").css({"width": "50px"});
+    //     } else {
+    //         $("img#avatar").css({"width": "300px"});
+    //     }
+    // });
+    // $(".imgareaselect-outer").appendTo("#avatar-block");
 });
 //var oldUserName = '';
 //var renameUserItem = null;

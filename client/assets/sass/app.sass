@@ -107,9 +107,9 @@ header, .modal-header, #send
 
 .list-group,
 .media
-    background: -moz-linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important
-    background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important
-    background: linear-gradient(135deg, #ECF6FF 0%, #FFFFFF 47%, #ECF6FF 100%) !important
+    background: -moz-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
+    background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
+    background: linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
 
 
 .scaledUp
@@ -329,7 +329,6 @@ input[type="password"]
         border-color: #EF6B26
         
 label
-    font-size: 1.3rem
     color: #EF6B26
 
 .input-group-addon
@@ -445,7 +444,8 @@ label
         .signup,
         .incognito
             display: none
-        
+
+        .avatar-block
 
         // .avatar-block
             // text-align: center
@@ -468,24 +468,201 @@ label
         input[type="radio"]
             margin-left: 15px
 
-    #enter-chat-button
+    #enter-chat-button,
+    #upload-avatar
         color: #FFF9F6
         background: #F6884C
         &:hover
             background: darken(#F6884C, 10)
+            
+    #upload-avatar
+        display: block
+        margin: 30px auto 15px
 
+.c-radio
+    .c-indicator
+        background-color: #FFFFFF
+        // border: 1px solid #F6884C
 
-img#avatar
-    width: 100%
-    border-radius: 4px
-    position: relative
+.c-checkbox
+    // font-size: 0.9rem
+    color: #EF6B26
+    span
+        border: 1px solid #F6884C
+        background: #FFFFFF
+
+.c-input > input ~ .c-indicator
+    border: 1px solid #F6884C
+
+.c-input > input:checked ~ .c-indicator
+    border: none
     
+.c-input
+    color: #F6884C
+
+.c-input+.c-input
+    margin-left: 1.5rem
+
+.c-indicator
+    width: 20px
+    height: 20px
+
+.c-input>input:checked~.c-indicator
+    background-color: #F6884C
+
+.c-input>input~.c-indicator,
+.c-input>input:checked~.c-indicator
+    color: #F6884C
+
+.c-input>input:active~.c-indicator
+    background: #F6884C
+    color: #F6884C
+
+// .c-checkbox:focus
+input[type="checkbox"]:focus + .c-indicator,
+input[type="radio"]:focus + .c-indicator
+    -webkit-box-shadow: 0 0 0 .075rem #FFF9F6,0 0 0 .2rem #FFF9F6 !important
+    box-shadow: 0 0 0 .075rem #FFF9F6,0 0 0 .2rem #FFF9F6 !important
+
+// div#avatar-block
+//     overflow: auto 
+//     max-width: 100%
+//     text-align: center
+//     border: 1px solid #F6884C
+//     padding: 10px
+//     background: #F7F7F7
+//     border-radius: 4px
+//     max-height: 300px
+//     div
+//         overflow: auto
+//         max-height: 260px
+//         img#avatar
+//             border-radius: 4px
+//             margin: 0
+// resizer
+// #resizer
+//     margin: 0 auto 10px
+//     width: 50%
+//     display: block
+
+//colors
+$black: #000000
+$color_coral_approx: #f6884c
+$color_bridal_heath_approx: #fff9f6
+
+input[type=range] 
+    margin: 10px 0
+    width: 100%
+    &:focus 
+        outline: none
+
+    &:focus::-webkit-slider-runnable-track 
+        background: $color_coral_approx
+
+    &:focus::-ms-fill-lower 
+        background: $color_coral_approx
+
+    &:focus::-ms-fill-upper 
+        background: $color_coral_approx
+
+
+input[type=range]::-webkit-slider-runnable-track 
+    width: 100%
+    height: 2px
+    cursor: pointer
+    animate: 0.2s
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+    background: $color_coral_approx
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50px
+    border: 0 solid $black
+
+input[type=range]::-webkit-slider-thumb 
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+    border: 1px solid $color_coral_approx
+    height: 14px
+    width: 14px
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50px
+    background: $color_bridal_heath_approx
+    cursor: pointer
+    margin-top: -6.5px
+
+input[type=range]::-moz-range-track 
+    width: 100%
+    height: 2px
+    cursor: pointer
+    animate: 0.2s
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+    background: $color_coral_approx
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50px
+    border: 0 solid $black
+
+input[type=range]::-moz-range-thumb 
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+    border: 1px solid $color_coral_approx
+    height: 14px
+    width: 14px
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50px
+    background: $color_bridal_heath_approx
+    cursor: pointer
+
+input[type=range]::-ms-track 
+    width: 100%
+    height: 2px
+    cursor: pointer
+    animate: 0.2s
+    background: transparent
+    border-color: transparent
+    color: transparent
+
+input[type=range]::-ms-fill-lower 
+    background: $color_coral_approx
+    border: 0 solid $black
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 100px
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+
+input[type=range]::-ms-fill-upper 
+    background: $color_coral_approx
+    border: 0 solid $black
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 100px
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+
+input[type=range]::-ms-thumb 
+    //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 0 $black
+    border: 1px solid $color_coral_approx
+    height: 14px
+    width: 14px
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50px
+    background: $color_bridal_heath_approx
+    cursor: pointer
+
+//     color: red;
+//     background-color: red;
+//     position: fixed;
+//     top: 647px;
+//     left: -22%;
+//     width: 300px;
+//     transform: rotate(90deg);
+
 // imgareaselect
-.imgareaselect-outer
-    &:nth-child(5)
-        border-radius: 4px 0 0 4px
-    &:nth-child(7)
-        border-radius: 0 4px 4px 0
+// .imgareaselect-outer
+//     &:nth-child(5)
+//         border-radius: 4px 0 0 4px
+//     &:nth-child(7)
+//         border-radius: 0 4px 4px 0
 
 
 //.searchRoom,
@@ -1125,54 +1302,180 @@ img#avatar
 //	font-size: .9rem;
 //}
 
+// croppie
 //colors
-$color_celeste_approx: #ccc
-$color_mountain_mist_approx: #999
-$yellow:  yellow
 $white: #fff
+$black_50: rgba(0, 0, 0, 0.5)
+$color_alto_approx: #ddd
 
-//urls
-$url_0: url(/images/male-avatar.png)
-$url_1: url(/images/female-avatar.png)
+//@extend-elements
+//original selectors
+//.croppie-container .cr-viewport.debug:before, .croppie-container .cr-viewport.debug:after
+.extend_1 
+    background: $white
+    width: 1px
+    height: 1px
+    content: ''
+    position: absolute
 
-.jrac_container 
-    margin-bottom: 1em
 
-.jrac_viewport 
+
+.croppie-container 
+    padding: 30px
+    .cr-image 
+        z-index: -1
+        position: absolute
+        top: 0
+        left: 0
+        //If you use compass, instead of the line below you could use + transform-origin($origin-x, $origin-y, $origin-z, $only3d)
+        transform-origin: 0 0
+
+    .cr-boundary 
+        position: relative
+        overflow: hidden
+        margin: 0 auto
+        z-index: 1
+
+    .cr-viewport 
+        position: absolute
+        border: 2px solid $white
+        margin: auto
+        top: 0
+        bottom: 0
+        right: 0
+        left: 0
+        //If you use compass, instead of the line below you could use + box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+        box-shadow: 0 0 0 1000px $black_50
+        z-index: 0
+        &.debug 
+            &:before 
+                @extend %extend_1
+                top: 0
+                height: 100%
+                left: 50%
+
+            &:after 
+                @extend %extend_1
+                top: 50%
+                left: 0
+                width: 100%
+
+
+
+    .cr-vp-circle 
+        //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+        border-radius: 50%
+
+    .cr-overlay 
+        z-index: 1
+        position: absolute
+        cursor: move
+
+    .cr-slider-wrap 
+        width: 75%
+        margin: 0 auto
+        margin-top: 25px
+        text-align: center
+
+
+.croppie-result 
     position: relative
     overflow: hidden
-    border: 1px solid $color_celeste_approx
-    height: 280px
-    background-image: $url_0
-    border: dashed 2px $color_mountain_mist_approx
     img 
-        cursor: pointer
+        position: absolute
 
 
-.jrac_loading 
-    background-image: $url_1
-    background-repeat: no-repeat
-    background-position: center
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
+.cr-slider 
+    width: 300px
+    max-width: 100%
+    &:focus 
+        outline: none
 
-.jrac_crop 
-    position: absolute
-    border: 2px solid $yellow
+    &:-moz-focusring 
+        outline: 1px solid $white
+        outline-offset: -1px
 
-.jrac_crop_drag_handler 
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    background-color: $white
-    opacity: .1
-    filter: alpha(opacity = 10)
-    cursor: pointer
+    &:focus::-ms-fill-lower 
+        background: $black_50
 
-.jrac_zoom_slider_label 
-    margin-top: .5em
+    &:focus::-ms-fill-upper 
+        background: $black_50
+
+
+.cr-slider::-webkit-slider-runnable-track 
+    width: 100%
+    height: 3px
+    background: $black_50
+    border: 0
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 3px
+
+.cr-slider::-webkit-slider-thumb 
+    border: none
+    height: 16px
+    width: 16px
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50%
+    background: $color_alto_approx
+    margin-top: -6px
+
+.cr-slider::-moz-range-track 
+    width: 100%
+    height: 3px
+    background: $black_50
+    border: 0
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 3px
+
+.cr-slider::-moz-range-thumb 
+    border: none
+    height: 16px
+    width: 16px
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50%
+    background: $color_alto_approx
+    margin-top: -6px
+
+.cr-slider::-ms-track 
+    width: 300px
+    height: 5px
+    background: transparent
+    border-color: transparent
+    border-width: 6px 0
+    color: transparent
+
+.cr-slider::-ms-fill-lower 
+    background: $black_50
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 10px
+
+.cr-slider::-ms-fill-upper 
+    background: $black_50
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 10px
+
+.cr-slider::-ms-thumb 
+    border: none
+    height: 16px
+    width: 16px
+    //If you use compass, instead of the line below you could use + border-radius($radius, $vertical-radius)
+    border-radius: 50%
+    background: $color_alto_approx
+
+// custom croppie
+.croppie-container
+    padding: 10px
+    
+    .cr-slider-wrap
+        margin-top: 10px
+        max-width: 300px
+
+    .cr-viewport
+        border: none
+
+.cr-boundary
+    border-radius: 50%
+    border: 2px solid #F6884C
+    
+.cr-slider-wrap
+    margin-top: 0

@@ -6,7 +6,7 @@ var logger = require('morgan');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var express = require('express');
@@ -46,6 +46,7 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
         process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
         process.env.OPENSHIFT_APP_NAME;
 }
+console.log(connection_string);
 
 // passport config
 var Account = require('./models/account');
@@ -73,7 +74,7 @@ if(!String.linkify) {
     };
 }
 
-mongoose.connect('mongodb://' + connection_string, function (err, db) {
+mongo.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
     var people = db.collection('people');
@@ -90,6 +91,10 @@ mongoose.connect('mongodb://' + connection_string, function (err, db) {
 
     app.get('/', function (req, res) {
         res.sendFile(__dirname + '/build/index.html');
+    });
+
+    app.get('/niko', function (req, res) {
+        res.sendFile(__dirname + '/build/index1.html');
     });
 
     var whitespacePattern = /^\s*$/;
