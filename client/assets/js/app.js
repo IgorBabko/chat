@@ -492,20 +492,18 @@ $(function() {
         }
     });
 
-    function readURL(input) {
-        if (input.files && input.files[0]) {
+    $(".avatar-block input").on("change", function() {
+        if (this.files && this.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                console.log(e.target.result);
-                $('#blah').attr('src', e.target.result);
+                avatar.croppie('bind', {
+                    url: e.target.result
+                });
             }
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(this.files[0]);
         }
-    }
-    $("#upload-avatar input").on("change", function() {
-        console.log("niko");
-        // readURL(this);
     });
+
     $(".incognito-item").on("click", function() {
         $("#enter-chat-modal .form > div").hide();
         $(".incognito").show();
@@ -517,19 +515,6 @@ $(function() {
         $(".login").show();
         $(".nav-item a").removeClass("active");
         $(".login-item a").addClass("active");
-    });
-
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                $('#blah').attr('src', e.target.result);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    $("#imgInp").change(function() {
-        readURL(this);
     });
     // drop avatar
     // function allowDrop(event) {
