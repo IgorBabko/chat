@@ -143,6 +143,11 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
             }
         });
 
+        socket.on("changeDefaultAvatar", function (gender) {
+            // @TODO Check if gender pic exists
+            socket.emit("changeDefaultAvatar", "images/" + gender + ".jpg");
+        });
+
         socket.on("joined", function (/*username*/userData) {
 
             // console.log(userData.avatarBase64);
@@ -151,7 +156,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
             // fs.writeFile("niko.png", decodeBase64Image(userData.avatarBase64), function(err) {
                 // return;
             // });
-            fs.writeFileSync(/*userData.username*/"niko.jpg", decodeBase64Image(userData.avatarBase64));
+            fs.writeFileSync(/*userData.username*/"niko.png", decodeBase64Image(userData.avatarBase64));
             // return;
 /*
             username = username.trim();

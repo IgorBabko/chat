@@ -488,7 +488,7 @@ $(function() {
                 }
             });
             avatar.croppie('bind', {
-                url: 'images/female-avatar.jpg'
+                url: 'images/male.jpg'
             });
             avatar.croppie('result', 'html');
         }
@@ -512,6 +512,17 @@ $(function() {
               //  break;
             //case "incognito":
         }
+    });
+
+    // male-female radio handler
+    $(".gender input[type='radio']").on("change", function () {
+        socket.emit("changeDefaultAvatar", $(this).val());
+    });
+
+    socket.on("changeDefaultAvatar", function (avatarPath) {
+        avatar.croppie('bind', {
+            url: avatarPath
+        });
     });
 
     $(".avatar-block input").on("change", function() {
