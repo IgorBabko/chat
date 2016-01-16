@@ -15,6 +15,9 @@ body {
   background: black;
   font-family: 'Open Sans', sans-serif; }
 
+.asterisk {
+  color: red; }
+
 a {
   color: #5BA7EF; }
   a:hover {
@@ -161,10 +164,6 @@ header, .modal-header, #send {
 
 #private-messages {
   display: none; }
-
-.asterisk {
-  color: #d9534f;
-  font-size: 20px; }
 
 .input-group-addon {
   background-color: #60ABF0 !important;

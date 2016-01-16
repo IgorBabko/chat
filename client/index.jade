@@ -63,13 +63,13 @@ body
                         li.nav-item.incognito-item
                             a.nav-link(href='#') Incognito
                     .form
-                        .login
+                        #login
                             .form-group
-                                label.form-control-label(for='username') Username or Email:
+                                label.form-control-label(for='username') Username or Email
                                 span.invalid
                                 input#usernameOrEmail.form-control(type='text', autofocus)
                             .form-group
-                                label.form-control-label(for='password') Password:
+                                label.form-control-label(for='password') Password
                                 span.invalid
                                 input#pass.form-control(type='password')
                             label.c-input.c-checkbox
@@ -77,25 +77,23 @@ body
                                 span.c-indicator
                                 | Remember me
 
-
-                        .signup
+                        #signup
                             .form-group
-                                label.form-control-label(for='username') Username:
+                                label.form-control-label(for='username') Username
                                 span.invalid
                                 input#username.form-control(type='text')
                             .form-group
-                                label.form-control-label(for='email') Email:
+                                label.form-control-label(for='email') Email
                                 span.invalid
                                 input#email.form-control(type='text')
                             .form-group
-                                label.form-control-label(for='password') Password:
+                                label.form-control-label(for='password') Password
                                 span.invalid
                                 input#password.form-control(type='password')
                             .form-group
-                                label.form-control-label(for='confirm-password') Confirm password:
+                                label.form-control-label(for='confirm-password') Confirm password
                                 span.invalid
                                 input#confirm-password.form-control(type='password')
-
                             .gender
                                 label.c-input.c-radio
                                     input#male(name='gender', type='radio', value="male", checked)
@@ -105,15 +103,15 @@ body
                                     input#female(name='gender', type='radio', value="female")
                                     span.c-indicator
                                     | Female
-
                             .avatar-block
                                 span.btn.btn-default.btn-file
                                     | Upload avatar 
                                     input(type='file')
-                                #avatar-block
-                        .incognito
+                                #avatar
+
+                        #incognito
                             .form-group
-                                label.form-control-label(for='username') Username:
+                                label.form-control-label(for='username') Username
                                 span.invalid
                                 input#guestName.form-control(type='text')
                 .modal-footer

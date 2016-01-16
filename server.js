@@ -1,5 +1,5 @@
 var fs = require("fs");
-var mongo = require('mongodb').MongoClient;
+// var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var sha1 = require('sha1');
 var jade = require('gulp-jade');
@@ -7,7 +7,7 @@ var logger = require('morgan');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var express = require('express');
@@ -50,10 +50,10 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
 console.log(connection_string);
 
 // passport config
-var Account = require('./models/account');
-passport.use(new LocalStrategy(Account.authenticate()));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
+var User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // regexp for URLs and E-mails
 if(!String.linkify) {
@@ -86,7 +86,14 @@ function decodeBase64Image(dataString) {
     }
 }
 
-mongo.connect('mongodb://' + connection_string, function (err, db) {
+// validation
+
+// join functions (login, signup, incognito)
+function incognito(userData) {
+
+}
+
+mongoose.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
     var people = db.collection('people');
@@ -109,11 +116,11 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
         res.sendFile(__dirname + '/build/index1.html');
     });
 
-    var whitespacePattern = /^\s*$/;
+    // var whitespacePattern = /^\s*$/;
 
-    function isEmpty(value) {
-        return whitespacePattern.test(value);
-    }
+    // function isEmpty(value) {
+    //     return whitespacePattern.test(value);
+    // }
 
     clients.on('connection', function (socket) {
         //socket.emit("populateChat", {roomsInfo: rooms.find()});
@@ -148,16 +155,20 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
             socket.emit("changeDefaultAvatar", "images/" + gender + ".jpg");
         });
 
-        socket.on("joined", function (/*username*/userData) {
+        socket.on("joined", function (data) {
+            switch (data.enterMode) {
+                case "login":
+                    login(data.formData);
+                    break;
+                case "signup":
+                    signup(data.formData);
+                    break;
+                case "incognito":
+                    incognito(data.formData);
+                    break;
+            }
 
-            // console.log(userData.avatarBase64);
-            // console.log(typeof userData.avatarBase64 + "----------------------------------");
-            // decodeBase64Image(userData.avatarBase64);
-            // fs.writeFile("niko.png", decodeBase64Image(userData.avatarBase64), function(err) {
-                // return;
-            // });
-            fs.writeFileSync(/*userData.username*/"niko.png", decodeBase64Image(userData.avatarBase64));
-            // return;
+            fs.writeFileSync(userData.username + ".png", decodeBase64Image(data.avatarBase64));
 /*
             username = username.trim();
 
