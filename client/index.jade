@@ -66,12 +66,12 @@ body
                         .login
                             .form-group
                                 label.form-control-label(for='username') Username or Email:
-                                //- span.invalid
-                                input#username.form-control(type='text', autofocus, autocomplete="off")
+                                span.invalid
+                                input#usernameOrEmail.form-control(type='text', autofocus)
                             .form-group
                                 label.form-control-label(for='password') Password:
-                                //- span.invalid
-                                input#password.form-control(type='password', autocomplete="off")
+                                span.invalid
+                                input#pass.form-control(type='password')
                             label.c-input.c-checkbox
                                 input(type='checkbox')
                                 span.c-indicator
@@ -81,20 +81,20 @@ body
                         .signup
                             .form-group
                                 label.form-control-label(for='username') Username:
-                                //- span.invalid
-                                input#username.form-control(type='text', autofocus, autocomplete="off")
+                                span.invalid
+                                input#username.form-control(type='text')
                             .form-group
                                 label.form-control-label(for='email') Email:
-                                //- span.invalid
+                                span.invalid
                                 input#email.form-control(type='text')
                             .form-group
                                 label.form-control-label(for='password') Password:
-                                //- span.invalid
-                                input#password.form-control(type='password', autocomplete="off")
+                                span.invalid
+                                input#password.form-control(type='password')
                             .form-group
                                 label.form-control-label(for='confirm-password') Confirm password:
-                                //- span.invalid
-                                input#confirm-password.form-control(type='password', autocomplete="off")
+                                span.invalid
+                                input#confirm-password.form-control(type='password')
 
                             .gender
                                 label.c-input.c-radio
@@ -111,29 +111,13 @@ body
                                     | Upload avatar 
                                     input(type='file')
                                 #avatar-block
-
-
-                                //- input#resizer(type='range', min='0', max='100', value='1')
-                                //- div
-                                //-     img#avatar(src="https://pbs.twimg.com/profile_images/587571943513137152/amdnGVqf_400x400.jpg", alt="Your avatar")
-
-                            //- .btn-group.gender(data-toggle='buttons')
-                            //-     label.btn.btn-primary.male
-                            //-         input#option1(type='radio', name='gender', autocomplete='off')
-                            //-         | Male
-                            //-     label.btn.btn-primary.female
-                            //-         input#option2(type='radio', name='gender', autocomplete='off')
-                            //-         | Female
-
-
                         .incognito
                             .form-group
                                 label.form-control-label(for='username') Username:
-                                //- span.invalid
-                                input#username.form-control(type='text', autofocus, autocomplete="off")
-
+                                span.invalid
+                                input#guestName.form-control(type='text')
                 .modal-footer
-                    button#enter-chat-button.btn(type='button') Enter
+                    button#enter-chat-button.btn(type='button') Join
 
     #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')

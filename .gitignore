@@ -5,3 +5,7 @@ npm-debug.log
 .idea
 handychat
 build
+
+*.html
+
+build/assets/js/app.js

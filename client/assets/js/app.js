@@ -474,7 +474,13 @@ $(function() {
     var avatar = null;
     var enterMode = "login";
     $(".signup-item").on("click", function() {
+        if (enterMode === "signup") {
+            return;
+        }
         enterMode = "signup";
+        setTimeout(function () {
+            $("#username").focus();
+        }, 1);
         $("#enter-chat-modal .form > div").hide();
         $(".signup").show();
         $(".nav-item a").removeClass("active");
@@ -538,12 +544,26 @@ $(function() {
     });
 
     $(".incognito-item").on("click", function() {
+        if (enterMode === "incognito") {
+            return;
+        }
+        enterMode = "incognito";
+        setTimeout(function () {
+            $("#guestName").focus();
+        }, 1);
         $("#enter-chat-modal .form > div").hide();
         $(".incognito").show();
         $(".nav-item a").removeClass("active");
         $(".incognito-item a").addClass("active");
     });
     $(".login-item").on("click", function() {
+        if (enterMode === "login") {
+            return;
+        }
+        enterMode = "login";
+        setTimeout(function () {
+            $("#usernameOrEmail").focus();
+        }, 1);
         $("#enter-chat-modal .form > div").hide();
         $(".login").show();
         $(".nav-item a").removeClass("active");
