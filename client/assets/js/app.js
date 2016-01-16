@@ -325,7 +325,7 @@ $(function() {
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
     });
-    $("#enter-chat-button").on('click', joinedHandler);
+    // $("#enter-chat-button").on('click', joinedHandler);
     $("#username").on('keypress', joinedHandler);
     // create room
     function addErrorState($input, errorMsg) {
@@ -472,7 +472,9 @@ $(function() {
         $("#" + id + " span").remove();
     });
     var avatar = null;
+    var enterMode = "login";
     $(".signup-item").on("click", function() {
+        enterMode = "signup";
         $("#enter-chat-modal .form > div").hide();
         $(".signup").show();
         $(".nav-item a").removeClass("active");
@@ -489,6 +491,26 @@ $(function() {
                 url: 'images/female-avatar.jpg'
             });
             avatar.croppie('result', 'html');
+        }
+    });
+
+    $('#enter-chat-button').on('click', function (e) {
+        switch (enterMode) {
+            //case "login":
+                //
+              //  break;
+            case "signup":
+                avatar.croppie('result', {
+                    type: 'canvas',
+                    size: 'original'
+                }).then(function (avatarBase64) {
+                    console.log(avatarBase64);
+                    socket.emit("joined", { enterMode: enterMode, avatarBase64: avatarBase64 });
+                    // $('#imagebase64').val(resp);
+                    // $('#form').submit();
+                });
+              //  break;
+            //case "incognito":
         }
     });
 

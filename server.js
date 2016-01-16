@@ -1,3 +1,4 @@
+var fs = require("fs");
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var sha1 = require('sha1');
@@ -74,6 +75,17 @@ if(!String.linkify) {
     };
 }
 
+function decodeBase64Image(dataString) {
+    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+
+    if (matches.length !== 3) {
+        return new Error('Invalid input string');
+    } else {
+        console.log(matches[1]);
+        return new Buffer(matches[2], 'base64');
+    }
+}
+
 mongo.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
@@ -131,8 +143,17 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
             }
         });
 
-        socket.on("joined", function (username) {
+        socket.on("joined", function (/*username*/userData) {
 
+            // console.log(userData.avatarBase64);
+            // console.log(typeof userData.avatarBase64 + "----------------------------------");
+            // decodeBase64Image(userData.avatarBase64);
+            // fs.writeFile("niko.png", decodeBase64Image(userData.avatarBase64), function(err) {
+                // return;
+            // });
+            fs.writeFileSync(/*userData.username*/"niko.jpg", decodeBase64Image(userData.avatarBase64));
+            // return;
+/*
             username = username.trim();
 
             people.findOne({ name: username }, function (err, userWithSameName) {
@@ -234,7 +255,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                         });
                     });
                 });
-            });
+            });*/
         });
 
         socket.on("createRoom", function (roomInfo) {
