@@ -65,7 +65,7 @@ body
                     .form
                         .login
                             .form-group
-                                label.form-control-label(for='username') Username:
+                                label.form-control-label(for='username') Username or Email:
                                 //- span.invalid
                                 input#username.form-control(type='text', autofocus, autocomplete="off")
                             .form-group
@@ -84,6 +84,10 @@ body
                                 //- span.invalid
                                 input#username.form-control(type='text', autofocus, autocomplete="off")
                             .form-group
+                                label.form-control-label(for='email') Email:
+                                //- span.invalid
+                                input#email.form-control(type='text')
+                            .form-group
                                 label.form-control-label(for='password') Password:
                                 //- span.invalid
                                 input#password.form-control(type='password', autocomplete="off")
@@ -94,7 +98,7 @@ body
 
                             .gender
                                 label.c-input.c-radio
-                                    input#male(name='gender', type='radio', value="male", checked="checked")
+                                    input#male(name='gender', type='radio', value="male", checked)
                                     span.c-indicator
                                     | Male
                                 label.c-input.c-radio
