@@ -1,4 +1,4 @@
-scss_files: "sass/*.sass"
+scss_files: "scss/*.scss"
 
 linters:
   BangFormat:
@@ -17,7 +17,7 @@ linters:
 
   Comment:
     enabled: true
-    exclude: ['_normalize.sass', 'bootstrap.sass']
+    exclude: ['_normalize.scss', 'bootstrap.scss']
 
   DebugStatement:
     enabled: true
@@ -27,7 +27,7 @@ linters:
 
   DuplicateProperty:
     enabled: true
-    exclude: ['mixins/_tab-focus.sass', '_reboot.sass']
+    exclude: ['mixins/_tab-focus.scss', '_reboot.scss']
 
   ElsePlacement:
     enabled: true
@@ -94,7 +94,7 @@ linters:
     enabled: true
     ignore_unspecified: false
     severity: warning
-    exclude: ['_normalize.sass']
+    exclude: ['_normalize.scss']
     order: [
       "position",
       "top",
@@ -452,7 +452,7 @@ linters:
     enabled: true
     identifier_list: base
     include: []
-    exclude: ['_normalize.sass']
+    exclude: ['_normalize.scss']
 
   ZeroUnit:
     enabled: true

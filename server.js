@@ -1,9 +1,31 @@
+var fs = require("fs");
 var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
 var sha1 = require('sha1');
 var jade = require('gulp-jade');
+var logger = require('morgan');
+var favicon = require('serve-favicon');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+// var mongoose = require('mongoose');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var express = require('express');
 var app = express();
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var port = process.env.OPENSHIFT_NODEJS_PORT || '8000';
@@ -25,6 +47,13 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
         process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
         process.env.OPENSHIFT_APP_NAME;
 }
+console.log(connection_string);
+
+// passport config
+var Account = require('./models/account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 // regexp for URLs and E-mails
 if(!String.linkify) {
@@ -46,6 +75,17 @@ if(!String.linkify) {
     };
 }
 
+function decodeBase64Image(dataString) {
+    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+
+    if (matches.length !== 3) {
+        return new Error('Invalid input string');
+    } else {
+        console.log(matches[1]);
+        return new Buffer(matches[2], 'base64');
+    }
+}
+
 mongo.connect('mongodb://' + connection_string, function (err, db) {
 
     var rooms = db.collection('rooms');
@@ -63,6 +103,10 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
 
     app.get('/', function (req, res) {
         res.sendFile(__dirname + '/build/index.html');
+    });
+
+    app.get('/niko', function (req, res) {
+        res.sendFile(__dirname + '/build/index1.html');
     });
 
     var whitespacePattern = /^\s*$/;
@@ -99,8 +143,17 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
             }
         });
 
-        socket.on("joined", function (username) {
+        socket.on("joined", function (/*username*/userData) {
 
+            // console.log(userData.avatarBase64);
+            // console.log(typeof userData.avatarBase64 + "----------------------------------");
+            // decodeBase64Image(userData.avatarBase64);
+            // fs.writeFile("niko.png", decodeBase64Image(userData.avatarBase64), function(err) {
+                // return;
+            // });
+            fs.writeFileSync(/*userData.username*/"niko.jpg", decodeBase64Image(userData.avatarBase64));
+            // return;
+/*
             username = username.trim();
 
             people.findOne({ name: username }, function (err, userWithSameName) {
@@ -202,7 +255,7 @@ mongo.connect('mongodb://' + connection_string, function (err, db) {
                         });
                     });
                 });
-            });
+            });*/
         });
 
         socket.on("createRoom", function (roomInfo) {

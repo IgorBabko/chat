@@ -13,15 +13,19 @@ html(lang='en')
         link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
         link(rel='stylesheet', href='animate.css/animate.min.css')
         link(rel='stylesheet', href='toastr/toastr.min.css')
+        link(rel='stylesheet', href='css/croppie.css')
         link(href='css/app.css', rel='stylesheet', type='text/css')
+        link(href='css/imgareaselect-default.css', rel='stylesheet', type='text/css')
 
         script(src='jquery/dist/jquery.min.js')
+        script(src='js/croppie.js')
         script(src='tether/dist/js/tether.min.js')
         script(src='bootstrap/dist/js/bootstrap.min.js')
         script(src='remarkable-bootstrap-notify/bootstrap-notify.js')
         script(src='toastr/toastr.min.js')
         script(src='handlebars/handlebars.min.js')
         script(src='js/jquery.timeago.js', type='text/javascript')
+        script(src='js/jquery.imgareaselect.pack.js', type='text/javascript')
         script(src='socket.io/socket.io.js')
 
         // templates
@@ -47,17 +51,85 @@ html(lang='en')
 body
     #enter-chat-modal.modal.fade(role='dialog', aria-labelledby='welcome', aria-hidden='false')
         .modal-dialog(role='document')
-            .modal-content
+            .modal-content.niko
                 .modal-header
                     h4#welcome.modal-title Welcome!
                 .modal-body
+                    ul.nav.nav-tabs
+                        li.nav-item.login-item
+                            a.nav-link.active(href='#') Log In
+                        li.nav-item.signup-item
+                            a.nav-link(href='#') Sign Up
+                        li.nav-item.incognito-item
+                            a.nav-link(href='#') Incognito
                     .form
-                        .form-group
-                            label.form-control-label(for='username') Your name:
-                            span.invalid
-                            input#username.form-control(type='text', autofocus, autocomplete="off")
+                        .login
+                            .form-group
+                                label.form-control-label(for='username') Username:
+                                //- span.invalid
+                                input#username.form-control(type='text', autofocus, autocomplete="off")
+                            .form-group
+                                label.form-control-label(for='password') Password:
+                                //- span.invalid
+                                input#password.form-control(type='password', autocomplete="off")
+                            label.c-input.c-checkbox
+                                input(type='checkbox')
+                                span.c-indicator
+                                | Remember me
+
+
+                        .signup
+                            .form-group
+                                label.form-control-label(for='username') Username:
+                                //- span.invalid
+                                input#username.form-control(type='text', autofocus, autocomplete="off")
+                            .form-group
+                                label.form-control-label(for='password') Password:
+                                //- span.invalid
+                                input#password.form-control(type='password', autocomplete="off")
+                            .form-group
+                                label.form-control-label(for='confirm-password') Confirm password:
+                                //- span.invalid
+                                input#confirm-password.form-control(type='password', autocomplete="off")
+
+                            .gender
+                                label.c-input.c-radio
+                                    input#radio1(name='radio', type='radio')
+                                    span.c-indicator
+                                    | Male
+                                label.c-input.c-radio
+                                    input#radio2(name='radio', type='radio')
+                                    span.c-indicator
+                                    | Female
+
+                            .avatar-block
+                                span.btn.btn-default.btn-file
+                                    | Upload avatar 
+                                    input(type='file')
+                                #avatar-block
+
+
+                                //- input#resizer(type='range', min='0', max='100', value='1')
+                                //- div
+                                //-     img#avatar(src="https://pbs.twimg.com/profile_images/587571943513137152/amdnGVqf_400x400.jpg", alt="Your avatar")
+
+                            //- .btn-group.gender(data-toggle='buttons')
+                            //-     label.btn.btn-primary.male
+                            //-         input#option1(type='radio', name='gender', autocomplete='off')
+                            //-         | Male
+                            //-     label.btn.btn-primary.female
+                            //-         input#option2(type='radio', name='gender', autocomplete='off')
+                            //-         | Female
+
+
+                        .incognito
+                            .form-group
+                                label.form-control-label(for='username') Username:
+                                //- span.invalid
+                                input#username.form-control(type='text', autofocus, autocomplete="off")
+
                 .modal-footer
-                    button#enter-chat-button.btn.btn-success(type='button') Enter
+                    button#enter-chat-button.btn(type='button') Enter
 
     #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')

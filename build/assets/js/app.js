@@ -1,22 +1,25 @@
-;$(function () {
-
+;
+$(function() {
     var socket = io('http://' + window.location.hostname + ':8000');
-
     var validErrorsSound = new Audio('/music/valid_errors.mp3');
     var messageSound = new Audio('/music/message.mp3');
     var invitationSound = new Audio('/music/invitation.mp3');
     var actionPerformedSound = new Audio('/music/action_performed.mp3');
     var privateMessageSound = new Audio('/music/private_message.mp3');
     var generalSound = new Audio('/music/enter_left.mp3');
-
+    $('img#avatar').imgAreaSelect({
+        handles: true,
+        parent: $('#enter-chat-modal .modal-content')
+    });
     toastr.options = {
         "positionClass": "toast-top-right",
         "timeOut": 3000,
         "newestOnTop": false
     };
-
-    $("#enter-chat-modal").modal({backdrop: 'static', keyboard: false});
-
+    $("#enter-chat-modal").modal({
+        backdrop: 'static',
+        keyboard: false
+    });
     var isRoomsVisible = true,
         isPeopleVisible = true;
     var gridManager = {
@@ -25,13 +28,12 @@
         isOverlayShown: false,
         isScreenWide: true,
         contentWidthCrop: 600,
-
-        init: function () {
+        init: function() {
             this.defineInitialGrid();
             this.setupHandlers();
             return this;
         },
-        defineInitialGrid: function () {
+        defineInitialGrid: function() {
             if ($(window).width() >= 992) {
                 $(".content").css({
                     "width": "calc(100% - " + this.contentWidthCrop + "px)",
@@ -48,15 +50,18 @@
                 $("#rooms-sidebar, #people-sidebar").addClass("hidden");
                 $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 //$("#toast-container").css("right", "12px");
-                $(".content").css({"width": "100%", "margin": "50px 0 0 0"});
+                $(".content").css({
+                    "width": "100%",
+                    "margin": "50px 0 0 0"
+                });
             }
         },
-        setupHandlers: function () {
+        setupHandlers: function() {
             $("#rooms-sidebar-button, #people-sidebar-button").on("click", this.togglingSidebarsHandler);
             $(window).on("resize", this.resizingWindowHandler);
             $(".content").on("click", this.clickOverlayHandler);
         },
-        togglingSidebarsHandler: function () {
+        togglingSidebarsHandler: function() {
             var $this = $(this);
             var _this = gridManager;
             $this.toggleClass("active");
@@ -66,14 +71,12 @@
             } else {
                 $("#people-sidebar").toggleClass("hidden");
                 isPeopleVisible = !isPeopleVisible;
-
                 if (isPeopleVisible && $(window).width() >= 992) {
                     $("#toast-container").css("right", "310px");
                 } else {
                     $("#toast-container").css("right", "10px");
                 }
             }
-
             if ($(window).width() > 992) {
                 _this.contentWidthCrop = isRoomsVisible && isPeopleVisible ? 600 : isRoomsVisible || isPeopleVisible ? 300 : 0;
                 _this.contentMarginLeft = isRoomsVisible ? 300 : 0;
@@ -84,10 +87,13 @@
                 });
             } else {
                 _this.toggleOverlay();
-                $(".content").css({"width": "100%", "margin": "50px 0 0 0"});
+                $(".content").css({
+                    "width": "100%",
+                    "margin": "50px 0 0 0"
+                });
             }
         },
-        resizingWindowHandler: function () {
+        resizingWindowHandler: function() {
             var _this = gridManager;
             if ($(window).width() > 992 && !_this.isScreenWide) {
                 if (isPeopleVisible) {
@@ -107,10 +113,13 @@
                 $("#rooms-sidebar ul, #people-sidebar ul").addClass("shadowless");
                 _this.isScreenWide = false;
                 _this.toggleOverlay();
-                $(".content").css({"width": "100%", "margin": "50px 0 0 0"});
+                $(".content").css({
+                    "width": "100%",
+                    "margin": "50px 0 0 0"
+                });
             }
         },
-        clickOverlayHandler: function () {
+        clickOverlayHandler: function() {
             if ($(window).width() <= 992) {
                 var _this = gridManager;
                 if (_this.isOverlayShown) {
@@ -124,7 +133,7 @@
                 }
             }
         },
-        toggleOverlay: function () {
+        toggleOverlay: function() {
             var _this = gridManager;
             if (isRoomsVisible || isPeopleVisible) {
                 $(".content").addClass("shadowed");
@@ -135,98 +144,90 @@
             }
         }
     };
-
     gridManager.init();
-
-    $("#create-room-button").on("click", function () {
-        $("#create-room-modal").modal().on("shown.bs.modal", function () {
+    $("#create-room-button").on("click", function() {
+        $("#create-room-modal").modal().on("shown.bs.modal", function() {
             $("#room-name").focus();
         });
     });
-
-    $("#delete-room-button").on("click", function () {
-        $("#delete-room-modal").modal().on("shown.bs.modal", function () {
+    $("#delete-room-button").on("click", function() {
+        $("#delete-room-modal").modal().on("shown.bs.modal", function() {
             $("#room-c-input").focus();
         });
     });
-
     //$("#people-sidebar li").on("click", function () {
     //    $("#private-message-modal").modal().on("shown.bs.modal", function () {
     //        $("#private-message-textarea").focus();
     //    });
     //});
-
     var newRoomId = "";
-    $("#enter-room").on("click", function () {
-        socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#password").val()});
+    $("#enter-room").on("click", function() {
+        socket.emit("changeRoom", {
+            newRoomId: newRoomId,
+            password: $("#password").val()
+        });
     });
-
-    $("#password").on("keypress", function (e) {
+    $("#password").on("keypress", function(e) {
         if (e.keyCode == 13) {
-            socket.emit("changeRoom", {newRoomId: newRoomId, password: $("#password").val()});
+            socket.emit("changeRoom", {
+                newRoomId: newRoomId,
+                password: $("#password").val()
+            });
         }
     });
-
-    $("#delete-room").on("click", function () {
-        socket.emit("deleteRoom", {roomId: newRoomId, code: $("#code").val()});
+    $("#delete-room").on("click", function() {
+        socket.emit("deleteRoom", {
+            roomId: newRoomId,
+            code: $("#code").val()
+        });
     });
-
-    $("#code").on("keypress", function (e) {
+    $("#code").on("keypress", function(e) {
         if (e.keyCode == 13) {
-            socket.emit("deleteRoom", {roomId: newRoomId, code: $("#code").val()});
+            socket.emit("deleteRoom", {
+                roomId: newRoomId,
+                code: $("#code").val()
+            });
         }
     });
-
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function() {
         location.reload();
     });
-
     //$("#private-messages-button").on("click", function () {
     //    $("#private-messages").show();
     //    $("#public-messages").hide();
     //});
-
     //$("#public-messages-button").on("click", function () {
     //    $("#public-messages").show();
     //    $("#private-messages").hide();
     //});
-
-    $("#send").on("click", function () {
+    $("#send").on("click", function() {
         socket.emit("message", $("#message-input").val());
     });
-
-    $("#message-input").on("keypress", function (e) {
+    $("#message-input").on("keypress", function(e) {
         if (e.keyCode == 13) {
             socket.emit("message", $("#message-input").val());
         }
     });
-
     // keypress handler
-
     var messageTemplate = window.Handlebars.compile($("#message-template").html());
     var roomTemplate = window.Handlebars.compile($("#room-template").html());
     var userTemplate = window.Handlebars.compile($("#user-template").html());
     var typingTemplate = window.Handlebars.compile($("#typing-template").html());
-
-    socket.on("message", function (message) {
+    socket.on("message", function(message) {
         // message.myMessage = message.myself ? "my-message" : "";
         var shouldScroll = true;
         if ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight !== $("#messages")[0].scrollHeight) {
             shouldScroll = false;
         }
-        
         $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
-
         if (shouldScroll) {
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         }
-
         if (message.myself) {
             $("#message-input").val("");
         } else {
             messageSound.play();
         }
-
         scaleMessage();
     });
 
@@ -234,10 +235,9 @@
         $("#messages .media:last-child").addClass("scaledDown");
         setTimeout(function() {
             $("#messages .media:last-child").removeClass("scaledDown").addClass("scaledUp");
-        }, 1);
+        }, 0.001);
     }
-
-    $(window).on("resize", function () {
+    $(window).on("resize", function() {
         console.log("scrollTop: " + $("#messages")[0].scrollTop);
         console.log("scrollHeight: " + $("#messages")[0].scrollHeight);
         console.log("scrollTop + clientHeight: " + ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight));
@@ -245,16 +245,18 @@
 
     function changeRoomHandler() {
         if ($(this).attr("id") === globalRoomId) {
-            socket.emit("changeRoom", {newRoomId: globalRoomId, password: ""});
+            socket.emit("changeRoom", {
+                newRoomId: globalRoomId,
+                password: ""
+            });
         } else {
-            $("#room-password-modal").modal().on("shown.bs.modal", function () {
+            $("#room-password-modal").modal().on("shown.bs.modal", function() {
                 $("#password").focus();
             });
         }
         newRoomId = $(this).attr("id");
     }
-
-    socket.on("populateChat", function (data) {
+    socket.on("populateChat", function(data) {
         for (var i = data.roomsInfo.length - 1; 0 <= i; --i) {
             $("#rooms-sidebar ul").prepend(roomTemplate(data.roomsInfo[i]));
         }
@@ -270,9 +272,7 @@
         }
         $("time").timeago();
     });
-
     $("html").show();
-
 
     function joinedHandler(e) {
         if (e.type === 'click' || e.keyCode == 13) {
@@ -281,7 +281,6 @@
     }
 
     function addNotification(message, type) {
-
         switch (type) {
             case "privateMessage":
                 window.toastr.success(message);
@@ -303,25 +302,21 @@
                 window.toastr.error(message);
                 validErrorsSound.play();
         }
-
         // TODO
         if (!isPeopleVisible || isPeopleVisible && $(window).width() < 992) {
-            $("#toast-container").css({"transition": "none", "right": "10px"});
+            $("#toast-container").css({
+                "transition": "none",
+                "right": "10px"
+            });
         }
     }
-
-    socket.on("joined", function (data) {
+    socket.on("joined", function(data) {
         if (data.hasOwnProperty("myself")) {
-
-            socket.on("notification", function (notificationInfo) {
+            socket.on("notification", function(notificationInfo) {
                 addNotification(notificationInfo.message, notificationInfo.type);
             });
-
             $("#enter-chat-modal").modal("hide");
-            $("#people-sidebar ul")
-                .prepend(userTemplate(data))
-                .find("li:first-child")
-                .addClass("active");
+            $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child").addClass("active");
             socketId = data._id;
             globalRoomId = currentRoomId = data.globalRoomId;
             $("#message-input").focus();
@@ -330,33 +325,21 @@
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
     });
-
-    $("#enter-chat-button").on('click', joinedHandler);
+    // $("#enter-chat-button").on('click', joinedHandler);
     $("#username").on('keypress', joinedHandler);
-
     // create room
-
     function addErrorState($input, errorMsg) {
         //noinspection JSValidateTypes
-        $input
-            .addClass("form-control-danger")
-            .siblings(".invalid")
-            .text(errorMsg)
-            .parent()
-            .addClass("has-danger");
+        $input.addClass("form-control-danger").siblings(".invalid").text(errorMsg).parent().addClass("has-danger");
     }
 
     function removeErrorState($input) {
         //noinspection JSValidateTypes
-        $input.removeClass("form-control-danger")
-            .parent()
-            .removeClass("has-danger")
-            .find(".invalid")
-            .text("");
+        $input.removeClass("form-control-danger").parent().removeClass("has-danger").find(".invalid").text("");
     }
 
     function updateValidationErrors(modalId, errors) {
-        $("#" + modalId + " .form input").each(function (index, input) {
+        $("#" + modalId + " .form input").each(function(index, input) {
             var $input = $(input),
                 inputId = $input.attr("id");
             if (!$input.hasClass("form-control-danger") && errors.hasOwnProperty(inputId)) {
@@ -369,7 +352,7 @@
 
     function getInputsData($inputs) {
         var formData = {};
-        $inputs.each(function (index, input) {
+        $inputs.each(function(index, input) {
             var $input = $(input);
             formData[$input.attr("id")] = $input.val();
         });
@@ -377,63 +360,48 @@
     }
 
     function clearInputs($inputs) {
-        $inputs.each(function (index, input) {
+        $inputs.each(function(index, input) {
             var $input = $(input);
             removeErrorState($input);
             $input.val("");
         });
     }
-
-    $("#create").on("click", function () {
+    $("#create").on("click", function() {
         socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
     });
-
-    $("#room-name, #room-password, #room-password-confirm, #room-code, #room-code-confirm").on("keypress", function (e) {
+    $("#room-name, #room-password, #room-password-confirm, #room-code, #room-code-confirm").on("keypress", function(e) {
         if (e.keyCode == 13) {
             socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
         }
     });
-
-    socket.on("createRoom", function (data) {
+    socket.on("createRoom", function(data) {
         $("#rooms-sidebar ul").append(roomTemplate(data.roomInfo));
         $("#rooms-sidebar ul li:last-child").on("click", changeRoomHandler);
         $("#create-room-modal").modal("hide");
         clearInputs($("#create-room-modal .form input"));
     });
-
-    socket.on("validErrors", function (validationInfo) {
+    socket.on("validErrors", function(validationInfo) {
         validErrorsSound.play();
         updateValidationErrors(validationInfo.modalId, validationInfo.errors);
     });
-
-    $(window).on("unload", function () {
+    $(window).on("unload", function() {
         socket.emit("disconnect");
     });
-
-    socket.on("left", function (data) {
+    socket.on("left", function(data) {
         $("#" + data.userId).remove();
     });
-
-    socket.on("changeRoom", function (data) {
+    socket.on("changeRoom", function(data) {
         if (data.peopleFromNewRoom) {
             $("#people-sidebar ul").text("");
             for (var i = 0; i < data.peopleFromNewRoom.length; ++i) {
                 $("#people-sidebar ul").prepend(userTemplate(data.peopleFromNewRoom[i]));
             }
-            $("#people-sidebar ul")
-                .prepend(userTemplate(data.userInfo))
-                .find("li:first-child")
-                .addClass("active");
-
+            $("#people-sidebar ul").prepend(userTemplate(data.userInfo)).find("li:first-child").addClass("active");
             $("#rooms-sidebar ul li.active").removeClass("active").on("click", changeRoomHandler);
             $("#" + data.newRoomId).addClass("active").off("click", changeRoomHandler);
-
-
             $("#room-password-modal").modal("hide");
             clearInputs($("#room-password-modal .form input"));
-
             currentRoomId = data.newRoomId;
-
             $("#messages").text("");
             for (var i = 0; i < data.messages.length; ++i) {
                 $("#messages").append(messageTemplate(data.messages[i]));
@@ -447,27 +415,22 @@
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
     });
-
-    socket.on("deleteRoomItem", function (roomId) {
+    socket.on("deleteRoomItem", function(roomId) {
         $("#" + roomId).remove();
     });
-
-    socket.on("updatePeopleCounters", function (data) {
+    socket.on("updatePeopleCounters", function(data) {
         $("#" + data.newRoomInfo._id + " span").text(data.newRoomInfo.peopleCount);
-
         if (data.oldRoomInfo) {
             $("#" + data.oldRoomInfo._id + " span").text(data.oldRoomInfo.peopleCount);
         }
     });
-
     var socketId = "";
     var globalRoomId = "";
     var currentRoomId = "";
-    socket.on("deleteRoom", function (data) {
+    socket.on("deleteRoom", function(data) {
         if (data.myself === true) {
             $("#room-password-modal").modal("hide");
             clearInputs($("#room-password-modal"));
-
             if (globalRoomId === currentRoomId) {
                 for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
                     $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
@@ -477,7 +440,6 @@
                 return;
             }
         }
-
         if (data.global === true) {
             for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
                 $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
@@ -497,25 +459,151 @@
             $("#" + globalRoomId).off("click", changeRoomHandler);
         }
     });
-
-    $("#message-input").on("focus", function () {
+    $("#message-input").on("focus", function() {
         socket.emit("startTyping", socketId);
     });
-
-    $("#message-input").on("blur", function () {
+    $("#message-input").on("blur", function() {
         socket.emit("stopTyping", socketId);
     });
-
-    socket.on("startTyping", function (id) {
+    socket.on("startTyping", function(id) {
         $("#" + id).prepend(typingTemplate());
     });
-
-    socket.on("stopTyping", function (id) {
+    socket.on("stopTyping", function(id) {
         $("#" + id + " span").remove();
     });
+    var avatar = null;
+    var enterMode = "login";
+    $(".signup-item").on("click", function() {
+        enterMode = "signup";
+        $("#enter-chat-modal .form > div").hide();
+        $(".signup").show();
+        $(".nav-item a").removeClass("active");
+        $(".signup-item a").addClass("active");
+        if (!avatar) {
+            avatar = $('#avatar-block').croppie({
+                viewport: {
+                    width: 300,
+                    height: 300,
+                    type: "circle"
+                }
+            });
+            avatar.croppie('bind', {
+                url: 'images/female-avatar.jpg'
+            });
+            avatar.croppie('result', 'html');
+        }
+    });
+
+    $('#enter-chat-button').on('click', function (e) {
+        switch (enterMode) {
+            //case "login":
+                //
+              //  break;
+            case "signup":
+                avatar.croppie('result', {
+                    type: 'canvas',
+                    size: 'original'
+                }).then(function (avatarBase64) {
+                    console.log(avatarBase64);
+                    socket.emit("joined", { enterMode: enterMode, avatarBase64: avatarBase64 });
+                    // $('#imagebase64').val(resp);
+                    // $('#form').submit();
+                });
+              //  break;
+            //case "incognito":
+        }
+    });
+
+    $(".avatar-block input").on("change", function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                avatar.croppie('bind', {
+                    url: e.target.result
+                });
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    $(".incognito-item").on("click", function() {
+        $("#enter-chat-modal .form > div").hide();
+        $(".incognito").show();
+        $(".nav-item a").removeClass("active");
+        $(".incognito-item a").addClass("active");
+    });
+    $(".login-item").on("click", function() {
+        $("#enter-chat-modal .form > div").hide();
+        $(".login").show();
+        $(".nav-item a").removeClass("active");
+        $(".login-item a").addClass("active");
+    });
+    // drop avatar
+    // function allowDrop(event) {
+    //     event.preventDefault();
+    //     console.log("allowDrop");
+    //     $("img#avatar").css("cursor", "pointer");
+    // }
+    // function drop(event) {
+    //     event.preventDefault();
+    //     console.log("drop");
+    //     event.dataTransfer = event.originalEvent.dataTransfer;
+    //     if (event.dataTransfer.getData('text/html') != "") {
+    //         var imgUrl = event.dataTransfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1];
+    //         $("img#avatar").attr("src", imgUrl);
+    //     } else {
+    //         var file = event.dataTransfer.files[0];
+    //         var reader = new FileReader();
+    //         reader.readAsDataURL(file);
+    //         reader.onload = loaded;
+    //     }
+    // }
+    // function loaded(evt) {
+    //     $("img#avatar").attr("src", evt.target.result);
+    // }
+    // $('#avatar-block').croppie({}).bind("http://static.giantbomb.com/uploads/original/3/39162/1542766-gta4_preview_niko.jpg");
+    // $uploadCrop = $('#avatar-block').croppie({
+    //     viewport: {
+    //         width: 400,
+    //         height: 400,
+    //         type: 'circle'
+    //     },
+    //     boundary: {
+    //         width: 300,
+    //         height: 300
+    //     }
+    // });
+    // var basic = $('#avatar-block').croppie({
+    //     viewport: {
+    //         width: 150,
+    //         height: 200
+    //     }
+    // });
+    // basic.croppie('bind', {
+    //     url: 'http://img10.deviantart.net/8f66/i/2009/324/7/3/niko_bellic_by_deimos_remus.jpg',
+    //     points: [77,469,280,739]
+    // });
+    //on button click
+    // basic.croppie('result', 'html');
+    // $("img#avatar").on("drop", drop);
+    // $("img#avatar").on("dragover dragenter", allowDrop);
+    // $("img#avatar").on("mouseenter", function () {
+    //     $(this).data('hover',1);
+    //     console.log("hover");
+    // }).on("mouseleave", function () {
+    //     $(this).data('hover',0);
+    //     console.log("out");
+    // });
+    // $("body").on("scroll", function (e) {
+    //     if ($("img#avatar").data("hover")) {
+    //         e.preventDefault();
+    //         $("img#avatar").css({"width": "50px"});
+    //     } else {
+    //         $("img#avatar").css({"width": "300px"});
+    //     }
+    // });
+    // $(".imgareaselect-outer").appendTo("#avatar-block");
 });
-
-
 //var oldUserName = '';
 //var renameUserItem = null;
 //
@@ -599,7 +687,6 @@
 //
 //    return [li, li2];
 //}
-
 //
 //function addMessage(messageDiv, data) {
 //    var message = document.createElement('div');
@@ -665,8 +752,6 @@
 //        panelHandler();
 //    }
 //}
-
-
 //
 //function panelHandler() {
 //    if (roomsOpened) {
@@ -682,7 +767,6 @@
 //    peopleCounters[0].innerHTML = roomInfo.peopleCount;
 //    peopleCounters[1].innerHTML = roomInfo.peopleCount;
 //}
-
 /*function getElements() {
  var elements = {
  closeRoomsSidebarSmallButton: getNode('#closeRoomsSidebarSmallButton'),
@@ -738,7 +822,6 @@
  };
  return elements;
  }*/
-
 //
 //var elements = getElements();
 //var activeItemName = 'global';
@@ -779,7 +862,7 @@
 //
 //    // elements.peopleItems = getNode('.peopleSidebar ul li', true);
 //    // for(i = 0; i < elements.peopleItems.length; ++i) {
-//    // 	elements.peopleItems[i].addEventListener('click', privateMessageHandler);
+//    //    elements.peopleItems[i].addEventListener('click', privateMessageHandler);
 //    // }
 //
 //    elements.activeItem = getNode('.activeItem', true);
@@ -1313,14 +1396,12 @@
 //if (data.message) {
 //notification(data.message, 'info', 15000);
 // toastr.info(data.message, null, { closeButton: true, positionClass: 'toast-bottom-right', timeOut: 3000, preventDuplicates: true });
-
 //    var personItems = addListItem(elements.peopleLists, data.user);
 //    personItems[0].addEventListener('click', privateMessageHandler);
 //    personItems[1].addEventListener('click', privateMessageHandler);
 //} else if (data.status) {
 //
 //    elements.messageInput.focus();
-
 //if (data.status === 'doctor') {
 //    socket.status = 'doctor';
 //    var roomItems = getNode('.roomsSidebar li', true);
@@ -1374,8 +1455,6 @@
 //    }
 //}
 //elements.closeInputNameModal.click();//dispatchEvent(new MouseEvent('click'));
-
-
 //        var currentUserItems = addListItem(elements.peopleLists, data.user);
 //
 //        assignRenameHandlers(currentUserItems);
@@ -1658,8 +1737,6 @@
 //});
 //
 //elements.showInputNameModal.click();//dispatchEvent(new MouseEvent('click'));
-
-
 //
 //elements.sendRoomCodeButton.addEventListener('click', function (e) {
 //    removeRoomFormSender(e);
@@ -1673,7 +1750,6 @@
 //    changeRoomFormSender(e);
 //});
 //
-
 //
 //elements.identificationCodeInput.addEventListener('keyup', function (e) {
 //    joinedHandler(e);
