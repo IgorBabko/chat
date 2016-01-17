@@ -228,15 +228,15 @@ $(function() {
         } else {
             messageSound.play();
         }
-        scaleMessage();
+        // scaleMessage();
     });
 
-    function scaleMessage() {
-        $("#messages .media:last-child").addClass("scaledDown");
-        setTimeout(function() {
-            $("#messages .media:last-child").removeClass("scaledDown").addClass("scaledUp");
-        }, 0.001);
-    }
+    // function scaleMessage() {
+    //     $("#messages .media:last-child").addClass("scaledDown");
+    //     setTimeout(function() {
+    //         $("#messages .media:last-child").removeClass("scaledDown").addClass("scaledUp");
+    //     }, 0.001);
+    // }
 
     function changeRoomHandler() {
         if ($(this).attr("id") === globalRoomId) {
