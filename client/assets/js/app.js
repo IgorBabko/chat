@@ -332,10 +332,11 @@ $(function() {
     }
 
     function updateValidationErrors(modalId, errors) {
+        console.log(errors);
         $("#" + modalId + " .form input").each(function(index, input) {
             var $input = $(input),
                 inputId = $input.attr("id");
-            if (!$input.hasClass("form-control-danger") && errors.hasOwnProperty(inputId)) {
+            if (errors.hasOwnProperty(inputId)) {
                 addErrorState($input, errors[inputId]);
             } else if ($input.hasClass("form-control-danger") && !errors.hasOwnProperty(inputId)) {
                 removeErrorState($input);
