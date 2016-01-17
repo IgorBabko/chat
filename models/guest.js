@@ -6,10 +6,7 @@ function trimVal(value) {
 }
 var Guest = new Schema({
     _id: String,
-    name: {
-        type: String,
-        set: trimVal
-    },
+    name: String,
     roomName: String
 });
 
@@ -24,7 +21,7 @@ GuestModel.schema.path('name').validate(function (value, callback) {
 }, 'Guest {VALUE} already exists');
 
 GuestModel.schema.path('name').validate(function (value) {
-    return !/^\s*$/.test(value);
+    return !/^\s*$/.test(value.trim());
 }, 'Name should not be empty');
 
 module.exports = GuestModel;

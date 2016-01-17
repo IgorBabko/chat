@@ -152,44 +152,10 @@ function populateChat(guestData, socket) {
 }
 // join functions (login, signup, incognito)
 function enterAsGuest(guestData, socket) {
-    // username = username.trim();
-    // User.findOne({ name: userData.username }, function (err, userWithSameName) {
-    // if (err) {
-    // throw err;
-    // }
-    // var errors = {};
-    // if (userWithSameName != null) {
-    // errors.username = "Username already exists!";
-    // console.log("1");
-    // } else if (whitespacePattern.test(username)) {
-    // errors.username = "Username should not be empty!";
-    // console.log("2");
-    // }
-    // if (!userData.isIncognito) {
-    //     userData.isIncognito = false;
-    // }
     guestData._id = "_" + socket.id.slice(2);
     guestData.roomName = "global";
     var guest = new Guest(guestData);
-    // console.log("validdd" + guest.validateSync().toString());
-    // console.log("guest" + guest);
     guest.save(function(err) {
-        // console.log("afterSave");
-        // console.log("errors" + err);
-        // console.log(err.errors);
-        // console.log(String(err.errors.color));
-        // console.log(err.errors.color.kind);
-        // console.log(err.errors.color.path);
-        // console.log(err.errors.color.value);
-        // console.log(err.name);
-        // console.log(err.message);
-        // if ((Object.keys(errors).length !== 0)) {
-        // console.log(Object.keys(errors).length);
-        // socket.emit("validErrors", {
-        //     modalId: "enter-chat-modal",
-        //     errors: errors
-        // });
-        // return;
         if (!err) {
             Room.update({
                 name: "global"
@@ -219,6 +185,38 @@ function enterAsGuest(guestData, socket) {
         }
     });
 }
+
+function addMessage(text, socket) {
+    Guest.findOne({
+        _id: "_" + socket.id.slice(2)
+    }, function(err, author) {
+        if (err) {
+            throw err;
+        }
+        var message = {
+            _id: "_" + sha1(new Date().toString()),
+            author: author.name,
+            postedDate: new Date().toISOString(),
+            text: text.linkify(),
+            roomName: socket.room
+        };
+
+        var messageObj = new Message(message);
+        messageObj.save(function (err) {
+            if (err) {
+                socket.emit("notification", {
+                    message: err.errors.text.message,
+                    type: "validErrors"
+                });
+            } else {
+                socket.broadcast.to(socket.room).emit("message", message);
+                message.myself = true;
+                socket.emit("message", message);
+            }
+        });
+    });
+}
+    
 mongoose.connect('mongodb://' + connection_string, function(err, db) {
     // var rooms = db.collection('rooms');
     // var people = db.collection('people');
@@ -237,37 +235,10 @@ mongoose.connect('mongodb://' + connection_string, function(err, db) {
     app.get('/niko', function(req, res) {
         res.sendFile(__dirname + '/build/index1.html');
     });
-    // var whitespacePattern = /^\s*$/;
-    // function isEmpty(value) {
-    //     return whitespacePattern.test(value);
-    // }
+
     clients.on('connection', function(socket) {
-        //socket.emit("populateChat", {roomsInfo: rooms.find()});
         socket.on("message", function(text) {
-            if (whitespacePattern.test(text.trim())) {
-                socket.emit("notification", {
-                    message: "Message should not be empty",
-                    type: "validErrors"
-                });
-            } else {
-                people.findOne({
-                    _id: "_" + socket.id.slice(2)
-                }, function(err, author) {
-                    if (err) {
-                        throw err;
-                    }
-                    var message = {
-                        author: author.name,
-                        postedDate: new Date().toISOString(),
-                        text: text.linkify(),
-                        room: socket.room
-                    };
-                    messages.insert(message);
-                    socket.broadcast.to(socket.room).emit("message", message);
-                    message.myself = true;
-                    socket.emit("message", message);
-                });
-            }
+            addMessage(text, socket);
         });
         socket.on("changeDefaultAvatar", function(gender) {
             // @TODO Check if gender pic exists

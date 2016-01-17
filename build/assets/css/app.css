@@ -56,7 +56,7 @@ header {
     cursor: default;
     text-shadow: 0 0 1px black; }
 
-header, .modal-header {
+header, .modal-header, #send {
   background: -moz-linear-gradient(to bottom, #feccb1 0%, #fb955e 47%, #fb955e 47%, #f17432 50%, #ea5507 100%);
   background: -webkit-linear-gradient(to bottom, #feccb1 0%, #fb955e 47%, #fb955e 47%, #f17432 50%, #ea5507 100%);
   background: linear-gradient(to bottom, #feccb1 0%, #fb955e 47%, #fb955e 47%, #f17432 50%, #ea5507 100%); }
@@ -105,8 +105,11 @@ header, .modal-header {
 
 .content {
   transition: all 0.3s ease-in-out;
-  background: #FFE9DD;
-  opacity: 1; }
+  background: #FEC8AB;
+  opacity: 1;
+  background: -moz-linear-gradient(#FFDECD 0%, #FBAB81 47%, #fa935c 100%);
+  background: -webkit-linear-gradient(#FFDECD 0%, #FBAB81 47%, #fa935c 100%);
+  background: linear-gradient(#FFDECD 0%, #FBAB81 47%, #fa935c 100%); }
   .content .input-group {
     padding: 0; }
   .content.shadowed {
@@ -147,6 +150,11 @@ header, .modal-header {
 
 #send {
   background: #772A00; }
+  #send:hover {
+    background: #772A00 !important; }
+
+#message-input {
+  border: 1px solid #772A00; }
 
 #message-input {
   height: 40px;
@@ -206,7 +214,7 @@ header, .modal-header {
     left: -300px; }
   #rooms-sidebar ul {
     height: calc(100vh - 50px);
-    box-shadow: 2px 0 8px -3px #FEBF9D; }
+    box-shadow: 2px 0 8px -3px #772a00; }
 
 #people-sidebar {
   z-index: 3;
@@ -219,7 +227,7 @@ header, .modal-header {
     right: -300px; }
   #people-sidebar ul {
     height: calc(100vh - 50px);
-    box-shadow: -2px 0 8px -3px #FEBF9D; }
+    box-shadow: -2px 0 8px -3px #772a00; }
     #people-sidebar ul .list-group-item {
       text-align: right;
       background: none; }
@@ -300,7 +308,7 @@ label {
   padding-right: 10px !important; }
 
 .list-group {
-  background: #FFF9F6;
+  background: #FFECE2;
   overflow: auto;
   height: calc(100vh - 50px) !important; }
 
@@ -311,27 +319,24 @@ label {
   overflow-x: auto; }
 
 .posted-date {
-  position: absolute;
-  top: -10px;
-  right: 0;
-  color: #025aa5;
+  float: right;
+  color: #772A00;
   font-size: 50% !important;
   font-weight: 200; }
 
 .media {
   margin: 50px 50px !important;
-  background: white;
-  padding: 30px;
-  box-shadow: 3px 3px 3px #A1D3FF; }
+  background: #FFF9F6;
+  padding: 20px;
+  box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+  border-radius: 10px; }
 
 .media-heading {
-  margin: 10px 0;
   font-weight: bold;
   border-bottom: 1px dashed #025aa5;
   padding-bottom: 5px;
   position: relative;
-  padding-top: 7px;
-  color: #025aa5; }
+  color: #772A00; }
 
 #messages {
   height: calc(100vh - 86px);
