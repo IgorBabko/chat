@@ -105,11 +105,8 @@ header, .modal-header, #send {
 
 .content {
   transition: all 0.3s ease-in-out;
-  background: #FEC8AB;
-  opacity: 1;
-  background: -moz-linear-gradient(#FFDECD 0%, #FBAB81 47%, #fa935c 100%);
-  background: -webkit-linear-gradient(#FFDECD 0%, #FBAB81 47%, #fa935c 100%);
-  background: linear-gradient(#FFDECD 0%, #FBAB81 47%, #fa935c 100%); }
+  background: #F8925C;
+  opacity: 1; }
   .content .input-group {
     padding: 0; }
   .content.shadowed {
@@ -154,11 +151,12 @@ header, .modal-header, #send {
     background: #772A00 !important; }
 
 #message-input {
-  border: 1px solid #772A00; }
-
-#message-input {
-  height: 40px;
-  font-size: 18px; }
+  border: 1px solid #F8925C;
+  font-size: 18px;
+  height: 45px;
+  border-bottom-width: 0;
+  border-right-width: 0;
+  border-color: #F8925C !important; }
 
 #search-input {
   height: 36px;
@@ -324,31 +322,39 @@ label {
   font-size: 50% !important;
   font-weight: 200; }
 
-.media {
-  margin: 50px 50px !important;
-  background: #FFF9F6;
-  padding: 20px;
-  box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
-  border-radius: 10px; }
-
-.media-heading {
-  font-weight: bold;
-  border-bottom: 1px dashed #025aa5;
-  padding-bottom: 5px;
-  position: relative;
-  color: #772A00; }
+.message {
+  margin: 50px 70px 50px 20px !important;
+  position: relative; }
+  .message .avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+    float: left;
+    margin-right: 20px;
+    margin-top: 15px; }
+  .message .rect {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 45px;
+    left: 82px;
+    background: #FFECE2;
+    transform: rotate(45deg); }
+  .message .media {
+    background: #FFECE2;
+    padding: 20px;
+    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+    border-radius: 10px; }
+    .message .media .media-heading {
+      font-weight: bold;
+      padding-bottom: 5px;
+      position: relative;
+      color: #772A00; }
 
 #messages {
   height: calc(100vh - 86px);
   overflow-y: scroll; }
-
-#messageInput {
-  height: 45px;
-  border-bottom-width: 0;
-  border-right-width: 0;
-  border-color: #75bffe !important; }
-  #messageInput:focus {
-    border-bottom-width: 0; }
 
 #enter-chat-modal .nav {
   border-bottom: 1px solid #fecbaf;

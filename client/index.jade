@@ -29,12 +29,22 @@ html(lang='en')
         script(src='socket.io/socket.io.js')
 
         // templates
-        script#message-template(type="text/x-handlebars-template")
+        script#guest-message-template(type="text/x-handlebars-template")
             .media
                 .media-body
                     h4.media-heading.name {{author}}
                         time.posted-date(datetime='{{postedDate}}')
                     | {{{text}}}
+
+        script#message-template(type="text/x-handlebars-template")
+            .message
+                img.avatar(src='images/male.jpg')
+                .rect
+                .media
+                    .media-body
+                        h4.media-heading.name {{author}}
+                            time.posted-date(datetime='{{postedDate}}')
+                        | {{{text}}}
 
         script#room-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}")
