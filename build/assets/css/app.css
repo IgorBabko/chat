@@ -364,8 +364,8 @@ label {
 #enter-chat-modal .form {
   transition: height 0.3s ease-in-out;
   padding: 30px 15px 15px; }
-  #enter-chat-modal .form .signup,
-  #enter-chat-modal .form .incognito {
+  #enter-chat-modal .form #signup,
+  #enter-chat-modal .form #guest {
     display: none; }
   #enter-chat-modal .form input[type="radio"] {
     margin-left: 15px; }

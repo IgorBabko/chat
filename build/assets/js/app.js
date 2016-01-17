@@ -237,11 +237,6 @@ $(function() {
             $("#messages .media:last-child").removeClass("scaledDown").addClass("scaledUp");
         }, 0.001);
     }
-    $(window).on("resize", function() {
-        console.log("scrollTop: " + $("#messages")[0].scrollTop);
-        console.log("scrollHeight: " + $("#messages")[0].scrollHeight);
-        console.log("scrollTop + clientHeight: " + ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight));
-    });
 
     function changeRoomHandler() {
         if ($(this).attr("id") === globalRoomId) {
@@ -273,13 +268,11 @@ $(function() {
         $("time").timeago();
     });
     $("html").show();
-
-    function joinedHandler(e) {
-        if (e.type === 'click' || e.keyCode == 13) {
-            socket.emit('joined', $("#username").val());
-        }
-    }
-
+    // function joinedHandler(e) {
+    //     if (e.type === 'click' || e.keyCode == 13) {
+    //         socket.emit('joined', $("#username").val());
+    //     }
+    // }
     function addNotification(message, type) {
         switch (type) {
             case "privateMessage":
@@ -310,7 +303,7 @@ $(function() {
             });
         }
     }
-    socket.on("joined", function(data) {
+    socket.on("enterAsGuest", function(data) {
         if (data.hasOwnProperty("myself")) {
             socket.on("notification", function(notificationInfo) {
                 addNotification(notificationInfo.message, notificationInfo.type);
@@ -326,7 +319,7 @@ $(function() {
         }
     });
     // $("#enter-chat-button").on('click', joinedHandler);
-    $("#username").on('keypress', joinedHandler);
+    // $("#username").on('keypress', joinedHandler);
     // create room
     function addErrorState($input, errorMsg) {
         //noinspection JSValidateTypes
@@ -387,7 +380,7 @@ $(function() {
     $(window).on("unload", function() {
         socket.emit("disconnect");
     });
-    socket.on("left", function(data) {
+    socket.on("guestLeft", function(data) {
         $("#" + data.userId).remove();
     });
     socket.on("changeRoom", function(data) {
@@ -474,11 +467,12 @@ $(function() {
     var avatar = null;
     var enterMode = "login";
     $(".signup-item").on("click", function() {
+        $("#enter-chat-button").val("Sign Up");
         if (enterMode === "signup") {
             return;
         }
         enterMode = "signup";
-        setTimeout(function () {
+        setTimeout(function() {
             $("#username").focus();
         }, 1);
         $("#enter-chat-modal .form > div").hide();
@@ -503,43 +497,64 @@ $(function() {
     function collectFormData(formId) {
         var formData = {};
         var inputs = $("#" + formId + " input");
-        $.each(inputs, function (i, input) {
+        $.each(inputs, function(i, input) {
             formData[input.id] = $("#" + input.id).val();
         });
         return formData;
     }
 
-    $('#enter-chat-button').on('click', function (e) {
+    function login(formData) {
+        socket.emit("login", {
+            userData: formData
+        });
+    }
+
+    function signup(formData) {
+        avatar.croppie('result', {
+            type: 'canvas',
+            size: 'original'
+        }).then(function(avatarBase64) {
+            formData.avatarBase64 = avatarBase64;
+            socket.emit("signup", formData);
+        });
+    }
+    // люси дженсон
+    function enterAsGuest(formData) {
+        socket.emit("enterAsGuest", formData);
+    }
+
+    function enterChatHandler() {
+        var formData = collectFormData(enterMode);
         switch (enterMode) {
             case "login":
-                socket.emit("joined", { enterMode: enterMode, formData: collectFormData(enterMode) });
+                login(formData);
                 break;
             case "signup":
-                avatar.croppie('result', {
-                    type: 'canvas',
-                    size: 'original'
-                }).then(function (avatarBase64) {
-                    var formData = collectFormData(enterMode);
-                    formData.avatarBase64 = avatarBase64;
-                    socket.emit("joined", { enterMode: enterMode, formData: formData });
-                });
-               break;
-            case "incognito":
-                socket.emit("joined", { enterMode: enterMode, formData: collectFormData(enterMode) });
+                signup(formData);
+                break;
+            case "guest":
+                enterAsGuest(formData);
+                break;
+        }
+    }
+
+    $('#enter-chat-button').on('click', enterChatHandler);
+    
+    $(".form input[type=text], .form input[type=password], .form input[type=hidden]").on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            enterChatHandler();
         }
     });
-
+    
     // male-female radio handler
-    $(".gender input[type='radio']").on("change", function () {
+    $(".gender input[type='radio']").on("change", function() {
         socket.emit("changeDefaultAvatar", $(this).val());
     });
-
-    socket.on("changeDefaultAvatar", function (avatarPath) {
+    socket.on("changeDefaultAvatar", function(avatarPath) {
         avatar.croppie('bind', {
             url: avatarPath
         });
     });
-
     $(".avatar-block input").on("change", function() {
         if (this.files && this.files[0]) {
             var reader = new FileReader();
@@ -551,26 +566,27 @@ $(function() {
             reader.readAsDataURL(this.files[0]);
         }
     });
-
-    $(".incognito-item").on("click", function() {
-        if (enterMode === "incognito") {
+    $(".guest-item").on("click", function() {
+        $("#enter-chat-button").val("Enter");
+        if (enterMode === "guest") {
             return;
         }
-        enterMode = "incognito";
-        setTimeout(function () {
-            $("#guestName").focus();
+        enterMode = "guest";
+        setTimeout(function() {
+            $("#name").focus();
         }, 1);
         $("#enter-chat-modal .form > div").hide();
-        $("#incognito").show();
+        $("#guest").show();
         $(".nav-item a").removeClass("active");
-        $(".incognito-item a").addClass("active");
+        $(".guest-item a").addClass("active");
     });
     $(".login-item").on("click", function() {
+        $("#enter-chat-button").val("Log In");
         if (enterMode === "login") {
             return;
         }
         enterMode = "login";
-        setTimeout(function () {
+        setTimeout(function() {
             $("#usernameOrEmail").focus();
         }, 1);
         $("#enter-chat-modal .form > div").hide();

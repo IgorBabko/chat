@@ -60,16 +60,16 @@ body
                             a.nav-link.active(href='#') Log In
                         li.nav-item.signup-item
                             a.nav-link(href='#') Sign Up
-                        li.nav-item.incognito-item
-                            a.nav-link(href='#') Incognito
+                        li.nav-item.guest-item
+                            a.nav-link(href='#') Guest
                     .form
                         #login
                             .form-group
-                                label.form-control-label(for='username') Username or Email
+                                label.form-control-label(for='usernameOrEmail') Username or Email
                                 span.invalid
                                 input#usernameOrEmail.form-control(type='text', autofocus)
                             .form-group
-                                label.form-control-label(for='password') Password
+                                label.form-control-label(for='pass') Password
                                 span.invalid
                                 input#pass.form-control(type='password')
                             label.c-input.c-checkbox
@@ -109,11 +109,11 @@ body
                                     input(type='file')
                                 #avatar
 
-                        #incognito
+                        #guest
                             .form-group
-                                label.form-control-label(for='username') Username
+                                label.form-control-label(for='name') Your name:
                                 span.invalid
-                                input#guestName.form-control(type='text')
+                                input#name.form-control(type='text')
                 .modal-footer
                     button#enter-chat-button.btn(type='button') Join
 
