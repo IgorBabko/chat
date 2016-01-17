@@ -26,6 +26,7 @@ body
     overflow: hidden
     background: black
     font-family: 'Open Sans', sans-serif
+    // line-height: 1rem
 
 .asterisk
     color: red
@@ -50,18 +51,21 @@ header
     top: 0
     left: 0
     width: 100%
-    -moz-box-shadow: 0 1px 1px $main-color-darker
-    -webkit-box-shadow: 0 1px 1px $main-color-darker
-    box-shadow: 0 1px 1px $main-color-darker
+    -moz-box-shadow: 0 1px 1px #903200
+    -webkit-box-shadow: 0 1px 1px #903200
+    box-shadow: 0 1px 1px #903200
+    // -moz-box-shadow: 0 1px 1px $main-color-darker
+    // -webkit-box-shadow: 0 1px 1px $main-color-darker
+    // box-shadow: 0 1px 1px $main-color-darker
     label
         transition: all 0.1s ease-in-out
-        background-color: $main-color-darker !important
+        background-color: #772A00 !important//$main-color-darker !important
         margin: 0
         cursor: pointer !important
-        color: $main-color-lightest !important
+        color: #FDC1A0 !important//$main-color-lightest !important
         &:hover,
         &.active
-            background-color: $main-color-lighter !important
+            background-color: #772A00 !important//$main-color-lighter !important
             color: white !important
 
     #rooms-sidebar-button
@@ -79,9 +83,9 @@ header
         text-shadow: 0 0 1px black
         &.active,
         &:hover
-            box-shadow: 0 0 1px #2270E1
+            // box-shadow: 0 0 1px #2270E1
 
-header, .modal-header, #send
+header, .modal-header
     background: -moz-linear-gradient(to bottom, #feccb1 0%,#fb955e 47%,#fb955e 47%,#f17432 50%,#ea5507 100%)
     background: -webkit-linear-gradient(to bottom, #feccb1 0%,#fb955e 47%,#fb955e 47%,#f17432 50%,#ea5507 100%)
     background: linear-gradient(to bottom, #feccb1 0%,#fb955e 47%,#fb955e 47%,#f17432 50%,#ea5507 100%)
@@ -99,9 +103,10 @@ header, .modal-header, #send
 
 .list-group,
 .media
-    background: -moz-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
-    background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
-    background: linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
+    background: #FFF9F6
+    // background: -moz-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
+    // background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
+    // background: linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
 
 
 .scaledUp
@@ -135,7 +140,7 @@ header, .modal-header, #send
 
 .content
     transition: all 0.3s ease-in-out
-    background: $main-color-lightest
+    background: #FFE9DD//$main-color-lightest
     opacity: 1
 
     .input-group
@@ -157,7 +162,7 @@ header, .modal-header, #send
     height: 36px
 
     &:hover
-        background-color: $main-color-lighter !important
+        // background-color: $main-color-lighter !important
 
 #create-room-button
     padding-top: 6px
@@ -173,6 +178,18 @@ header, .modal-header, #send
 
 #message-input-block
     z-index: 12
+    height: 30px
+    
+#list-group-item,
+#message-input,
+#send
+    border-radius: 0 !important
+
+#send
+    background: #772A00
+#message-input
+    height: 40px
+    font-size: 18px
 
 #search-input
     height: 36px
@@ -192,7 +209,7 @@ header, .modal-header, #send
     display: none
 
 .input-group-addon
-    background-color: #60ABF0 !important
+    background-color: #772A00 !important
     transition: all 0.2s ease-in-out
 
     &:hover
@@ -231,7 +248,7 @@ header, .modal-header, #send
         left: -300px
     ul
         height: calc(100vh - 50px)
-        box-shadow: 2px 0 8px -3px $main-color-lighter
+        box-shadow: 2px 0 8px -3px #FEBF9D//$main-color-lighter
 
 #people-sidebar
     z-index: 3
@@ -244,7 +261,7 @@ header, .modal-header, #send
         right: -300px
     ul
         height: calc(100vh - 50px)
-        box-shadow: -2px 0 8px -3px $main-color-lighter
+        box-shadow: -2px 0 8px -3px #FEBF9D//$main-color-lighter
         .list-group-item
             text-align: right
             background: none
@@ -300,10 +317,13 @@ label
     &:hover
         background-color: $main-color-darker
 
-.list-group-item.active,
-    background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
-    background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
-    background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
+.list-group-item.active
+    background: -moz-linear-gradient(135deg, #F37E3F 0%, #FBA06F 58%, #FBA170 58%, #F0702C 100%) !important
+    background: -webkit-linear-gradient(135deg, #F37E3F 0%, #FBA06F 58%, #FBA170 58%, #F0702C 100%) !important
+    background: linear-gradient(135deg, #F37E3F 0%, #FBA06F 58%, #FBA170 58%, #F0702C 100%) !important
+    // background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
+    // background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
+    // background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
 
 .my-message
     background: -moz-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
@@ -319,16 +339,18 @@ label
 
 .list-group-item.active
     border: none
+    border-radius: 0
 
     .label
-        background-color: white
-        color: $main-color-lighter
+        background-color: #FFF9F6
+        color: #ED6016//$main-color-lighter
 
 .pull-left
     float: left !important
     padding-right: 10px !important
 
 .list-group
+    background: #FFF9F6
     overflow: auto
     height: calc(100vh - 50px) !important
 
