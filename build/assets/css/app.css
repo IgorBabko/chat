@@ -282,18 +282,6 @@ label {
   background: -webkit-linear-gradient(135deg, #F37E3F 0%, #FBA06F 58%, #FBA170 58%, #F0702C 100%) !important;
   background: linear-gradient(135deg, #F37E3F 0%, #FBA06F 58%, #FBA170 58%, #F0702C 100%) !important; }
 
-.my-message {
-  background: -moz-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important;
-  background: -webkit-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important;
-  background: linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important;
-  color: black; }
-  .my-message a {
-    color: white; }
-  .my-message .media-heading {
-    color: #025aa5; }
-  .my-message time {
-    color: white; }
-
 .list-group-item.active {
   border: none;
   border-radius: 0; }
@@ -323,22 +311,22 @@ label {
   font-weight: 200; }
 
 .message {
-  margin: 50px 70px 50px 20px !important;
+  margin: 50px 40px 50px 100px !important;
   position: relative; }
   .message .avatar {
     width: 70px;
     height: 70px;
     border-radius: 50%;
     box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
-    float: left;
-    margin-right: 20px;
+    float: right;
+    margin-left: 20px;
     margin-top: 15px; }
   .message .rect {
     width: 15px;
     height: 15px;
     position: absolute;
     top: 45px;
-    left: 82px;
+    right: 82px;
     background: #FFECE2;
     transform: rotate(45deg); }
   .message .media {
@@ -348,9 +336,44 @@ label {
     border-radius: 10px; }
     .message .media .media-heading {
       font-weight: bold;
+      text-align: right;
       padding-bottom: 5px;
       position: relative;
       color: #772A00; }
+      .message .media .media-heading .posted-date {
+        float: left; }
+
+.my-message {
+  margin: 50px 100px 50px 20px !important;
+  position: relative; }
+  .my-message .avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+    float: left;
+    margin-right: 20px;
+    margin-top: 15px; }
+  .my-message .rect {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 45px;
+    left: 82px;
+    background: #FFECE2;
+    transform: rotate(45deg); }
+  .my-message .media {
+    background: #FFECE2;
+    padding: 20px;
+    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+    border-radius: 10px; }
+    .my-message .media .media-heading {
+      font-weight: bold;
+      padding-bottom: 5px;
+      position: relative;
+      color: #772A00; }
+      .my-message .media .media-heading .posted-date {
+        float: right; }
 
 #messages {
   height: calc(100vh - 86px);

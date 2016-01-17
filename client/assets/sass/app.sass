@@ -334,19 +334,7 @@ label
     // background: -moz-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
     // background: -webkit-linear-gradient(-45deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
     // background: linear-gradient(135deg, #7abcff 0%, #8cc2f7 58%, #8cc2f7 58%, #4096ee 100%) !important
-
-.my-message
-    background: -moz-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
-    background: -webkit-linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
-    background: linear-gradient(135deg, #A6D4FF 0%, #97D6FF 47%, #5AA7EF 100%) !important
-    a
-        color: white
-    .media-heading
-        color: $main-color-darker
-    color: black
-    time
-        color: white
-
+    
 .list-group-item.active
     border: none
     border-radius: 0
@@ -380,7 +368,45 @@ label
     font-weight: 200
 
 .message
-    margin: 50px 70px 50px 20px !important
+    margin: 50px 40px 50px 100px !important
+    position: relative
+    .avatar
+        width: 70px
+        height: 70px
+        border-radius: 50%
+        box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5)
+        float: right
+        margin-left: 20px
+        margin-top: 15px
+
+    .rect
+        width: 15px
+        height: 15px
+        position: absolute
+        top: 45px
+        right: 82px
+        background: #FFECE2
+        transform: rotate(45deg)
+
+    .media
+        background: #FFECE2
+        padding: 20px
+        box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5)
+        border-radius: 10px
+
+        .media-heading
+            font-weight: bold
+            text-align: right
+            //border-bottom: 1px dashed #772A00
+            padding-bottom: 5px
+            position: relative
+            color: #772A00
+            
+            .posted-date
+                float: left
+
+.my-message
+    margin: 50px 100px 50px 20px !important
     position: relative
     .avatar
         width: 70px
@@ -412,6 +438,9 @@ label
             padding-bottom: 5px
             position: relative
             color: #772A00
+            
+            .posted-date
+                float: right
 
 #messages
     height: calc(100vh - 86px)
