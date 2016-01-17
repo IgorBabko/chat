@@ -317,7 +317,7 @@ label {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+    box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
     float: right;
     margin-left: 20px;
     margin-top: 15px; }
@@ -326,7 +326,7 @@ label {
     height: 15px;
     position: absolute;
     top: 45px;
-    right: 82px;
+    right: 85px;
     background: #FFECE2;
     transform: rotate(45deg); }
   .message .media {
@@ -337,6 +337,7 @@ label {
     .message .media .media-heading {
       font-weight: bold;
       text-align: right;
+      border-bottom: 1px dashed #772A00;
       padding-bottom: 5px;
       position: relative;
       color: #772A00; }
@@ -350,7 +351,7 @@ label {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
+    box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
     float: left;
     margin-right: 20px;
     margin-top: 15px; }
@@ -359,7 +360,7 @@ label {
     height: 15px;
     position: absolute;
     top: 45px;
-    left: 82px;
+    left: 85px;
     background: #FFECE2;
     transform: rotate(45deg); }
   .my-message .media {
@@ -369,6 +370,7 @@ label {
     border-radius: 10px; }
     .my-message .media .media-heading {
       font-weight: bold;
+      border-bottom: 1px dashed #772A00;
       padding-bottom: 5px;
       position: relative;
       color: #772A00; }

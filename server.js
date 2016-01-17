@@ -1,7 +1,7 @@
 var fs = require("fs");
 // var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
-var sha1 = require('sha1');
+// var sha1 = require('sha1');
 var jade = require('gulp-jade');
 var logger = require('morgan');
 var favicon = require('serve-favicon');
@@ -216,7 +216,12 @@ function addMessage(text, socket) {
         });
     });
 }
-    
+
+function createRoom(roomInfo, socket) {
+
+    var room = Room();
+}
+
 mongoose.connect('mongodb://' + connection_string, function(err, db) {
     // var rooms = db.collection('rooms');
     // var people = db.collection('people');
@@ -254,33 +259,37 @@ mongoose.connect('mongodb://' + connection_string, function(err, db) {
         socket.on("login", function(userData) {
             login(userData);
         });
+
         socket.on("createRoom", function(roomInfo) {
-            var errors = {};
-            rooms.findOne({
-                name: roomInfo["room-name"]
-            }, function(err, roomWithSameName) {
-                if (err) {
-                    throw err;
-                }
-                if (roomWithSameName != null) {
-                    errors["room-name"] = "Room with same name already exists!";
-                } else if (whitespacePattern.test(roomInfo["room-name"])) {
-                    errors["room-name"] = "Name should not be empty!";
-                }
-                if (roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
-                    errors["room-password-confirm"] = "Password confirmation should match the password!";
-                }
-                if (whitespacePattern.test(roomInfo["room-code"])) {
-                    errors["room-code"] = "Code should not be empty!";
-                } else if (roomInfo["room-code"] !== roomInfo["room-code-confirm"]) {
-                    errors["room-code-confirm"] = "Code confirmation should match the code!";
-                }
-                if (Object.keys(errors).length !== 0) {
-                    socket.emit("validErrors", {
-                        modalId: "create-room-modal",
-                        errors: errors
-                    });
-                } else {
+            // createRoom(roomInfo, socket);
+            // var errors = {};
+            // Room.findOne({
+                // name: roomInfo["room-name"]
+            // }, function(err, roomWithSameName) {
+            //     if (err) {
+            //         throw err;
+            //     }
+                // if (roomWithSameName != null) {
+                //     errors["room-name"] = "Room with same name already exists!";
+                // } else if (whitespacePattern.test(roomInfo["room-name"])) {
+                //     errors["room-name"] = "Name should not be empty!";
+                // }
+                // if (roomInfo["room-password"] !== roomInfo["room-password-confirm"]) {
+                //     errors["room-password-confirm"] = "Password confirmation should match the password!";
+                // }
+                // if (whitespacePattern.test(roomInfo["room-code"])) {
+                //     errors["room-code"] = "Code should not be empty!";
+                // } else if (roomInfo["room-code"] !== roomInfo["room-code-confirm"]) {
+                //     errors["room-code-confirm"] = "Code confirmation should match the code!";
+                // }
+
+
+                // if (Object.keys(errors).length !== 0) {
+                //     socket.emit("validErrors", {
+                //         modalId: "create-room-modal",
+                //         errors: errors
+                //     });
+                // } else {
                     var roomId = "_" + sha1(new Date().toString());
                     rooms.insert({
                         _id: roomId,
