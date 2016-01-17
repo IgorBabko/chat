@@ -332,7 +332,6 @@ $(function() {
     }
 
     function updateValidationErrors(modalId, errors) {
-        console.log(errors);
         $("#" + modalId + " .form input").each(function(index, input) {
             var $input = $(input),
                 inputId = $input.attr("id");
@@ -342,6 +341,7 @@ $(function() {
                 removeErrorState($input);
             }
         });
+        $("#" + modalId + " .form-control-danger").first().select();
     };
 
     function getInputsData($inputs) {
