@@ -1,7 +1,7 @@
 var fs = require("fs");
 // var mongo = require('mongodb').MongoClient;
 var io = require('socket.io');
-// var sha1 = require('sha1');
+var sha1 = require('sha1');
 var jade = require('gulp-jade');
 var logger = require('morgan');
 var favicon = require('serve-favicon');
@@ -324,8 +324,8 @@ mongoose.connect('mongodb://' + connection_string, function(err, db) {
                             type: "general"
                         });
                     });
-                }
-            });
+                // }
+            // });
         });
 
         function guestLeft() {

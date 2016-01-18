@@ -118,6 +118,7 @@ header, .modal-header, #send
 
 .list-group
     background-color: white
+    color: #772A00
 
 .highlighted
     color: #8AFF8A
@@ -189,6 +190,7 @@ header, .modal-header, #send
     border-radius: 0 !important
 
 #send
+    padding: 10px
     background: #772A00
     &:hover
         background: #772A00 !important
@@ -221,6 +223,7 @@ header, .modal-header, #send
 .input-group-addon
     background-color: #772A00 !important
     transition: all 0.2s ease-in-out
+    vertical-align: top
 
     &:hover
         background-color: #2777E4 !important
@@ -276,20 +279,22 @@ header, .modal-header, #send
             text-align: right
             background: none
 
+// #rooms-sidebar,
+// #people-sidebar
+//     ul
+//         &.shadowless
+//             box-shadow: none !important
+
 #rooms-sidebar,
 #people-sidebar
-    ul
-        &.shadowless
-            box-shadow: none !important
-
-#rooms-sidebar
     .list-group-item
-        background: none
+        // background: none
+        border-radius: 0 !important
         &:not(.active)
             cursor: pointer
         &:hover
-            background-color: $main-color-lightest
-            border-color: $main-color-lightest
+            background-color: #FEC9AC//$main-color-lightest
+            border-color: #FEC9AC//$main-color-lightest
 
 .typing
     color: $main-color
@@ -348,15 +353,17 @@ label
     padding-right: 10px !important
 
 .list-group
-    background: #FFECE2
+    background: #FBFBFB//#FFECE2
     overflow: auto
     height: calc(100vh - 50px) !important
 
 .list-group-item
-    border: 1px solid $main-color-lightest
+    border: 1px solid #FDC6A8
     border-left: none
     border-right: none
     overflow-x: auto
+    &:hover
+        background: red 
 
 .posted-date
     // position: absolute
@@ -367,6 +374,27 @@ label
     font-size: 14px
     font-weight: 100
 
+.small-avatar
+    width: 40px
+    border-radius: 50%
+    margin-left: 10px
+    border: 1px solid #772A00
+
+.online-indicator
+    width: 20px
+    height: 20px
+    border-radius: 50%
+    background: #D9534F
+    float: left
+    margin: 12px 0 0 0
+
+    &.is-online
+        background: #D9534F
+
+.active
+    .online-indicator
+        display: none
+
 .message
     margin: 50px 40px 50px 100px !important
     position: relative
@@ -375,7 +403,7 @@ label
     align-items: stretch
     
     .avatar
-        width: 70px
+        min-width: 70px
         height: 70px
         border-radius: 50%
         box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5)
@@ -387,13 +415,13 @@ label
         position: absolute
         top: 35px
         right: 85px
-        background: #FFECE2
+        background: #FBFBFB//#FFECE2
         transform: rotate(45deg)
 
     .media
         margin: 0
         min-width: 300px
-        background: #FFECE2
+        background: #FBFBFB//#FFECE2
         padding: 10px 20px
         box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
         border-radius: 10px
@@ -424,7 +452,7 @@ label
     align-items: stretch
     // max-width: 1200px
     .avatar
-        width: 70px
+        min-width: 70px !important
         height: 70px
         border-radius: 50%
         box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5)
@@ -436,13 +464,13 @@ label
         position: absolute
         top: 35px
         left: 85px
-        background: #FFECE2
+        background: #FBFBFB//#FFECE2
         transform: rotate(45deg)
 
     .media
         margin: 0
         min-width: 300px
-        background: #FFECE2
+        background: #FBFBFB//#FFECE2
         padding: 10px 20px
         box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
         border-radius: 10px

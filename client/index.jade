@@ -39,7 +39,7 @@ html(lang='en')
         script#message-template(type="text/x-handlebars-template")
             .my-message
                 .rect
-                img.avatar(src='images/female1.jpg')
+                img.avatar(src='images/female.jpg')
                 .media
                     .media-body
                         h4.media-heading.name {{author}}
@@ -53,6 +53,8 @@ html(lang='en')
 
         script#user-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}") {{name}}
+                img.small-avatar(src='images/incognito1.jpg')
+                .online-indicator
 
         script#typing-template(type="text/x-handlebars-template")
             span.pull-xs-left.typing
