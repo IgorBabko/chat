@@ -38,13 +38,13 @@ html(lang='en')
 
         script#message-template(type="text/x-handlebars-template")
             .my-message
-                img.avatar(src='images/female.jpg')
                 .rect
+                img.avatar(src='images/female1.jpg')
                 .media
                     .media-body
                         h4.media-heading.name {{author}}
                             time.posted-date(datetime='{{postedDate}}')
-                        | {{{text}}}
+                        div {{{text}}}
 
         script#room-template(type="text/x-handlebars-template")
             li.list-group-item(id="{{_id}}")

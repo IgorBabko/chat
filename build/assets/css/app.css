@@ -75,13 +75,6 @@ header, .modal-header, #send {
 .media {
   background: #FFF9F6; }
 
-.scaledUp {
-  transition: transform 0.3s ease-in-out;
-  transform: scale(1); }
-
-.scaledDown {
-  transform: scale(0); }
-
 .list-group {
   background-color: white; }
 
@@ -307,73 +300,89 @@ label {
 .posted-date {
   float: right;
   color: #772A00;
-  font-size: 50% !important;
-  font-weight: 200; }
+  font-size: 14px;
+  font-weight: 100; }
 
 .message {
   margin: 50px 40px 50px 100px !important;
-  position: relative; }
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch; }
   .message .avatar {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
-    float: right;
-    margin-left: 20px;
-    margin-top: 15px; }
+    box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5);
+    margin-left: 20px; }
   .message .rect {
     width: 15px;
     height: 15px;
     position: absolute;
-    top: 45px;
+    top: 35px;
     right: 85px;
     background: #FFECE2;
     transform: rotate(45deg); }
   .message .media {
+    margin: 0;
+    min-width: 300px;
     background: #FFECE2;
-    padding: 20px;
-    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
-    border-radius: 10px; }
+    padding: 10px 20px;
+    box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
+    border-radius: 10px;
+    line-height: 1.7rem; }
+    .message .media .media-body {
+      display: inline; }
+      .message .media .media-body div {
+        display: block; }
     .message .media .media-heading {
       font-weight: bold;
       text-align: right;
-      border-bottom: 1px dashed #772A00;
       padding-bottom: 5px;
       position: relative;
-      color: #772A00; }
+      color: #772A00;
+      display: block; }
       .message .media .media-heading .posted-date {
         float: left; }
 
 .my-message {
   margin: 50px 100px 50px 20px !important;
-  position: relative; }
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch; }
   .my-message .avatar {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
-    float: left;
-    margin-right: 20px;
-    margin-top: 15px; }
+    box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5);
+    margin-right: 20px; }
   .my-message .rect {
     width: 15px;
     height: 15px;
     position: absolute;
-    top: 45px;
+    top: 35px;
     left: 85px;
     background: #FFECE2;
     transform: rotate(45deg); }
   .my-message .media {
+    margin: 0;
+    min-width: 300px;
     background: #FFECE2;
-    padding: 20px;
-    box-shadow: 3px 3px 3px rgba(119, 42, 0, 0.5);
-    border-radius: 10px; }
+    padding: 10px 20px;
+    box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
+    border-radius: 10px;
+    line-height: 1.7rem; }
+    .my-message .media .media-body {
+      display: inline; }
+      .my-message .media .media-body div {
+        display: block; }
     .my-message .media .media-heading {
       font-weight: bold;
-      border-bottom: 1px dashed #772A00;
       padding-bottom: 5px;
       position: relative;
-      color: #772A00; }
+      color: #772A00;
+      display: block; }
       .my-message .media .media-heading .posted-date {
         float: right; }
 
