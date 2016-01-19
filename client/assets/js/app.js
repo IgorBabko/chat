@@ -241,6 +241,7 @@ $(function() {
     // }
 
     console.log("global " + globalRoomId);
+
     function changeRoomHandler() {
         if ($(this).hasClass("public")) {
             socket.emit("changeRoom", {
@@ -545,13 +546,13 @@ $(function() {
     }
 
     $('#enter-chat-button').on('click', enterChatHandler);
-    
+
     $("#enter-chat-modal input").on("keypress", function(e) {
         if (e.keyCode == 13) {
             enterChatHandler();
         }
     });
-    
+
     // male-female radio handler
     $(".gender input[type='radio']").on("change", function() {
         socket.emit("changeDefaultAvatar", $(this).val());
@@ -599,5 +600,25 @@ $(function() {
         $("#login").show();
         $(".nav-item a").removeClass("active");
         $(".login-item a").addClass("active");
+    });
+
+    $("#search-room-input").on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            socket.emit("searchRoom", { searchPattern: $(this).val(), currentRoomId: currentRoomId });
+        }
+    }).on("focus", function () {
+        $(this).select();
+    });
+
+    $("#search-room-button").on("click", function() {
+        socket.emit("searchRoom", { searchPattern: $(this).val(), currentRoomId: currentRoomId });
+    });
+
+    socket.on("searchRoom", function(foundRooms) {
+        $("#rooms-sidebar ul li:not(.active)").remove();
+        for (var i = foundRooms.length - 1; 0 <= i; --i) {
+            $("#rooms-sidebar ul").append(roomTemplate(foundRooms[i]));
+        }
+        $("#rooms-sidebar ul li:not(.active)").on("click", changeRoomHandler);
     });
 });

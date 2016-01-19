@@ -207,16 +207,17 @@ body
                     //- button.btn.btn-danger#delete-room(type='button') Delete
                     button.btn.btn-success#enter-room(type='button') Enter
 
-
     header
         .btn-group
             label.btn.btn-primary#rooms-sidebar-button.active Rooms
             //label.btn.btn-primary#subscriptions-button
                 i.fa.fa-star
-            label.btn.btn-primary#create-room-button
+            //- label.btn#delete-room-button
+                i.fa.fa-minus-circle
+            label.btn#create-room-button
                 i.fa.fa-plus-circle
-            //input#search-input(type='text', placeholder='search for rooms:')
-            //label.btn.btn-primary#search-button
+            input#search-room-input(type='text', placeholder='search for rooms:')
+            label.btn.btn-primary#search-room-button
                 i.fa.fa-search
         .btn-group
             //label.btn.btn-primary#invite-people-button

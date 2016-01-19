@@ -7,10 +7,10 @@ $main-color-lightest: lighten($main-color, 47)
 // rulse
 
 ::-webkit-input-placeholder
-    color: $main-color-lightest
+    color: #FDC1A0
 
 ::-moz-placeholder
-    color: $main-color-lightest
+    color: #FDC1A0
 //::-moz-placeholder
 //    color: $main-color-lightest
 //::-ms-input-placeholder
@@ -155,8 +155,9 @@ header, .modal-header, #send
         cursor: pointer
 
 #create-room-button,
+#delete-room-button,
 #invite-people-button,
-#search-button,
+#search-room-button,
 #subscriptions-button
     transition: all 0.1s ease-in-out
     width: 41.6094px
@@ -178,7 +179,7 @@ header, .modal-header, #send
         margin-right: 10px
 
 #delete-room-button
-    margin: 0 2px
+    margin: 0 0 0 2px
 
 #message-input-block
     z-index: 12
@@ -199,19 +200,21 @@ header, .modal-header, #send
     border: 1px solid #F8925C
     font-size: 18px
     height: 45px
-    border-bottom-width: 0
+    border-bottom-width
     border-right-width: 0
     border-color: #F8925C !important
 
-#search-input
+#search-room-input
     height: 36px
     border: none
     padding: 0 10px
     outline: none
-    background-color: #0268BF
+    background-color: #772A00
     color: white
+    font-size: 1rem
+    margin-left: 2px
 
-#search-button
+#search-room-button
     float: right
 
 #private-mode-button
@@ -277,7 +280,7 @@ header, .modal-header, #send
         box-shadow: -2px 0 8px -3px rgb(119, 42, 0)//$main-color-lighter
         .list-group-item
             text-align: right
-            background: none
+            // background: none
 
 // #rooms-sidebar,
 // #people-sidebar
@@ -288,7 +291,7 @@ header, .modal-header, #send
 #rooms-sidebar,
 #people-sidebar
     .list-group-item
-        // background: none
+        background: none
         border-radius: 0 !important
         &:not(.active)
             cursor: pointer

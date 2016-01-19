@@ -209,7 +209,7 @@ function addMessage(text, socket) {
         };
 
         var messageObj = new Message(message);
-        messageObj.save(function (err) {
+        messageObj.save(function(err) {
             if (err) {
                 notify(err.errors.text.message, "validErrors", socket);
             } else {
@@ -228,7 +228,7 @@ function createRoom(roomInfo, socket) {
     });
     room.setPassword(roomInfo["password"], roomInfo["password-confirm"]);
     room.setCode(roomInfo["code"], roomInfo["code-confirm"]);
-    room.save(function (err) {
+    room.save(function(err) {
         if (err) {
             sendValidErrors(err, "create-room-modal", socket);
         } else {
@@ -289,7 +289,7 @@ function guestLeft(socket) {
                 if (guestInfo != null) {
                     Guest.remove({
                         _id: guestInfo._id
-                    }, function (err) {
+                    }, function(err) {
                         if (err) {
                             throw err;
                         }
@@ -315,14 +315,14 @@ function guestLeft(socket) {
 }
 
 function cleanDBAfterServerReload() {
-    Guest.remove(function (){});
+    Guest.remove(function() {});
     Room.update({}, {
         $set: {
             peopleCount: 0
         }
     }, {
         multi: true
-    }, function (){});
+    }, function() {});
 }
 
 function changeRoom(roomInfo, socket) {
@@ -332,9 +332,10 @@ function changeRoom(roomInfo, socket) {
         if (err) {
             throw err;
         }
-        console.log(roomInfo);
         if (roomInfo.status === "private" && newRoomInfo.password !== sha1(roomInfo.password)) {
-            sendValidErrors({ password: "Password is wrong" }, "room-password-modal", socket);
+            sendValidErrors({
+                password: "Password is wrong"
+            }, "room-password-modal", socket);
         } else {
             Room.update({
                 name: socket.room
@@ -342,14 +343,14 @@ function changeRoom(roomInfo, socket) {
                 $inc: {
                     peopleCount: -1
                 }
-            }, function (){});
+            }, function() {});
             Room.update({
                 _id: roomInfo.newRoomId
             }, {
                 $inc: {
                     peopleCount: 1
                 }
-            }, function (){});
+            }, function() {});
             Room.findOne({
                 name: socket.room
             }, function(err, oldRoomInfo) {
@@ -420,7 +421,7 @@ function changeRoom(roomInfo, socket) {
                                 $set: {
                                     roomName: newRoomInfo.name
                                 }
-                            }, function (){});
+                            }, function() {});
                         });
                     });
                 });
@@ -451,7 +452,7 @@ function deleteRoom(data) {
                     $inc: {
                         peopleCount: peopleCountInDeletedRoom
                     }
-                }, function (){});
+                }, function() {});
                 Room.findOne({
                     name: "global"
                 }, function(err, globalRoomInfo) {
@@ -472,7 +473,7 @@ function deleteRoom(data) {
                             }
                         }, {
                             multi: true
-                        }, function (){});
+                        }, function() {});
                         Guest.find({
                             roomName: "global"
                         }, function(err, peopleFromGlobalRoom) {
@@ -536,10 +537,10 @@ function deleteRoom(data) {
                                     });
                                     Room.remove({
                                         _id: data.roomId
-                                    }, function (){});
+                                    }, function() {});
                                     Message.remove({
                                         roomName: roomInfo.name
-                                    }, function (){});
+                                    }, function() {});
                                 });
                             });
                         });
@@ -547,6 +548,24 @@ function deleteRoom(data) {
                 });
             });
         }
+    });
+}
+
+function searchRoom(searchPattern, currentRoomId, socket) {
+    console.log("regexp: " + searchPattern);
+    Room.find({
+        $and: [{
+            name: new RegExp('.*' + searchPattern + '.*', 'i')
+        }, {
+            _id: {
+                $ne: currentRoomId
+            }
+        }]
+    }, function(err, foundRooms) {
+        if (err) {
+            throw err;
+        }
+        socket.emit("searchRoom", foundRooms);
     });
 }
 
@@ -590,16 +609,20 @@ mongoose.connect('mongodb://' + connection_string, function(err, db) {
             createRoom(roomInfo, socket);
         });
 
-        socket.on("disconnect", function () {
+        socket.on("disconnect", function() {
             guestLeft(socket);
         });
 
         socket.on("changeRoom", function(roomInfo) {
             changeRoom(roomInfo, socket);
         });
-        
-        socket.on("deleteRoom", function (data) {
+
+        socket.on("deleteRoom", function(data) {
             deleteRoom(data, socket);
+        });
+
+        socket.on("searchRoom", function(data) {
+            searchRoom(data.searchPattern, data.currentRoomId, socket);
         });
 
         socket.on("startTyping", function(id) {
