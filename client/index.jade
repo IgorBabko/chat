@@ -184,27 +184,27 @@ body
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                     button.btn.btn-danger(type='button') Delete
 
-    #room-password-modal.modal.fade(role='dialog', aria-labelledby='roomPassword', aria-hidden='false')
+    #room-password-modal.modal.fade(role='dialog', aria-labelledby='enterRoom', aria-hidden='false')
         .modal-dialog(role='document')
             .modal-content
                 .modal-header
                     button.close(type='button', data-dismiss='modal', aria-label='Close')
                         span(aria-hidden='true') ×
-                    h4#roomPassword.modal-title Enter room
+                    h4#enterRoom.modal-title Enter room
                 .modal-body
                     .form
                         .form-group
                             label.form-control-label(for='password') Password:
                             span.invalid
                             input#password.form-control(type='password')
-                        .form-group
-                            label.form-control-label(for='code') Code:
-                            span.invalid
-                            input#code.form-control(type='password', placeholder="Needed only to delete room")
+                        //- .form-group
+                        //-     label.form-control-label(for='code') Code:
+                        //-     span.invalid
+                        //-     input#code.form-control(type='password', placeholder="Needed only to delete room")
                 .modal-footer
-                    //button.btn.btn-info#subscribe-room(type='button', style="float: left") Subscribe
+                    //- button.btn.btn-info#subscribe-room(type='button', style="float: left") Subscribe
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-danger#delete-room(type='button') Delete
+                    //- button.btn.btn-danger#delete-room(type='button') Delete
                     button.btn.btn-success#enter-room(type='button') Enter
 
 

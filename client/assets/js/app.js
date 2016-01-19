@@ -147,14 +147,14 @@ $(function() {
     gridManager.init();
     $("#create-room-button").on("click", function() {
         $("#create-room-modal").modal().on("shown.bs.modal", function() {
-            $("#room-name").focus();
+            $("#create-room-modal #name").focus();
         });
     });
-    $("#delete-room-button").on("click", function() {
-        $("#delete-room-modal").modal().on("shown.bs.modal", function() {
-            $("#room-c-input").focus();
-        });
-    });
+    // $("#delete-room-button").on("click", function() {
+    //     $("#delete-room-modal").modal().on("shown.bs.modal", function() {
+    //         $("#").focus();
+    //     });
+    // });
     //$("#people-sidebar li").on("click", function () {
     //    $("#private-message-modal").modal().on("shown.bs.modal", function () {
     //        $("#private-message-textarea").focus();
@@ -164,14 +164,14 @@ $(function() {
     $("#enter-room").on("click", function() {
         socket.emit("changeRoom", {
             newRoomId: newRoomId,
-            password: $("#password").val()
+            password: $("#room-password-modal #password").val()
         });
     });
-    $("#password").on("keypress", function(e) {
+    $("#room-password-modal #password").on("keypress", function(e) {
         if (e.keyCode == 13) {
             socket.emit("changeRoom", {
                 newRoomId: newRoomId,
-                password: $("#password").val()
+                password: $("#room-password-modal #password").val()
             });
         }
     });
@@ -181,11 +181,11 @@ $(function() {
             code: $("#code").val()
         });
     });
-    $("#code").on("keypress", function(e) {
+    $("#delete-room-modal #code").on("keypress", function(e) {
         if (e.keyCode == 13) {
             socket.emit("deleteRoom", {
                 roomId: newRoomId,
-                code: $("#code").val()
+                code: $("#delete-room-modal #code").val()
             });
         }
     });
@@ -238,6 +238,7 @@ $(function() {
     //     }, 0.001);
     // }
 
+    console.log("global " + globalRoomId);
     function changeRoomHandler() {
         if ($(this).attr("id") === globalRoomId) {
             socket.emit("changeRoom", {
@@ -246,7 +247,7 @@ $(function() {
             });
         } else {
             $("#room-password-modal").modal().on("shown.bs.modal", function() {
-                $("#password").focus();
+                $("#room-password-modal #password").focus();
             });
         }
         newRoomId = $(this).attr("id");
@@ -312,6 +313,7 @@ $(function() {
             $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child").addClass("active");
             socketId = data._id;
             globalRoomId = currentRoomId = data.globalRoomId;
+            console.log("mmmm: " + globalRoomId);
             $("#message-input").focus();
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         } else {
@@ -361,6 +363,7 @@ $(function() {
         });
     }
     $("#create").on("click", function() {
+        console.log("create");
         socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
     });
     $("#create-room-modal .form input").on("keypress", function(e) {
@@ -541,7 +544,7 @@ $(function() {
 
     $('#enter-chat-button').on('click', enterChatHandler);
     
-    $(".form input[type=text], .form input[type=password], .form input[type=hidden]").on("keypress", function(e) {
+    $("#enter-chat-modal input").on("keypress", function(e) {
         if (e.keyCode == 13) {
             enterChatHandler();
         }

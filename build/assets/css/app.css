@@ -76,7 +76,8 @@ header, .modal-header, #send {
   background: #FFF9F6; }
 
 .list-group {
-  background-color: white; }
+  background-color: white;
+  color: #772A00; }
 
 .highlighted {
   color: #8AFF8A; }
@@ -139,6 +140,7 @@ header, .modal-header, #send {
   border-radius: 0 !important; }
 
 #send {
+  padding: 10px;
   background: #772A00; }
   #send:hover {
     background: #772A00 !important; }
@@ -170,7 +172,8 @@ header, .modal-header, #send {
 
 .input-group-addon {
   background-color: #772A00 !important;
-  transition: all 0.2s ease-in-out; }
+  transition: all 0.2s ease-in-out;
+  vertical-align: top; }
   .input-group-addon:hover {
     background-color: #2777E4 !important; }
 
@@ -223,17 +226,16 @@ header, .modal-header, #send {
       text-align: right;
       background: none; }
 
-#rooms-sidebar ul.shadowless,
-#people-sidebar ul.shadowless {
-  box-shadow: none !important; }
-
-#rooms-sidebar .list-group-item {
-  background: none; }
-  #rooms-sidebar .list-group-item:not(.active) {
+#rooms-sidebar .list-group-item,
+#people-sidebar .list-group-item {
+  border-radius: 0 !important; }
+  #rooms-sidebar .list-group-item:not(.active),
+  #people-sidebar .list-group-item:not(.active) {
     cursor: pointer; }
-  #rooms-sidebar .list-group-item:hover {
-    background-color: #cbe7ff;
-    border-color: #cbe7ff; }
+  #rooms-sidebar .list-group-item:hover,
+  #people-sidebar .list-group-item:hover {
+    background-color: #FEC9AC;
+    border-color: #FEC9AC; }
 
 .typing {
   color: #0275d8;
@@ -241,7 +243,7 @@ header, .modal-header, #send {
 
 #rooms-sidebar .label {
   margin-top: 3px;
-  background-color: #5BA7EF; }
+  background-color: #F8925C; }
 
 #rooms-sidebar li.active .label {
   background-color: white; }
@@ -287,21 +289,42 @@ label {
   padding-right: 10px !important; }
 
 .list-group {
-  background: #FFECE2;
+  background: #FBFBFB;
   overflow: auto;
   height: calc(100vh - 50px) !important; }
 
 .list-group-item {
-  border: 1px solid #cbe7ff;
+  border: 1px solid #FDC6A8;
   border-left: none;
   border-right: none;
   overflow-x: auto; }
+  .list-group-item:hover {
+    background: red; }
 
 .posted-date {
   float: right;
   color: #772A00;
   font-size: 14px;
   font-weight: 100; }
+
+.small-avatar {
+  width: 40px;
+  border-radius: 50%;
+  margin-left: 10px;
+  border: 1px solid #772A00; }
+
+.online-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #D9534F;
+  float: left;
+  margin: 12px 0 0 0; }
+  .online-indicator.is-online {
+    background: #D9534F; }
+
+.active .online-indicator {
+  display: none; }
 
 .message {
   margin: 50px 40px 50px 100px !important;
@@ -310,7 +333,7 @@ label {
   justify-content: flex-end;
   align-items: stretch; }
   .message .avatar {
-    width: 70px;
+    min-width: 70px;
     height: 70px;
     border-radius: 50%;
     box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5);
@@ -321,12 +344,12 @@ label {
     position: absolute;
     top: 35px;
     right: 85px;
-    background: #FFECE2;
+    background: #FBFBFB;
     transform: rotate(45deg); }
   .message .media {
     margin: 0;
     min-width: 300px;
-    background: #FFECE2;
+    background: #FBFBFB;
     padding: 10px 20px;
     box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
     border-radius: 10px;
@@ -352,7 +375,7 @@ label {
   justify-content: flex-start;
   align-items: stretch; }
   .my-message .avatar {
-    width: 70px;
+    min-width: 70px !important;
     height: 70px;
     border-radius: 50%;
     box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5);
@@ -363,12 +386,12 @@ label {
     position: absolute;
     top: 35px;
     left: 85px;
-    background: #FFECE2;
+    background: #FBFBFB;
     transform: rotate(45deg); }
   .my-message .media {
     margin: 0;
     min-width: 300px;
-    background: #FFECE2;
+    background: #FBFBFB;
     padding: 10px 20px;
     box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5);
     border-radius: 10px;
@@ -421,17 +444,19 @@ label {
   #enter-chat-modal .form input[type="radio"] {
     margin-left: 15px; }
 
-#enter-chat-modal #enter-chat-button,
-#enter-chat-modal #upload-avatar {
-  color: #FFF9F6;
-  background: #F6884C; }
-  #enter-chat-modal #enter-chat-button:hover,
-  #enter-chat-modal #upload-avatar:hover {
-    background: #f4681b; }
-
 #enter-chat-modal #upload-avatar {
   display: block;
   margin: 30px auto 15px; }
+
+#join,
+#upload-avatar,
+#create {
+  color: #FFF9F6;
+  background: #F6884C; }
+  #join:hover,
+  #upload-avatar:hover,
+  #create:hover {
+    background: #f4681b; }
 
 .avatar-block {
   text-align: center; }
