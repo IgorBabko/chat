@@ -47,7 +47,7 @@ html(lang='en')
                         div {{{text}}}
 
         script#room-template(type="text/x-handlebars-template")
-            li.list-group-item(id="{{_id}}")
+            li(id="{{_id}}", class="list-group-item {{status}}")
                 span.label.label-primary.label-pill.pull-xs-right {{peopleCount}}
                 | {{name}}
 

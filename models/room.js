@@ -7,6 +7,10 @@ var sha1 = require('sha1');
 var Room = new Schema({
     _id: String,
     name: String, // index: { unique: true }
+    status: {
+        type: String,
+        default: "private"
+    },
     password: String,
     code: String,
     peopleCount: Number
@@ -30,15 +34,15 @@ Room.path('name').validate(function(value, callback) {
 }, 'Room {VALUE} already exists');
 
 Room.methods.setPassword = function setPassword(password, confirm) {
+    console.log(this);
     if (password !== confirm) {
         this.invalidate('password', new Error('Password should match confirmation'));
         return false;
     }
-    // if (password.length === 0) {
-        // this.password = password;
-    // } else {
-        this.password = sha1(password);
-    // }
+    if (password.length === 0) {
+        this.status = "public";
+    }
+    this.password = sha1(password);
     return true;
 }
 

@@ -164,6 +164,7 @@ $(function() {
     $("#enter-room").on("click", function() {
         socket.emit("changeRoom", {
             newRoomId: newRoomId,
+            status: "private",
             password: $("#room-password-modal #password").val()
         });
     });
@@ -171,6 +172,7 @@ $(function() {
         if (e.keyCode == 13) {
             socket.emit("changeRoom", {
                 newRoomId: newRoomId,
+                status: "private",
                 password: $("#room-password-modal #password").val()
             });
         }
@@ -240,10 +242,10 @@ $(function() {
 
     console.log("global " + globalRoomId);
     function changeRoomHandler() {
-        if ($(this).attr("id") === globalRoomId) {
+        if ($(this).hasClass("public")) {
             socket.emit("changeRoom", {
-                newRoomId: globalRoomId,
-                password: ""
+                newRoomId: $(this).attr("id"),
+                status: "public"
             });
         } else {
             $("#room-password-modal").modal().on("shown.bs.modal", function() {

@@ -99,12 +99,6 @@ function populateChat(guestData, socket) {
                     messagesInfo: messagesInfo,
                     peopleInfo: peopleInfo
                 });
-                // insert joined user - incognito
-                // User.insert({
-                //     _id: "_" + socket.id.slice(2),
-                //     username: username,
-                //     roomName: "global"
-                // });
                 Room.findOne({
                     name: "global"
                 }, function(err, globalRoomInfo) {
@@ -236,12 +230,12 @@ function createRoom(roomInfo, socket) {
     room.setCode(roomInfo["code"], roomInfo["code-confirm"]);
     room.save(function (err) {
         if (err) {
-            console.log(err);
             sendValidErrors(err, "create-room-modal", socket);
         } else {
             roomInfo = {
                 name: roomInfo["name"],
                 peopleCount: 0,
+                status: room.status,
                 _id: room._id
             }
             Guest.findOne({
@@ -250,16 +244,16 @@ function createRoom(roomInfo, socket) {
                 if (err) {
                     throw err;
                 }
-                socket.emit('createRoom', {
+                clients.emit('createRoom', {
                     roomInfo: roomInfo
                 });
                 socket.emit("notification", {
                     message: "Room <span class='highlighted'>" + roomInfo.name + "</span> has been created successfully",
                     type: "actionPerformed"
                 });
-                socket.broadcast.emit('createRoom', {
-                    roomInfo: roomInfo
-                });
+                // socket.broadcast.emit('createRoom', {
+                //     roomInfo: roomInfo
+                // });
                 socket.broadcast.emit("notification", {
                     message: "User <span class='highlighted'>" + userInfo.name + "</span> has created the room <span class='highlighted'>" + roomInfo.name + "</span>",
                     type: "general"
@@ -338,7 +332,8 @@ function changeRoom(roomInfo, socket) {
         if (err) {
             throw err;
         }
-        if (newRoomInfo.password !== sha1(roomInfo.password)) {
+        console.log(roomInfo);
+        if (roomInfo.status === "private" && newRoomInfo.password !== sha1(roomInfo.password)) {
             sendValidErrors({ password: "Password is wrong" }, "room-password-modal", socket);
         } else {
             Room.update({
@@ -443,12 +438,6 @@ function deleteRoom(data) {
         }
         if (roomInfo.code !== sha1(data.code)) {
             sendValidErrors(err, "room-password-modal", socket);
-            // socket.emit("validErrors", {
-            //     modalId: "room-password-modal",
-            //     errors: {
-            //         "code": "Code is wrong!"
-            //     }
-            // });
         } else {
             Guest.find({
                 roomName: roomInfo.name
