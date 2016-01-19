@@ -210,11 +210,12 @@ function addMessage(text, socket) {
 
         var messageObj = new Message(message);
         messageObj.save(function(err) {
+            console.log(err);
             if (err) {
                 notify(err.errors.text.message, "validErrors", socket);
             } else {
                 socket.broadcast.to(socket.room).emit("message", message);
-                message.myself = true;
+                message.isMine = true;
                 socket.emit("message", message);
             }
         });
@@ -552,7 +553,6 @@ function deleteRoom(data) {
 }
 
 function searchRoom(searchPattern, currentRoomId, socket) {
-    console.log("regexp: " + searchPattern);
     Room.find({
         $and: [{
             name: new RegExp('.*' + searchPattern + '.*', 'i')

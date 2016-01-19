@@ -212,6 +212,7 @@ $(function() {
     });
     // keypress handler
     var messageTemplate = window.Handlebars.compile($("#message-template").html());
+    var myMessageTemplate = window.Handlebars.compile($("#my-message-template").html());
     var roomTemplate = window.Handlebars.compile($("#room-template").html());
     var userTemplate = window.Handlebars.compile($("#user-template").html());
     var typingTemplate = window.Handlebars.compile($("#typing-template").html());
@@ -221,14 +222,15 @@ $(function() {
         if ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight !== $("#messages")[0].scrollHeight) {
             shouldScroll = false;
         }
-        $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
-        if (shouldScroll) {
-            $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
-        }
-        if (message.myself) {
+        if (message.isMine) {
+            $("#messages").append(myMessageTemplate(message)).find("time:last-child").timeago();
             $("#message-input").val("");
         } else {
+            $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
             messageSound.play();
+        }
+        if (shouldScroll) {
+            $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         }
         // scaleMessage();
     });

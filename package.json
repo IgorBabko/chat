@@ -51,7 +51,8 @@
     "passport-local-mongoose": "^1.0.0",
     "serve-favicon": "~2.3.0",
     "should": "~2.1.0",
-    "bcrypt": "^0.8.5"
+    "bcrypt": "^0.8.5",
+    "crypto": "^0.0.3"
   },
   "devDependencies": {},
   "bundleDependencies": [],
