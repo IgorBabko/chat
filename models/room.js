@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var sha1 = require('sha1');
+var crypto = require('crypto');
 // var bcrypt = require('bcrypt');
 // var SALT_WORK_FACTOR = 10;
 
@@ -17,7 +18,7 @@ var Room = new Schema({
 });
 
 Room.pre('save', function(next) {
-    this._id = sha1(new Date().toString());
+    this._id = crypto.randomBytes(20).toString('hex');
     next();
 });
 
