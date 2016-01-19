@@ -7,15 +7,3 @@ handychat
 build
 
 *.html
-
-build/assets/js/app.js
-
-build/assets/css/app.css
-
-build/assets/js/app.js
-
-build/index.html
-
-build/assets/css/app.css
-
-build/assets/js/app.js
