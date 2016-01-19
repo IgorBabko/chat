@@ -127,7 +127,7 @@ body
                                 span.invalid
                                 input#name.form-control(type='text')
                 .modal-footer
-                    button#enter-chat-button.btn(type='button') Join
+                    button#join.btn(type='button') Join
 
     #create-room-modal.modal.fade(role='dialog', aria-labelledby='createRoom', aria-hidden='false')
         .modal-dialog(role='document')
@@ -139,35 +139,35 @@ body
                 .modal-body
                     .form
                         .form-group
-                            label.form-control-label(for='room-name') Name:&nbsp;
+                            label.form-control-label(for='name') Name:&nbsp;
                                 span.asterisk *
                             span.invalid
-                            input#room-name.form-control(type='text')
+                            input#name.form-control(type='text')
                         .form-group
-                            label.form-control-label(for='room-password') Password:
+                            label.form-control-label(for='password') Password:
                             span.invalid
-                            input#room-password.form-control(type='password')
+                            input#password.form-control(type='password')
                         .form-group
-                            label.form-control-label(for='room-password-confirm') Password again:
+                            label.form-control-label(for='password-confirm') Password again:
                             span.invalid
-                            input#room-password-confirm.form-control(type='password')
+                            input#password-confirm.form-control(type='password')
                         .form-group
-                            label.form-control-label(for='room-code') Code:&nbsp;
+                            label.form-control-label(for='code') Code:&nbsp;
                                 span.asterisk *
                             span.invalid
-                            input#room-code.form-control(type='password')
+                            input#code.form-control(type='password')
                         .form-group
-                            label.form-control-label(for='room-code-confirm') Code again:&nbsp;
+                            label.form-control-label(for='code-confirm') Code again:&nbsp;
                                 span.asterisk *
                             span.invalid
-                            input#room-code-confirm.form-control(type='password')
+                            input#code-confirm.form-control(type='password')
                 .modal-footer
-                    //.checkbox#join-room-checkbox
-                    //    label
-                    //        input(type='checkbox', value='')
-                    //        | Join newely created room
+                    .checkbox#join-room-checkbox
+                        label
+                            input(type='checkbox', value='')
+                            | Join newely created room
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                    button.btn.btn-success#create(type='button') Create
+                    button.btn.btn#create(type='button') Create
 
     //#delete-room-modal.modal.fade(role='dialog', aria-labelledby='deleteRoom', aria-hidden='false')
         .modal-dialog(role='document')

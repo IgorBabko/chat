@@ -363,7 +363,7 @@ $(function() {
     $("#create").on("click", function() {
         socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
     });
-    $("#room-name, #room-password, #room-password-confirm, #room-code, #room-code-confirm").on("keypress", function(e) {
+    $("#create-room-modal .form input").on("keypress", function(e) {
         if (e.keyCode == 13) {
             socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
         }
