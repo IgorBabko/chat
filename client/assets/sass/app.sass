@@ -361,12 +361,11 @@ label
     height: calc(100vh - 50px) !important
 
 .list-group-item
-    border: 1px solid #FDC6A8
+    border: none
+    border-bottom: 1px solid #FDC6A8
     border-left: none
     border-right: none
     overflow-x: auto
-    &:hover
-        background: red 
 
 .posted-date
     // position: absolute
@@ -387,12 +386,12 @@ label
     width: 20px
     height: 20px
     border-radius: 50%
-    background: #D9534F
+    background: #5CB85C//#D9534F
     float: left
     margin: 12px 0 0 0
 
     &.is-online
-        background: #D9534F
+        background: #5CB85C
 
 .active
     .online-indicator
@@ -423,7 +422,7 @@ label
 
     .media
         margin: 0
-        min-width: 300px
+        min-width: 250px
         background: #FBFBFB//#FFECE2
         padding: 10px 20px
         box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
@@ -472,7 +471,7 @@ label
 
     .media
         margin: 0
-        min-width: 300px
+        min-width: 250px
         background: #FBFBFB//#FFECE2
         padding: 10px 20px
         box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
@@ -569,6 +568,27 @@ label
     background: white
     cursor: inherit
     display: block
+
+// accordion
+.tab-title
+    // height: 50px
+    background: #772A00 !important
+    text-align: center !important
+    padding: 1rem 1.25rem
+    margin-bottom: 0
+    border: none
+    font-size: 20px
+    height: 64px
+    border-bottom: 1px solid #FDC6A8
+    color: rgb(255, 217, 196)
+    &:hover
+        border-bottom: 1px solid #FDC6A8 !important
+        color: #FBFBFB
+    .expand-icon
+        margin-top: 6px
+        float: left
+        font-size: 20px
+
 
 .c-radio
     .c-indicator

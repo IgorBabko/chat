@@ -315,7 +315,7 @@ $(function() {
                 addNotification(notificationInfo.message, notificationInfo.type);
             });
             $("#enter-chat-modal").modal("hide");
-            $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child").addClass("active");
+            $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child")//.addClass("active");
             socketId = data._id;
             globalRoomId = currentRoomId = data.globalRoomId;
             console.log("mmmm: " + globalRoomId);
@@ -623,4 +623,18 @@ $(function() {
         }
         $("#rooms-sidebar ul li:not(.active)").on("click", changeRoomHandler);
     });
-});
+
+    // accordion
+    // collapse all tabs
+    $('.tab-title').collapse();
+
+
+    $(".tab-title").on("click", function () {
+        if ($(this).find("i").hasClass("fa-chevron-circle-up")) {
+            $(this).find("i").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
+        } else {
+            $(this).find("i").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
+        }
+        console.log("tab-title");
+    });
+;});

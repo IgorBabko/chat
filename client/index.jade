@@ -230,6 +230,24 @@ body
 
     #rooms-sidebar
         ul.list-group
+            #accordion1(role='tablist', aria-multiselectable='true')
+                .panel.panel-default
+                    #headin.list-group-item.tab-title(role='tab', data-toggle='collapse', href='#collapseOn', aria-expanded='false', aria-controls='collapseOn')
+                        | Search results (24)
+                        i.fa.fa-chevron-circle-down.expand-icon
+                    #collapseOn.panel-collapse.collapse(role='tabpanel', aria-labelledby='headin')
+                        li.list-group-item(id="") niko
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") mike
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") jerry
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") john
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
 
     .container-fluid
         .row
@@ -242,5 +260,58 @@ body
 
     #people-sidebar
         ul.list-group
+            #accordion(role='tablist', aria-multiselectable='true')
+                .panel.panel-default
+                    #headingOne.list-group-item.tab-title(role='tab', data-toggle='collapse', href='#collapseOne', aria-expanded='false', aria-controls='collapseOne')
+                        | Global
+                        i.fa.fa-chevron-circle-down.expand-icon
+                    #collapseOne.panel-collapse.collapse(role='tabpanel', aria-labelledby='headingOne')
+                        li.list-group-item(id="") niko
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") mike
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") jerry
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") john
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                .panel.panel-default
+                    #headingTwo.list-group-item.tab-title.collapsed(role='tab', data-toggle='collapse', href='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo')
+                        | Room1
+                        i.fa.fa-chevron-circle-down.expand-icon
+                    #collapseTwo.panel-collapse.collapse(role='tabpanel', aria-labelledby='headingTwo')
+                        li.list-group-item(id="") niko
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") mike
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") jerry
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") john
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                .panel.panel-default
+                    #headingThree.list-group-item.tab-title.collapsed(role='tab', data-toggle='collapse', href='#collapseThree', aria-expanded='false', aria-controls='collapseThree')
+                        | Room2
+                        i.fa.fa-chevron-circle-down.expand-icon
+                    #collapseThree.panel-collapse.collapse(role='tabpanel', aria-labelledby='headingThree')
+                        li.list-group-item(id="") niko
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") mike
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") jerry
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+                        li.list-group-item(id="") john
+                            img.small-avatar(src='images/incognito1.jpg')
+                            .online-indicator
+
 
     script(src='js/app.js')
