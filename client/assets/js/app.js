@@ -7,10 +7,10 @@ $(function() {
     var actionPerformedSound = new Audio('/music/action_performed.mp3');
     var privateMessageSound = new Audio('/music/private_message.mp3');
     var generalSound = new Audio('/music/enter_left.mp3');
-    $('img#avatar').imgAreaSelect({
-        handles: true,
-        parent: $('#enter-chat-modal .modal-content')
-    });
+    // $('#avatar-circle').imgAreaSelect({
+    //     handles: true,
+    //     parent: $('#enter-chat-modal .modal-content')
+    // });
     toastr.options = {
         "positionClass": "toast-top-right",
         "timeOut": 3000,
@@ -489,7 +489,7 @@ $(function() {
         $(".nav-item a").removeClass("active");
         $(".signup-item a").addClass("active");
         if (!avatar) {
-            avatar = $('#avatar').croppie({
+            avatar = $('#avatar-circle').croppie({
                 viewport: {
                     width: 300,
                     height: 300,
@@ -507,6 +507,9 @@ $(function() {
         var formData = {};
         var inputs = $("#" + formId + " input");
         $.each(inputs, function(i, input) {
+            if ($("#" + input.id).attr("type") === "radio" && !$("#" + input.id).is(':checked')) {
+                return;
+            }
             formData[input.id] = $("#" + input.id).val();
         });
         return formData;
@@ -534,6 +537,7 @@ $(function() {
 
     function enterChatHandler() {
         var formData = collectFormData(enterMode);
+        console.log(formData);
         switch (enterMode) {
             case "login":
                 login(formData);
@@ -547,9 +551,10 @@ $(function() {
         }
     }
 
-    $('#enter-chat-button').on('click', enterChatHandler);
+    $('#join').on('click', enterChatHandler);
 
     $("#enter-chat-modal input").on("keypress", function(e) {
+        console.log("niniini");
         if (e.keyCode == 13) {
             enterChatHandler();
         }

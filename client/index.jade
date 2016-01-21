@@ -112,7 +112,7 @@ body
                                 input#confirm-password.form-control(type='password')
                             .gender
                                 label.c-input.c-radio
-                                    input#male(name='gender', type='radio', value="male", checked)
+                                    input#male(name='gender' type='radio', value="male", checked)
                                     span.c-indicator
                                     | Male
                                 label.c-input.c-radio
@@ -121,9 +121,9 @@ body
                                     | Female
                             .avatar-block
                                 span.btn.btn-default.btn-file
-                                    | Upload avatar 
-                                    input(type='file')
-                                #avatar
+                                    | Upload avatar
+                                    input#avatar(type='file')
+                                #avatar-circle
 
                         #guest
                             .form-group

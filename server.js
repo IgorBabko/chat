@@ -8,7 +8,7 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var passport = require('passport');
+// var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var express = require('express');
 var app = express();
@@ -30,8 +30,8 @@ app.use(require('express-session')({
     resave: false,
     saveUninitialized: false
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var port = process.env.OPENSHIFT_NODEJS_PORT || '8000';
 var server = app.listen(port, ip);
@@ -46,9 +46,9 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
 }
 console.log(connection_string);
 // passport config
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.use(new LocalStrategy(User.authenticate()));
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 // regexp for URLs and E-mails
 if (!String.linkify) {
     String.prototype.linkify = function() {
@@ -60,16 +60,6 @@ if (!String.linkify) {
         var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
         return this.replace(urlPattern, '<a href="$&" target="_blank">$&</a>').replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>').replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
     };
-}
-
-function decodeBase64Image(dataString) {
-    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    if (matches.length !== 3) {
-        return new Error('Invalid input string');
-    } else {
-        console.log(matches[1]);
-        return new Buffer(matches[2], 'base64');
-    }
 }
 
 function populateChat(guestData, socket) {
@@ -111,7 +101,6 @@ function populateChat(guestData, socket) {
                         if (err) {
                             throw err;
                         }
-                        // console.log("nikkkkkkkk");
                         socket.join("global");
                         socket.room = "global";
                         socket.emit("enterAsGuest", {
@@ -210,7 +199,7 @@ function addMessage(text, socket) {
 
         var messageObj = new Message(message);
         messageObj.save(function(err) {
-            console.log(err);
+            // console.log(err);
             if (err) {
                 notify(err.errors.text.message, "validErrors", socket);
             } else {
@@ -223,6 +212,7 @@ function addMessage(text, socket) {
 }
 
 function createRoom(roomInfo, socket) {
+    // TODO: you know
     var room = new Room({
         name: roomInfo["name"],
         peopleCount: 0
@@ -569,6 +559,24 @@ function searchRoom(searchPattern, currentRoomId, socket) {
     });
 }
 
+function signup(userData, socket) {
+    var user = new User({
+        username: userData["username"],
+        email: userData["email"],
+        gender: userData["male"] ? userData["male"] : userData["female"],
+        avatar: userData["avatarBase64"],
+        roomName: "global"
+    });
+    user.setPassword(userData["password"], userData["confirm-password"]);
+    user.save(function (err) {
+        if (err) {
+            sendValidErrors(err, "enter-chat-modal", socket);
+        } else {
+            // signin
+        }
+    });
+}
+
 mongoose.connect('mongodb://' + connection_string, function(err, db) {
 
     cleanDBAfterServerReload();
@@ -597,8 +605,7 @@ mongoose.connect('mongodb://' + connection_string, function(err, db) {
         });
 
         socket.on("signup", function(userData) {
-            // fs.writeFileSync(userData.username + ".png", decodeBase64Image(data.avatarBase64));
-            signup(userData);
+            signup(userData, socket);
         });
 
         socket.on("login", function(userData) {
