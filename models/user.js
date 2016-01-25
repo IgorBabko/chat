@@ -3,11 +3,10 @@ var Schema = mongoose.Schema;
 var sha1 = require('sha1');
 var crypto = require('crypto');
 var fs = require('fs');
+var passportLocalMongoose = require('passport-local-mongoose');
 
-// var passportLocalMongoose = require('passport-local-mongoose');
-
-function saveAvatar(username, avatarBase64) {
-    var avatarPath = username + ".png";
+function saveAvatar(name, avatarBase64) {
+    var avatarPath = name + ".png";
     fs.writeFileSync(avatarPath, decodeBase64Image(avatarBase64));
     return avatarPath;
 }
@@ -24,31 +23,31 @@ function decodeBase64Image(dataString) {
 
 var User = new Schema({
     _id: String,
-    username: String,
+    name: String,
     email: String,
     password: String,
     gender: String,
     avatar: String,
     roomName: String
 });
-// User.plugin(passportLocalMongoose);
+User.plugin(passportLocalMongoose);
 
 User.pre('save', function(next) {
     this._id = crypto.randomBytes(20).toString('hex');
     next();
 });
 
-User.path('username').validate(function(value) {
+User.path('name').validate(function(value) {
     return !/^\s*$/.test(value.trim());
 }, 'Usename should not be empty');
 
-User.path('username').validate(function(value, callback) {
+User.path('name').validate(function(value, callback) {
     UserModel.count({
-        username: value
+        name: value
     }, function(err, count) {
         callback(count === 0);
     });
-}, 'Username {VALUE} already exists');
+}, 'Name {VALUE} already exists');
 
 User.path('email').validate(function(value) {
     return !/^\s*$/.test(value.trim());
@@ -84,7 +83,7 @@ User.post('save', function(user) {
         _id: user._id
     }, {
         $set: {
-            avatar: saveAvatar(user.username, user.avatar)
+            avatar: saveAvatar(user.name, user.avatar)
         }
     }, function() {});
 });

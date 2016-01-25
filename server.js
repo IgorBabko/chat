@@ -8,7 +8,7 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-// var passport = require('passport');
+var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var express = require('express');
 var app = express();
@@ -30,8 +30,8 @@ app.use(require('express-session')({
     resave: false,
     saveUninitialized: false
 }));
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var port = process.env.OPENSHIFT_NODEJS_PORT || '8000';
 var server = app.listen(port, ip);
@@ -42,13 +42,13 @@ app.use(express.static(__dirname + '/bower_components'));
 var connection_string = '127.0.0.1:27017/chat';
 // if OPENSHIFT env variables are present, use the available connection info:
 if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
-    connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" + process.env.OPENSHIFT_MONGODB_DB_HOST + ':' + process.env.OPENSHIFT_MONGODB_DB_PORT + '/' + process.env.OPENSHIFT_APP_NAME;
+    connection_string = process.env.OPENSHIFT_MONGODB_DB_name + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" + process.env.OPENSHIFT_MONGODB_DB_HOST + ':' + process.env.OPENSHIFT_MONGODB_DB_PORT + '/' + process.env.OPENSHIFT_APP_NAME;
 }
 console.log(connection_string);
 // passport config
-// passport.use(new LocalStrategy(User.authenticate()));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 // regexp for URLs and E-mails
 if (!String.linkify) {
     String.prototype.linkify = function() {
@@ -62,7 +62,7 @@ if (!String.linkify) {
     };
 }
 
-function populateChat(guestData, socket) {
+function populateChat(userData, socket) {
     Room.find({}, function(err, roomsInfo) {
         if (err) {
             throw err;
@@ -77,7 +77,7 @@ function populateChat(guestData, socket) {
             Guest.find({
                 roomName: "global",
                 _id: {
-                    $ne: guestData._id
+                    $ne: userData._id
                 }
             }, function(err, peopleInfo) {
                 if (err) {
@@ -103,22 +103,35 @@ function populateChat(guestData, socket) {
                         }
                         socket.join("global");
                         socket.room = "global";
-                        socket.emit("enterAsGuest", {
-                            _id: guestData._id,
-                            name: guestData.name,
-                            myself: true,
-                            globalRoomId: globalRoomInfo._id
-                        });
+
+                        if (userData.signedIn) {
+                            console.log("signedIn");
+                            socket.emit("login", {
+                                _id: userData._id,
+                                name: userData.name,
+                                myself: true,
+                                globalRoomId: globalRoomInfo._id
+                            });
+                        } else {
+                            socket.emit("enterAsGuest", {
+                                _id: userData._id,
+                                name: userData.name,
+                                myself: true,
+                                globalRoomId: globalRoomInfo._id
+                            });
+                        }
+
+
                         socket.emit("notification", {
-                            message: "Welcome, <span class='highlighted'>" + guestData.name + "</span>!",
+                            message: "Welcome, <span class='highlighted'>" + userData.name + "</span>!",
                             type: "actionPerformed"
                         });
                         socket.broadcast.to("global").emit("enterAsGuest", {
-                            _id: guestData._id,
-                            name: guestData.name
+                            _id: userData._id,
+                            name: userData.name
                         });
                         socket.broadcast.emit("notification", {
-                            message: "User <span class='highlighted'>" + guestData.name + "</span> has joined the chat",
+                            message: "User <span class='highlighted'>" + userData.name + "</span> has joined the chat",
                             type: "general"
                         });
                         clients.emit("updatePeopleCounters", {
@@ -166,6 +179,7 @@ function enterAsGuest(guestData, socket) {
         if (err) {
             sendValidErrors(err, "enter-chat-modal", socket);
         } else {
+            socket.loggedIn = false;
             Room.update({
                 name: "global"
             }, {
@@ -183,7 +197,9 @@ function enterAsGuest(guestData, socket) {
 }
 
 function addMessage(text, socket) {
-    Guest.findOne({
+    console.log("loggedIn: " + socket.loggedIn);
+    var People = socket.loggedIn ? User : Guest;
+    People.findOne({
         _id: "_" + socket.id.slice(2)
     }, function(err, author) {
         if (err) {
@@ -561,7 +577,7 @@ function searchRoom(searchPattern, currentRoomId, socket) {
 
 function signup(userData, socket) {
     var user = new User({
-        username: userData["username"],
+        name: userData["name"],
         email: userData["email"],
         gender: userData["male"] ? userData["male"] : userData["female"],
         avatar: userData["avatarBase64"],
@@ -569,10 +585,25 @@ function signup(userData, socket) {
     });
     user.setPassword(userData["password"], userData["confirm-password"]);
     user.save(function (err) {
+        console.log(err);
         if (err) {
             sendValidErrors(err, "enter-chat-modal", socket);
         } else {
-            // signin
+            socket.loggedIn = true;
+            Room.update({
+                name: "global"
+            }, {
+                $inc: {
+                    peopleCount: 1
+                }
+            }, function(err, doc) {
+                if (err) {
+                    throw err;
+                }
+                // console.log(user);
+                user.signedIn = true;
+                populateChat(user, socket);
+            });
         }
     });
 }

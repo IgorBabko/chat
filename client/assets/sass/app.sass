@@ -103,7 +103,7 @@ header, .modal-header, #send
 
 .list-group,
 .media
-    background: #FFF9F6
+    background: white//#FFF9F6
     // background: -moz-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
     // background: -webkit-linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
     // background: linear-gradient(135deg, #ECF6FF 0%, #D4D4D4 47%, #ECF6FF 100%) !important
@@ -117,8 +117,10 @@ header, .modal-header, #send
 //     transform: scale(0)
 
 .list-group
-    background-color: white
+    background: white
     color: #772A00
+    overflow: auto
+    height: calc(100vh - 50px) !important
 
 .highlighted
     color: #8AFF8A
@@ -361,11 +363,6 @@ label
     float: left !important
     padding-right: 10px !important
 
-.list-group
-    background: #FBFBFB//#FFECE2
-    overflow: auto
-    height: calc(100vh - 50px) !important
-
 .list-group-item
     border: none
     border-bottom: 1px solid #FDC6A8
@@ -429,7 +426,6 @@ label
     .media
         margin: 0
         min-width: 250px
-        background: #FBFBFB//#FFECE2
         padding: 10px 20px
         box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
         border-radius: 10px
@@ -577,23 +573,30 @@ label
 
 // accordion
 .tab-title
-    background: #EB580B !important//#D9534F//#6559CA
+    background: #AF3CEA !important //#EB580B //#D9534F//#6559CA
     text-align: center !important
     padding: 1rem 1.25rem
     margin-bottom: 0
     border: none
     font-size: 1rem
-    border-bottom: 1px solid #FDC6A8
-    color: rgb(255, 217, 196)
-    &:hover
-        border-bottom: 1px solid #FDC6A8 !important
-        color: #FBFBFB
+    border-bottom: 1px solid white
+    color: white
     .expand-icon
-        // margin-top: 6px
+        transition: all 0.2s ease-in-out
+        transform: rotate(0) !important
         float: center
         display: block
         font-size: 1.5rem
-        
+    &:hover
+        background: #7C1AAF !important
+        border-bottom: 1px solid white !important
+        color: #FBFBFB
+    
+    &.collapsed
+        .expand-icon
+            transform: rotate(180deg) !important
+            // margin-top: -2px
+
 
 
 .c-radio

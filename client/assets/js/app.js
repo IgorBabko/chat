@@ -309,13 +309,14 @@ $(function() {
             });
         }
     }
-    socket.on("enterAsGuest", function(data) {
+
+    function joinHandler(data) {
         if (data.hasOwnProperty("myself")) {
             socket.on("notification", function(notificationInfo) {
                 addNotification(notificationInfo.message, notificationInfo.type);
             });
             $("#enter-chat-modal").modal("hide");
-            $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child")//.addClass("active");
+            $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child") //.addClass("active");
             socketId = data._id;
             globalRoomId = currentRoomId = data.globalRoomId;
             console.log("mmmm: " + globalRoomId);
@@ -324,7 +325,10 @@ $(function() {
         } else {
             $("#people-sidebar ul").prepend(userTemplate(data));
         }
-    });
+    }
+
+    socket.on("enterAsGuest", joinHandler);
+    socket.on("login", joinHandler);
     // $("#enter-chat-button").on('click', joinedHandler);
     // $("#username").on('keypress', joinedHandler);
     // create room
@@ -476,13 +480,13 @@ $(function() {
     var avatar = null;
     var enterMode = "login";
     $(".signup-item").on("click", function() {
-        $("#enter-chat-button").val("Sign Up");
+        $("#join").val("Sign Up");
         if (enterMode === "signup") {
             return;
         }
         enterMode = "signup";
         setTimeout(function() {
-            $("#username").focus();
+            $("#signup #name").focus();
         }, 1);
         $("#enter-chat-modal .form > div").hide();
         $("#signup").show();
@@ -507,19 +511,22 @@ $(function() {
         var formData = {};
         var inputs = $("#" + formId + " input");
         $.each(inputs, function(i, input) {
-            if ($("#" + input.id).attr("type") === "radio" && !$("#" + input.id).is(':checked')) {
+            var selector = "#" + formId + " #" + input.id;
+            if ($(selector).attr("type") === "radio" && !$(selector).is(':checked')) {
                 return;
             }
-            formData[input.id] = $("#" + input.id).val();
+            
+            formData[input.id] = $(selector).val();
+            console.log("#" + formId + " #" + input.id);
         });
         return formData;
     }
 
-    function login(formData) {
-        socket.emit("login", {
-            userData: formData
-        });
-    }
+    // function login(formData) {
+    //     socket.emit("login", {
+    //         userData: formData
+    //     });
+    // }
 
     function signup(formData) {
         avatar.croppie('result', {
@@ -537,12 +544,13 @@ $(function() {
 
     function enterChatHandler() {
         var formData = collectFormData(enterMode);
-        console.log(formData);
+        console.log(enterMode);
         switch (enterMode) {
             case "login":
                 login(formData);
                 break;
             case "signup":
+                console.log("signup");
                 signup(formData);
                 break;
             case "guest":
@@ -581,13 +589,13 @@ $(function() {
         }
     });
     $(".guest-item").on("click", function() {
-        $("#enter-chat-button").val("Enter");
+        $("#join").val("Enter");
         if (enterMode === "guest") {
             return;
         }
         enterMode = "guest";
         setTimeout(function() {
-            $("#name").focus();
+            $("#guest #name").focus();
         }, 1);
         $("#enter-chat-modal .form > div").hide();
         $("#guest").show();
@@ -595,7 +603,7 @@ $(function() {
         $(".guest-item a").addClass("active");
     });
     $(".login-item").on("click", function() {
-        $("#enter-chat-button").val("Log In");
+        $("#join").val("Log In");
         if (enterMode === "login") {
             return;
         }
@@ -611,14 +619,20 @@ $(function() {
 
     $("#search-room-input").on("keypress", function(e) {
         if (e.keyCode == 13) {
-            socket.emit("searchRoom", { searchPattern: $(this).val(), currentRoomId: currentRoomId });
+            socket.emit("searchRoom", {
+                searchPattern: $(this).val(),
+                currentRoomId: currentRoomId
+            });
         }
-    }).on("focus", function () {
+    }).on("focus", function() {
         $(this).select();
     });
 
     $("#search-room-button").on("click", function() {
-        socket.emit("searchRoom", { searchPattern: $(this).val(), currentRoomId: currentRoomId });
+        socket.emit("searchRoom", {
+            searchPattern: $(this).val(),
+            currentRoomId: currentRoomId
+        });
     });
 
     socket.on("searchRoom", function(foundRooms) {
@@ -634,12 +648,12 @@ $(function() {
     $('.tab-title').collapse();
 
 
-    $(".tab-title").on("click", function () {
-        if ($(this).find("i").hasClass("fa-chevron-circle-up")) {
-            $(this).find("i").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
-        } else {
-            $(this).find("i").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
-        }
-        console.log("tab-title");
-    });
-;});
+    // $(".tab-title").on("click", function() {
+    //     if ($(this).find("i").hasClass("fa-chevron-circle-up")) {
+    //         $(this).find("i").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
+    //     } else {
+    //         $(this).find("i").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
+    //     }
+    //     console.log("tab-title");
+    // });
+});
