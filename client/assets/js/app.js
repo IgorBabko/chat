@@ -242,8 +242,6 @@ $(function() {
     //     }, 0.001);
     // }
 
-    console.log("global " + globalRoomId);
-
     function changeRoomHandler() {
         if ($(this).hasClass("public")) {
             socket.emit("changeRoom", {
@@ -319,7 +317,6 @@ $(function() {
             $("#people-sidebar ul").prepend(userTemplate(data)).find("li:first-child") //.addClass("active");
             socketId = data._id;
             globalRoomId = currentRoomId = data.globalRoomId;
-            console.log("mmmm: " + globalRoomId);
             $("#message-input").focus();
             $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
         } else {
@@ -343,7 +340,7 @@ $(function() {
     }
 
     function updateValidationErrors(modalId, errors) {
-        $("#" + modalId + " .form input").each(function(index, input) {
+        $("#" + modalId + " input").each(function(index, input) {
             var $input = $(input),
                 inputId = $input.attr("id");
             if (errors.hasOwnProperty(inputId)) {
@@ -372,7 +369,6 @@ $(function() {
         });
     }
     $("#create").on("click", function() {
-        console.log("create");
         socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
     });
     $("#create-room-modal .form input").on("keypress", function(e) {
@@ -501,7 +497,7 @@ $(function() {
                 }
             });
             avatar.croppie('bind', {
-                url: 'images/male.jpg'
+                url: 'images/male1.jpg'
             });
             avatar.croppie('result', 'html');
         }
@@ -512,12 +508,13 @@ $(function() {
         var inputs = $("#" + formId + " input");
         $.each(inputs, function(i, input) {
             var selector = "#" + formId + " #" + input.id;
+            if (input.id == "") {
+                return;
+            }
             if ($(selector).attr("type") === "radio" && !$(selector).is(':checked')) {
                 return;
             }
-            
             formData[input.id] = $(selector).val();
-            console.log("#" + formId + " #" + input.id);
         });
         return formData;
     }
@@ -544,13 +541,11 @@ $(function() {
 
     function enterChatHandler() {
         var formData = collectFormData(enterMode);
-        console.log(enterMode);
         switch (enterMode) {
             case "login":
                 login(formData);
                 break;
             case "signup":
-                console.log("signup");
                 signup(formData);
                 break;
             case "guest":
@@ -562,7 +557,6 @@ $(function() {
     $('#join').on('click', enterChatHandler);
 
     $("#enter-chat-modal input").on("keypress", function(e) {
-        console.log("niniini");
         if (e.keyCode == 13) {
             enterChatHandler();
         }
@@ -642,18 +636,4 @@ $(function() {
         }
         $("#rooms-sidebar ul li:not(.active)").on("click", changeRoomHandler);
     });
-
-    // accordion
-    // collapse all tabs
-    $('.tab-title').collapse();
-
-
-    // $(".tab-title").on("click", function() {
-    //     if ($(this).find("i").hasClass("fa-chevron-circle-up")) {
-    //         $(this).find("i").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
-    //     } else {
-    //         $(this).find("i").removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-up");
-    //     }
-    //     console.log("tab-title");
-    // });
 });

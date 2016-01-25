@@ -195,9 +195,9 @@ header, .modal-header, #send
 
 #send
     padding: 10px
-    background: #772A00
+    background: #EA5507 !important
     &:hover
-        background: #772A00 !important
+        background: #CE4700 !important
 
 #message-input
     border: 1px solid #F8925C
@@ -320,7 +320,7 @@ header, .modal-header, #send
             background-color: white
 
 .modal-content
-    background: #FFF9F6
+    background: white
     border: none
 
 input[type="text"],
@@ -401,7 +401,7 @@ label
         display: none
 
 .message
-    margin: 50px 40px 50px 100px !important
+    margin: 50px 30px 50px 100px !important
     position: relative
     display: flex
     justify-content: flex-end
@@ -411,7 +411,7 @@ label
         min-width: 70px
         height: 70px
         border-radius: 50%
-        box-shadow: 1px 1px 1px rgba(119, 42, 0, 0.5)
+        box-shadow: -1px 1px 1px rgba(119, 42, 0, 0.5)
         margin-left: 20px
         
     .rect
@@ -420,14 +420,15 @@ label
         position: absolute
         top: 35px
         right: 85px
-        background: #FBFBFB//#FFECE2
         transform: rotate(45deg)
+        background: #FFF 
 
     .media
+        background: white
         margin: 0
         min-width: 250px
         padding: 10px 20px
-        box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
+        box-shadow: -1px 1px 3px rgba(119, 42, 0, 0.5)
         border-radius: 10px
         line-height: 1.7rem
 
@@ -449,7 +450,7 @@ label
                 float: left
 
 .my-message
-    margin: 50px 100px 50px 20px !important
+    margin: 50px 100px 50px 30px !important
     position: relative
     display: flex
     justify-content: flex-start
@@ -474,7 +475,6 @@ label
     .media
         margin: 0
         min-width: 250px
-        background: #FBFBFB//#FFECE2
         padding: 10px 20px
         box-shadow: 1px 1px 3px rgba(119, 42, 0, 0.5)
         border-radius: 10px
@@ -516,7 +516,6 @@ label
                 border: 1px solid rgba(254, 203, 175, 1)
                 color: #EF6B26
         .nav-link.active
-            background: #FFF9F6
             color: #EF6B26
             cursor: default
             border-color: #FECBAF #FECBAF transparent

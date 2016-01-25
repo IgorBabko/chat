@@ -177,7 +177,7 @@ function enterAsGuest(guestData, socket) {
     var guest = new Guest(guestData);
     guest.save(function(err) {
         if (err) {
-            sendValidErrors(err, "enter-chat-modal", socket);
+            sendValidErrors(err, "guest", socket);
         } else {
             socket.loggedIn = false;
             Room.update({
@@ -587,8 +587,9 @@ function signup(userData, socket) {
     user.save(function (err) {
         console.log(err);
         if (err) {
-            sendValidErrors(err, "enter-chat-modal", socket);
+            sendValidErrors(err, "signup", socket);
         } else {
+            login(user);
             socket.loggedIn = true;
             Room.update({
                 name: "global"
