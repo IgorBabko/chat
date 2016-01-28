@@ -21,12 +21,12 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(cookieParser());
 
-    var MongoStore = require('connect-mongo')(app);
+    var sessionStore = require('./sessionStore');
 
     app.use(session({
       secret: config.get('session:secret'),
       key: config.get('session:key'),
       cookie: config.get('session:cookie'),
-      store: new MongoStore({mongoose_connection: mongoose.connection})
+      store: sessionStore
     }));
 };
