@@ -1,5 +1,21 @@
 module.exports = function (clients, handlers) {
+    
+    // clients.set('authorization', function (handshakeData, accept) {
+    //     if (handshakeData.headers.cookie) {
+    //         handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
+    //         handshakeData.sessionID = connect.utils.parseSignedCookie(handshakeData.cookie['express.sid'], 'secret');
+    //     }
+    //     if (handshakeData.cookie['express.sid'] == handshakeData.sessionID) {
+    //         return accept('Cookie is invalid.', false);
+    //     } else {
+    //         return accept('No cookie transmitted.', false);
+    //     } 
+    //     accept(null, true);
+    // });
+
+
     clients.on('connection', function(socket) {
+        // console.log(socket.handshake);
         socket
             .on("message", function(text) {
                 handlers.addMessage(text, socket);

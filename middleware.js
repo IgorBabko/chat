@@ -23,12 +23,18 @@ module.exports = function (app) {
     app.use(cookieParser());
 
     app.use(session({
-        secret: 'keyboard cat',
+        secret: config.session.secret,
+        key: config.session.key,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: true },
+        cookie: config.cookie,
         store: new MongoStore({
             mongooseConnection: mongoose.connection
         })
     }));
+
+    // app.use(function (req, res, next) {
+    //     req.session.num = req.session.num + 1 || 1;
+    //     res.send("Visits: " + req.session.num);
+    // });
 };

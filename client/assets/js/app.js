@@ -1,6 +1,5 @@
 ;
 $(function() {
-    var socket = io('http://' + window.location.hostname + ':8000');
     var validErrorsSound = new Audio('/music/valid_errors.mp3');
     var messageSound = new Audio('/music/message.mp3');
     var invitationSound = new Audio('/music/invitation.mp3');
@@ -145,11 +144,7 @@ $(function() {
         }
     };
     gridManager.init();
-    $("#create-room-button").on("click", function() {
-        $("#create-room-modal").modal().on("shown.bs.modal", function() {
-            $("#create-room-modal #name").focus();
-        });
-    });
+
     // $("#delete-room-button").on("click", function() {
     //     $("#delete-room-modal").modal().on("shown.bs.modal", function() {
     //         $("#").focus();
@@ -161,39 +156,7 @@ $(function() {
     //    });
     //});
     var newRoomId = "";
-    $("#enter-room").on("click", function() {
-        socket.emit("changeRoom", {
-            newRoomId: newRoomId,
-            status: "private",
-            password: $("#room-password-modal #password").val()
-        });
-    });
-    $("#room-password-modal #password").on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            socket.emit("changeRoom", {
-                newRoomId: newRoomId,
-                status: "private",
-                password: $("#room-password-modal #password").val()
-            });
-        }
-    });
-    $("#delete-room").on("click", function() {
-        socket.emit("deleteRoom", {
-            roomId: newRoomId,
-            code: $("#code").val()
-        });
-    });
-    $("#delete-room-modal #code").on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            socket.emit("deleteRoom", {
-                roomId: newRoomId,
-                code: $("#delete-room-modal #code").val()
-            });
-        }
-    });
-    socket.on('disconnect', function() {
-        location.reload();
-    });
+
     //$("#private-messages-button").on("click", function () {
     //    $("#private-messages").show();
     //    $("#public-messages").hide();
@@ -202,38 +165,14 @@ $(function() {
     //    $("#public-messages").show();
     //    $("#private-messages").hide();
     //});
-    $("#send").on("click", function() {
-        socket.emit("message", $("#message-input").val());
-    });
-    $("#message-input").on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            socket.emit("message", $("#message-input").val());
-        }
-    });
+    
     // keypress handler
     var messageTemplate = window.Handlebars.compile($("#message-template").html());
     var myMessageTemplate = window.Handlebars.compile($("#my-message-template").html());
     var roomTemplate = window.Handlebars.compile($("#room-template").html());
     var userTemplate = window.Handlebars.compile($("#user-template").html());
     var typingTemplate = window.Handlebars.compile($("#typing-template").html());
-    socket.on("message", function(message) {
-        // message.myMessage = message.myself ? "my-message" : "";
-        var shouldScroll = true;
-        if ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight !== $("#messages")[0].scrollHeight) {
-            shouldScroll = false;
-        }
-        if (message.isMine) {
-            $("#messages").append(myMessageTemplate(message)).find("time:last-child").timeago();
-            $("#message-input").val("");
-        } else {
-            $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
-            messageSound.play();
-        }
-        if (shouldScroll) {
-            $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
-        }
-        // scaleMessage();
-    });
+
 
     // function scaleMessage() {
     //     $("#messages .media:last-child").addClass("scaledDown");
@@ -242,35 +181,7 @@ $(function() {
     //     }, 0.001);
     // }
 
-    function changeRoomHandler() {
-        if ($(this).hasClass("public")) {
-            socket.emit("changeRoom", {
-                newRoomId: $(this).attr("id"),
-                status: "public"
-            });
-        } else {
-            $("#room-password-modal").modal().on("shown.bs.modal", function() {
-                $("#room-password-modal #password").focus();
-            });
-        }
-        newRoomId = $(this).attr("id");
-    }
-    socket.on("populateChat", function(data) {
-        for (var i = data.roomsInfo.length - 1; 0 <= i; --i) {
-            $("#rooms-sidebar ul").prepend(roomTemplate(data.roomsInfo[i]));
-        }
-        $("#rooms-sidebar ul li:first-child").addClass("active");
-        $("#rooms-sidebar li:not(.active)").on("click", changeRoomHandler);
-        globalRoomId = $("#rooms-sidebar ul li:first-child").attr("id");
-        for (var i = 0; i < data.messagesInfo.length; ++i) {
-            $("#messages").append(messageTemplate(data.messagesInfo[i]));
-        }
-        $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
-        for (var i = 0; i < data.peopleInfo.length; ++i) {
-            $("#people-sidebar ul").prepend(userTemplate(data.peopleInfo[i]));
-        }
-        $("time").timeago();
-    });
+
     $("html").show();
     // function joinedHandler(e) {
     //     if (e.type === 'click' || e.keyCode == 13) {
@@ -324,8 +235,6 @@ $(function() {
         }
     }
 
-    socket.on("enterAsGuest", joinHandler);
-    socket.on("login", joinHandler);
     // $("#enter-chat-button").on('click', joinedHandler);
     // $("#username").on('keypress', joinedHandler);
     // create room
@@ -368,111 +277,15 @@ $(function() {
             $input.val("");
         });
     }
-    $("#create").on("click", function() {
-        socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
-    });
-    $("#create-room-modal .form input").on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
-        }
-    });
-    socket.on("createRoom", function(data) {
-        $("#rooms-sidebar ul").append(roomTemplate(data.roomInfo));
-        $("#rooms-sidebar ul li:last-child").on("click", changeRoomHandler);
-        $("#create-room-modal").modal("hide");
-        clearInputs($("#create-room-modal .form input"));
-    });
-    socket.on("validErrors", function(validationInfo) {
-        validErrorsSound.play();
-        updateValidationErrors(validationInfo.modalId, validationInfo.errors);
-    });
-    $(window).on("unload", function() {
-        socket.emit("disconnect");
-    });
-    socket.on("guestLeft", function(data) {
-        $("#" + data.userId).remove();
-    });
-    socket.on("changeRoom", function(data) {
-        if (data.peopleFromNewRoom) {
-            $("#people-sidebar ul").text("");
-            for (var i = 0; i < data.peopleFromNewRoom.length; ++i) {
-                $("#people-sidebar ul").prepend(userTemplate(data.peopleFromNewRoom[i]));
-            }
-            $("#people-sidebar ul").prepend(userTemplate(data.userInfo)).find("li:first-child").addClass("active");
-            $("#rooms-sidebar ul li.active").removeClass("active").on("click", changeRoomHandler);
-            $("#" + data.newRoomId).addClass("active").off("click", changeRoomHandler);
-            $("#room-password-modal").modal("hide");
-            clearInputs($("#room-password-modal .form input"));
-            currentRoomId = data.newRoomId;
-            $("#messages").text("");
-            for (var i = 0; i < data.messages.length; ++i) {
-                $("#messages").append(messageTemplate(data.messages[i]));
-            }
-            $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
-            $("#message-input").focus();
-            $("time").timeago();
-        } else if (data.status === "left") {
-            $("#" + data._id).remove();
-        } else {
-            $("#people-sidebar ul").prepend(userTemplate(data));
-        }
-    });
-    socket.on("deleteRoomItem", function(roomId) {
-        $("#" + roomId).remove();
-    });
-    socket.on("updatePeopleCounters", function(data) {
-        $("#" + data.newRoomInfo._id + " span").text(data.newRoomInfo.peopleCount);
-        if (data.oldRoomInfo) {
-            $("#" + data.oldRoomInfo._id + " span").text(data.oldRoomInfo.peopleCount);
-        }
-    });
+    
+
+
     var socketId = "";
     var globalRoomId = "";
     var currentRoomId = "";
-    socket.on("deleteRoom", function(data) {
-        if (data.myself === true) {
-            $("#room-password-modal").modal("hide");
-            clearInputs($("#room-password-modal"));
-            if (globalRoomId === currentRoomId) {
-                for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
-                    $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
-                }
-                return;
-            } else if (currentRoomId !== data.roomId) {
-                return;
-            }
-        }
-        if (data.global === true) {
-            for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
-                $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
-            }
-        } else {
-            $("#" + globalRoomId).addClass("active");
-            currentRoomId = globalRoomId;
-            $("#people-sidebar ul").html("");
-            for (var i = 0; i < data.peopleFromGlobalRoom.length; ++i) {
-                $("#people-sidebar ul").prepend(userTemplate(data.peopleFromGlobalRoom[i]));
-            }
-            $("#messages").text("");
-            for (var i = 0; i < data.messages.length; ++i) {
-                $("#messages").append(messageTemplate(data.messages[i]));
-            }
-            $("#" + socketId).addClass("active");
-            $("#" + globalRoomId).off("click", changeRoomHandler);
-        }
-    });
-    $("#message-input").on("focus", function() {
-        socket.emit("startTyping", socketId);
-    });
-    $("#message-input").on("blur", function() {
-        socket.emit("stopTyping", socketId);
-    });
-    socket.on("startTyping", function(id) {
-        $("#" + id).prepend(typingTemplate());
-    });
-    socket.on("stopTyping", function(id) {
-        $("#" + id + " span").remove();
-    });
+    
+    
+    
     var avatar = null;
     var enterMode = "login";
     $(".signup-item").on("click", function() {
@@ -519,24 +332,70 @@ $(function() {
         return formData;
     }
 
-    // function login(formData) {
-    //     socket.emit("login", {
-    //         userData: formData
-    //     });
-    // }
+    function login(formData) {
+        var request = $.ajax({
+            url: "/login",
+            method: "POST",
+            data: formData
+            // dataType: "html"
+        });
+        request.done(function( msg ) {
+            console.log(msg);
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            console.log( "Request failed: ");
+        });
+        // socket.emit("enterAsGuest", formData);
+        // socket.emit("login", {
+        //     userData: formData
+        // });
+    }
 
     function signup(formData) {
         avatar.croppie('result', {
             type: 'canvas',
             size: 'original'
         }).then(function(avatarBase64) {
+
             formData.avatarBase64 = avatarBase64;
-            socket.emit("signup", formData);
+
+            var request = $.ajax({
+                url: "/signup",
+                method: "POST",
+                data: formData
+                // dataType: "html"
+            });
+
+            request.done(function( msg ) {
+                console.log('SIGNUP');
+                var socket = io('http://' + window.location.hostname + ':8000');
+                setupSocketHandlers(socket);
+                setupEventHandlers(socket);
+            });
+
+            request.fail(function( jqXHR, textStatus ) {
+                console.log( "Request failed: ");
+            });
+
+
+            // socket.emit("signup", formData);
         });
     }
     // люси дженсон
     function enterAsGuest(formData) {
-        socket.emit("enterAsGuest", formData);
+        var request = $.ajax({
+            url: "/guest",
+            method: "POST",
+            data: formData
+            // dataType: "html"
+        });
+        request.done(function( msg ) {
+            console.log(msg);
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            console.log( "Request failed: ");
+        });
+        // socket.emit("enterAsGuest", formData);
     }
 
     function enterChatHandler() {
@@ -562,15 +421,10 @@ $(function() {
         }
     });
 
-    // male-female radio handler
     $(".gender input[type='radio']").on("change", function() {
         socket.emit("changeDefaultAvatar", $(this).val());
     });
-    socket.on("changeDefaultAvatar", function(avatarPath) {
-        avatar.croppie('bind', {
-            url: avatarPath
-        });
-    });
+    
     $(".avatar-block input").on("change", function() {
         if (this.files && this.files[0]) {
             var reader = new FileReader();
@@ -611,29 +465,251 @@ $(function() {
         $(".login-item a").addClass("active");
     });
 
-    $("#search-room-input").on("keypress", function(e) {
+    // socket handlers
+
+    function setupEventHandlers(socket) {
+        $("#search-room-input").on("keypress", function(e) {
         if (e.keyCode == 13) {
             socket.emit("searchRoom", {
                 searchPattern: $(this).val(),
                 currentRoomId: currentRoomId
             });
         }
-    }).on("focus", function() {
-        $(this).select();
-    });
-
-    $("#search-room-button").on("click", function() {
-        socket.emit("searchRoom", {
-            searchPattern: $(this).val(),
-            currentRoomId: currentRoomId
+        }).on("focus", function() {
+            $(this).select();
         });
-    });
 
-    socket.on("searchRoom", function(foundRooms) {
-        $("#rooms-sidebar ul li:not(.active)").remove();
-        for (var i = foundRooms.length - 1; 0 <= i; --i) {
-            $("#rooms-sidebar ul").append(roomTemplate(foundRooms[i]));
+        $("#search-room-button").on("click", function() {
+            socket.emit("searchRoom", {
+                searchPattern: $(this).val(),
+                currentRoomId: currentRoomId
+            });
+        });
+
+        $("#message-input").on("focus", function() {
+            socket.emit("startTyping", socketId);
+        });
+        $("#message-input").on("blur", function() {
+            socket.emit("stopTyping", socketId);
+        });
+
+        $("#create").on("click", function() {
+            socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
+        });
+        $("#create-room-modal .form input").on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                socket.emit("createRoom", getInputsData($("#create-room-modal .form input")));
+            }
+        });
+        
+        $(window).on("unload", function() {
+            socket.emit("disconnect");
+        });
+
+        $("#create-room-button").on("click", function() {
+            $("#create-room-modal").modal().on("shown.bs.modal", function() {
+                $("#create-room-modal #name").focus();
+            });
+        });
+        $("#enter-room").on("click", function() {
+            socket.emit("changeRoom", {
+                newRoomId: newRoomId,
+                status: "private",
+                password: $("#room-password-modal #password").val()
+            });
+        });
+        $("#room-password-modal #password").on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                socket.emit("changeRoom", {
+                    newRoomId: newRoomId,
+                    status: "private",
+                    password: $("#room-password-modal #password").val()
+                });
+            }
+        });
+        $("#delete-room").on("click", function() {
+            socket.emit("deleteRoom", {
+                roomId: newRoomId,
+                code: $("#code").val()
+            });
+        });
+        $("#delete-room-modal #code").on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                socket.emit("deleteRoom", {
+                    roomId: newRoomId,
+                    code: $("#delete-room-modal #code").val()
+                });
+            }
+        });
+        $("#send").on("click", function() {
+            socket.emit("message", $("#message-input").val());
+        });
+        $("#message-input").on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                socket.emit("message", $("#message-input").val());
+            }
+        });
+
+        function changeRoomHandler() {
+            if ($(this).hasClass("public")) {
+                socket.emit("changeRoom", {
+                    newRoomId: $(this).attr("id"),
+                    status: "public"
+                });
+            } else {
+                $("#room-password-modal").modal().on("shown.bs.modal", function() {
+                    $("#room-password-modal #password").focus();
+                });
+            }
+            newRoomId = $(this).attr("id");
         }
-        $("#rooms-sidebar ul li:not(.active)").on("click", changeRoomHandler);
-    });
+    }
+
+    function setupSocketHandlers(socket) {
+        socket.on("startTyping", function(id) {
+            $("#" + id).prepend(typingTemplate());
+        });
+        socket.on("stopTyping", function(id) {
+            $("#" + id + " span").remove();
+        });
+
+        socket.on("searchRoom", function(foundRooms) {
+            $("#rooms-sidebar ul li:not(.active)").remove();
+            for (var i = foundRooms.length - 1; 0 <= i; --i) {
+                $("#rooms-sidebar ul").append(roomTemplate(foundRooms[i]));
+            }
+            $("#rooms-sidebar ul li:not(.active)").on("click", changeRoomHandler);
+        });
+
+        socket.on("changeDefaultAvatar", function(avatarPath) {
+            avatar.croppie('bind', {
+                url: avatarPath
+            });
+        });
+
+        socket.on("deleteRoom", function(data) {
+            if (data.myself === true) {
+                $("#room-password-modal").modal("hide");
+                clearInputs($("#room-password-modal"));
+                if (globalRoomId === currentRoomId) {
+                    for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
+                        $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
+                    }
+                    return;
+                } else if (currentRoomId !== data.roomId) {
+                    return;
+                }
+            }
+            if (data.global === true) {
+                for (var i = 0; i < data.peopleFromDeletedRoom.length; ++i) {
+                    $("#people-sidebar ul").prepend(userTemplate(data.peopleFromDeletedRoom[i]));
+                }
+            } else {
+                $("#" + globalRoomId).addClass("active");
+                currentRoomId = globalRoomId;
+                $("#people-sidebar ul").html("");
+                for (var i = 0; i < data.peopleFromGlobalRoom.length; ++i) {
+                    $("#people-sidebar ul").prepend(userTemplate(data.peopleFromGlobalRoom[i]));
+                }
+                $("#messages").text("");
+                for (var i = 0; i < data.messages.length; ++i) {
+                    $("#messages").append(messageTemplate(data.messages[i]));
+                }
+                $("#" + socketId).addClass("active");
+                $("#" + globalRoomId).off("click", changeRoomHandler);
+            }
+        });
+
+        socket.on("validErrors", function(validationInfo) {
+            validErrorsSound.play();
+            updateValidationErrors(validationInfo.modalId, validationInfo.errors);
+        });
+        
+        socket.on("guestLeft", function(data) {
+            $("#" + data.userId).remove();
+        });
+        socket.on("changeRoom", function(data) {
+            if (data.peopleFromNewRoom) {
+                $("#people-sidebar ul").text("");
+                for (var i = 0; i < data.peopleFromNewRoom.length; ++i) {
+                    $("#people-sidebar ul").prepend(userTemplate(data.peopleFromNewRoom[i]));
+                }
+                $("#people-sidebar ul").prepend(userTemplate(data.userInfo)).find("li:first-child").addClass("active");
+                $("#rooms-sidebar ul li.active").removeClass("active").on("click", changeRoomHandler);
+                $("#" + data.newRoomId).addClass("active").off("click", changeRoomHandler);
+                $("#room-password-modal").modal("hide");
+                clearInputs($("#room-password-modal .form input"));
+                currentRoomId = data.newRoomId;
+                $("#messages").text("");
+                for (var i = 0; i < data.messages.length; ++i) {
+                    $("#messages").append(messageTemplate(data.messages[i]));
+                }
+                $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
+                $("#message-input").focus();
+                $("time").timeago();
+            } else if (data.status === "left") {
+                $("#" + data._id).remove();
+            } else {
+                $("#people-sidebar ul").prepend(userTemplate(data));
+            }
+        });
+        socket.on("deleteRoomItem", function(roomId) {
+            $("#" + roomId).remove();
+        });
+        socket.on("updatePeopleCounters", function(data) {
+            $("#" + data.newRoomInfo._id + " span").text(data.newRoomInfo.peopleCount);
+            if (data.oldRoomInfo) {
+                $("#" + data.oldRoomInfo._id + " span").text(data.oldRoomInfo.peopleCount);
+            }
+        });
+
+        socket.on("message", function(message) {
+            // message.myMessage = message.myself ? "my-message" : "";
+            var shouldScroll = true;
+            if ($("#messages")[0].scrollTop + $("#messages")[0].clientHeight !== $("#messages")[0].scrollHeight) {
+                shouldScroll = false;
+            }
+            if (message.isMine) {
+                $("#messages").append(myMessageTemplate(message)).find("time:last-child").timeago();
+                $("#message-input").val("");
+            } else {
+                $("#messages").append(messageTemplate(message)).find("time:last-child").timeago();
+                messageSound.play();
+            }
+            if (shouldScroll) {
+                $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
+            }
+            // scaleMessage();
+        });
+
+        socket.on("createRoom", function(data) {
+            $("#rooms-sidebar ul").append(roomTemplate(data.roomInfo));
+            $("#rooms-sidebar ul li:last-child").on("click", changeRoomHandler);
+            $("#create-room-modal").modal("hide");
+            clearInputs($("#create-room-modal .form input"));
+        });
+
+        socket.on("enterAsGuest", joinHandler);
+        socket.on("login", joinHandler);
+        socket.on("populateChat", function(data) {
+            for (var i = data.roomsInfo.length - 1; 0 <= i; --i) {
+                $("#rooms-sidebar ul").prepend(roomTemplate(data.roomsInfo[i]));
+            }
+            $("#rooms-sidebar ul li:first-child").addClass("active");
+            $("#rooms-sidebar li:not(.active)").on("click", changeRoomHandler);
+            globalRoomId = $("#rooms-sidebar ul li:first-child").attr("id");
+            for (var i = 0; i < data.messagesInfo.length; ++i) {
+                $("#messages").append(messageTemplate(data.messagesInfo[i]));
+            }
+            $("#messages").prop("scrollTop", $("#messages").prop("scrollHeight"));
+            for (var i = 0; i < data.peopleInfo.length; ++i) {
+                $("#people-sidebar ul").prepend(userTemplate(data.peopleInfo[i]));
+            }
+            $("time").timeago();
+        });
+
+        socket.on('disconnect', function() {
+            location.reload();
+        });
+    }
 });
