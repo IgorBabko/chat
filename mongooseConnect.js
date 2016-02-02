@@ -2,7 +2,9 @@ var mongoose = require("mongoose");
 var Guest = require('./models/guest');
 var Room = require('./models/room');
 
-var connectionString = require('./config').get('mongoose:uri');
+var config = require('config.json')('./config.json');
+
+var connectionString = config.mongoose.uri;
 if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
     connectionString = process.env.OPENSHIFT_MONGODB_DB_name
                         + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD

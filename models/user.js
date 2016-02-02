@@ -3,7 +3,6 @@ var Schema = mongoose.Schema;
 var sha1 = require('sha1');
 var crypto = require('crypto');
 var fs = require('fs');
-var passportLocalMongoose = require('passport-local-mongoose');
 
 function saveAvatar(name, avatarBase64) {
     var avatarPath = name + ".png";
@@ -30,7 +29,6 @@ var User = new Schema({
     avatar: String,
     roomName: String
 });
-User.plugin(passportLocalMongoose);
 
 User.pre('save', function(next) {
     this._id = crypto.randomBytes(20).toString('hex');

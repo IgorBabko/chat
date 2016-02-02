@@ -3,7 +3,6 @@ var $ = require('gulp-load-plugins')();
 var gulp = require('gulp');
 var livereload = require('gulp-livereload');
 //var rimraf = require('rimraf');
-var router = require('front-router');
 var sequence = require('run-sequence');
 var sass = require('gulp-sass');
 var jade = require('gulp-jade');
